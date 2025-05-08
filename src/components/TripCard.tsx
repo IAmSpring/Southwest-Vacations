@@ -78,7 +78,10 @@ const TripCard = ({ trip, isLoading = false }: Props) => {
   }
   
   return (
-    <div className="group bg-white rounded-xl shadow-md overflow-hidden transition-all duration-500 hover:shadow-lg transform hover:-translate-y-1 border border-gray-100 hover:border-[#304CB2]/20">
+    <div 
+      className="group bg-white rounded-xl shadow-md overflow-hidden transition-all duration-500 hover:shadow-lg transform hover:-translate-y-1 border border-gray-100 hover:border-[#304CB2]/20"
+      data-testid="trip-card"
+    >
       <div className="relative overflow-hidden">
         <Link to={`/trip/${trip.id}`} className="block">
           <ImageWithFallback 
