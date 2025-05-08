@@ -11,6 +11,8 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - Modern UI with Southwest Airlines branding
 - Responsive design for all devices
 
+![Southwest Vacations Landing Page](https://github.com/user-attachments/assets/44142e17-0920-404b-a650-858a5bfaae4d)
+
 ## Tech Stack
 
 ### Frontend
