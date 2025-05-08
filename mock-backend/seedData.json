@@ -1,0 +1,101 @@
+{
+  "trips": [
+    {
+      "id": "trip1",
+      "destination": "Maui, Hawaii",
+      "imageUrl": "/images/southwest-hawaii.jpg",
+      "price": 1499.99,
+      "description": "Relax on Maui's beautiful beaches and enjoy the stunning sunsets. Perfect for couples and families. Fly with Southwest's comfortable service.",
+      "datesAvailable": ["2025-08-01", "2025-08-15", "2025-09-01", "2025-09-20"]
+    },
+    {
+      "id": "trip2",
+      "destination": "Paris, France",
+      "imageUrl": "/images/southwest-europe.jpg",
+      "price": 1999.99,
+      "description": "Experience the magic of Paris, from the Eiffel Tower to the Louvre. A city of art, culture, and romance. Southwest makes your journey comfortable.",
+      "datesAvailable": ["2025-07-10", "2025-08-20", "2025-09-10", "2025-10-05"]
+    },
+    {
+      "id": "trip3",
+      "destination": "Tokyo, Japan",
+      "imageUrl": "/images/southwest-asia.jpg",
+      "price": 1799.99,
+      "description": "Discover the fusion of tradition and technology in Tokyo. Vibrant nightlife, historic temples, and amazing food. Enjoy Southwest's hospitality en route.",
+      "datesAvailable": ["2025-08-05", "2025-09-01", "2025-10-01", "2025-11-15"]
+    },
+    {
+      "id": "trip4",
+      "destination": "Rome, Italy",
+      "imageUrl": "/images/southwest-italy.jpg",
+      "price": 1850.00,
+      "description": "Explore ancient ruins like the Colosseum and savor authentic Italian cuisine. History and beauty at every corner. Southwest gets you there with comfort.",
+      "datesAvailable": ["2025-09-05", "2025-09-25", "2025-10-15"]
+    },
+    {
+      "id": "trip5",
+      "destination": "Cancun, Mexico",
+      "imageUrl": "/images/southwest-mexico.jpg",
+      "price": 1250.00,
+      "description": "Enjoy crystal clear waters, white sandy beaches, and vibrant nightlife in Cancun. Ideal for a sunny getaway with Southwest's friendly service.",
+      "datesAvailable": ["2025-07-20", "2025-08-10", "2025-11-01", "2025-12-10"]
+    },
+    {
+      "id": "trip6",
+      "destination": "Banff, Canada",
+      "imageUrl": "/images/southwest-canada.jpg",
+      "price": 1600.00,
+      "description": "Witness the breathtaking beauty of the Canadian Rockies. Perfect for hiking, skiing, and nature lovers. Southwest makes travel easy and comfortable.",
+      "datesAvailable": ["2025-06-15", "2025-07-01", "2025-12-05", "2026-01-10"]
+    },
+    {
+      "id": "trip7",
+      "destination": "Sydney, Australia",
+      "imageUrl": "/images/southwest-australia.jpg",
+      "price": 2200.00,
+      "description": "Visit the iconic Opera House, surf at Bondi Beach, and explore a vibrant multicultural city. Get there with Southwest's exceptional service.",
+      "datesAvailable": ["2025-10-20", "2025-11-10", "2026-02-05"]
+    },
+    {
+      "id": "trip8",
+      "destination": "Kyoto, Japan",
+      "imageUrl": "/images/southwest-japan.jpg",
+      "price": 1750.00,
+      "description": "Immerse yourself in traditional Japanese culture with beautiful temples, serene gardens, and geisha districts. Enjoy the journey with Southwest.",
+      "datesAvailable": ["2025-09-15", "2025-10-10", "2026-03-20"]
+    },
+    {
+      "id": "trip9",
+      "destination": "New York City, USA",
+      "imageUrl": "/images/southwest-nyc.jpg",
+      "price": 1300.00,
+      "description": "The city that never sleeps! Explore famous landmarks, museums, Broadway shows, and diverse neighborhoods. Southwest makes your trip hassle-free.",
+      "datesAvailable": ["2025-08-01", "2025-09-10", "2025-11-20", "2025-12-15"]
+    },
+    {
+      "id": "trip10",
+      "destination": "Santorini, Greece",
+      "imageUrl": "/images/southwest-greece.jpg",
+      "price": 2100.00,
+      "description": "Famous for its stunning sunsets, white-washed villages, and blue-domed churches overlooking the Aegean Sea. Southwest ensures a comfortable journey.",
+      "datesAvailable": ["2025-07-01", "2025-08-01", "2025-09-05"]
+    },
+    {
+      "id": "trip11",
+      "destination": "Grand Canyon, USA",
+      "imageUrl": "/images/southwest-grandcanyon.jpg",
+      "price": 950.00,
+      "description": "Marvel at one of the world's most spectacular natural wonders. Ideal for hiking and breathtaking views. Let Southwest take you there comfortably.",
+      "datesAvailable": ["2025-09-01", "2025-10-05", "2026-04-10"]
+    },
+    {
+      "id": "trip12",
+      "destination": "London, UK",
+      "imageUrl": "/images/southwest-london.jpg",
+      "price": 1900.00,
+      "description": "Discover historic landmarks, world-class museums, and a vibrant cultural scene in the heart of England. Southwest's service makes your journey pleasant.",
+      "datesAvailable": ["2025-07-15", "2025-08-25", "2025-10-01"]
+    }
+  ],
+  "bookings": []
+}
