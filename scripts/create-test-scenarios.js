@@ -58,6 +58,19 @@ async function main() {
       process.exit(1);
     }
 
+    // Create variables to hold date pairs
+    const date2 = generateRandomDate();
+    const returnDate2 = getReturnDate(date2);
+    
+    const date3 = generateRandomDate();
+    const returnDate3 = getReturnDate(date3, 5, 7);
+    
+    const date4 = generateRandomDate(new Date(2025, 5, 1), new Date(2025, 6, 30));
+    const returnDate4 = getReturnDate(date4, 7, 10);
+    
+    const date5 = generateRandomDate();
+    const returnDate5 = getReturnDate(date5);
+
     // Create test scenarios
     const scenarios = [
       // Scenario 1: Simple flight booking (one-way)
@@ -86,12 +99,8 @@ async function main() {
         fullName: "John Smith",
         email: testUser.email,
         travelers: 2,
-        startDate: (function() { 
-          const date = generateRandomDate();
-          this.returnDate = getReturnDate(date);
-          return date;
-        })(),
-        returnDate: null, // Set by the start date function
+        startDate: date2,
+        returnDate: returnDate2,
         tripType: "round-trip",
         departureTime: "morning",
         returnTime: "evening",
@@ -111,12 +120,8 @@ async function main() {
         fullName: "Admin User",
         email: adminUser.email,
         travelers: 4,
-        startDate: (function() { 
-          const date = generateRandomDate();
-          this.returnDate = getReturnDate(date, 5, 7);
-          return date;
-        })(),
-        returnDate: null, // Set by the start date function
+        startDate: date3,
+        returnDate: returnDate3,
         tripType: "round-trip",
         departureTime: "afternoon",
         returnTime: "afternoon",
@@ -137,12 +142,8 @@ async function main() {
         fullName: "John Smith",
         email: testUser.email,
         travelers: 5,
-        startDate: (function() { 
-          const date = generateRandomDate(new Date(2025, 5, 1), new Date(2025, 6, 30));
-          this.returnDate = getReturnDate(date, 7, 10);
-          return date;
-        })(),
-        returnDate: null, // Set by the start date function
+        startDate: date4,
+        returnDate: returnDate4,
         tripType: "round-trip",
         departureTime: "morning",
         returnTime: "afternoon",
@@ -163,12 +164,8 @@ async function main() {
         fullName: "John Smith",
         email: testUser.email,
         travelers: 2,
-        startDate: (function() { 
-          const date = generateRandomDate();
-          this.returnDate = getReturnDate(date);
-          return date;
-        })(),
-        returnDate: null, // Set by the start date function
+        startDate: date5,
+        returnDate: returnDate5,
         tripType: "round-trip",
         departureTime: getRandomTime(),
         returnTime: getRandomTime(),
@@ -181,13 +178,6 @@ async function main() {
         specialRequests: "Needed to cancel due to emergency"
       }
     ];
-    
-    // Process and fix the scenarios - need this because of how we generate return dates
-    scenarios.forEach(scenario => {
-      if (scenario.returnDate === null) {
-        scenario.returnDate = getReturnDate(scenario.startDate);
-      }
-    });
 
     // Clear existing bookings for clean test data
     dbData.bookings = [];
