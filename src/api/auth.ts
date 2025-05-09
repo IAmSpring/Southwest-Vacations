@@ -64,7 +64,7 @@ export const register = async (userData: RegisterData): Promise<RegisterResponse
 export const getUser = async (token: string): Promise<User> => {
   const response = await fetch(`${API_URL}/me`, {
     headers: {
-      'Authorization': `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
     },
   });
 
@@ -80,7 +80,7 @@ export const quickLogin = async (isAdmin: boolean = false): Promise<LoginRespons
   const credentials = isAdmin
     ? { email: 'admin@example.com', password: 'Admin123' }
     : { email: 'test@example.com', password: 'Password123' };
-  
+
   return login(credentials);
 };
 
@@ -88,7 +88,7 @@ export const quickLogin = async (isAdmin: boolean = false): Promise<LoginRespons
 export const logout = (): void => {
   // Clear token from localStorage
   localStorage.removeItem('token');
-  
+
   // For additional security, you might want to invalidate the token on the server
   // but this depends on your backend implementation
 };
@@ -96,4 +96,4 @@ export const logout = (): void => {
 // Helper to check if user is authenticated
 export const isAuthenticated = (): boolean => {
   return !!localStorage.getItem('token');
-}; 
+};

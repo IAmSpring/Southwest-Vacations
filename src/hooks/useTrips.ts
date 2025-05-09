@@ -11,6 +11,6 @@ const fetchTrips = async (): Promise<Trip[]> => {
 
 export const useTrips = () => {
   return useQuery<Trip[], Error>('trips', fetchTrips, {
-    initialData: undefined
+    initialData: undefined,
   });
-}; 
+};

@@ -7,12 +7,8 @@ export const AuthContext = createContext<ReturnType<typeof useAuth> | undefined>
 // Create a provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const auth = useAuth();
-  
-  return (
-    <AuthContext.Provider value={auth}>
-      {children}
-    </AuthContext.Provider>
-  );
+
+  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 };
 
 // Custom hook to use the auth context
@@ -22,4 +18,4 @@ export const useAuthContext = () => {
     throw new Error('useAuthContext must be used within an AuthProvider');
   }
   return context;
-}; 
+};

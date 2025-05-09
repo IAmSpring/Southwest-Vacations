@@ -48,7 +48,7 @@ describe('HomePage', () => {
     expect(
       screen.getByText(/Explore breathtaking destinations with the Southwest Vacations experience/i)
     ).toBeInTheDocument();
-    
+
     // Check for call-to-action buttons
     expect(screen.getByText('Find Your Adventure')).toBeInTheDocument();
     expect(screen.getByText('View All Destinations')).toBeInTheDocument();
@@ -107,7 +107,7 @@ describe('HomePage', () => {
 
     // Check for destination names in the trip cards
     expect(screen.getByText('Popular Destinations')).toBeInTheDocument();
-    
+
     // Note: The actual trip card content might be rendered in the TripCard component
     // For a more comprehensive test, we would need to check for the rendered TripCard components
     // This would typically involve checking for the props passed to the TripCard
@@ -132,4 +132,4 @@ describe('HomePage', () => {
     expect(screen.getByText('Failed to fetch trips')).toBeInTheDocument();
     expect(screen.getByText('Try Again')).toBeInTheDocument();
   });
-}); 
+});

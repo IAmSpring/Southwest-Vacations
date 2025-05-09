@@ -43,7 +43,7 @@ export const testAuthenticationFlow = async (): Promise<boolean> => {
   try {
     // First log out to ensure clean state
     localStorage.removeItem('token');
-    
+
     // Try to register (might fail if user exists, but that's okay)
     try {
       await register(TEST_USERNAME, TEST_EMAIL, TEST_PASSWORD);
@@ -51,18 +51,18 @@ export const testAuthenticationFlow = async (): Promise<boolean> => {
       // Ignore registration errors, user might already exist
       console.log('Registration failed (might be expected if user exists)');
     }
-    
+
     // Login with our test user
     const token = await login(TEST_EMAIL, TEST_PASSWORD);
     if (!token) return false;
-    
+
     // Verify we're authenticated
     if (!isAuthenticated()) return false;
-    
+
     // Try to get user profile
     const user = await getCurrentUser();
     if (!user || !user.id) return false;
-    
+
     return true;
   } catch (error) {
     console.error('Authentication flow error:', error);
@@ -77,7 +77,7 @@ export const testBookingFlow = async (): Promise<boolean> => {
     if (!isAuthenticated()) {
       await login(TEST_EMAIL, TEST_PASSWORD);
     }
-    
+
     // Make a test booking
     const bookingResult = await bookTrip({
       tripId: TEST_TRIP_ID,
@@ -85,15 +85,15 @@ export const testBookingFlow = async (): Promise<boolean> => {
       email: TEST_EMAIL,
       travelers: 1,
       startDate: '2025-06-01',
-      tripType: 'one-way'
+      tripType: 'one-way',
     });
-    
+
     if (!bookingResult || !bookingResult.id) return false;
-    
+
     // Check if we can retrieve bookings
     const userBookings = await getUserBookings();
     if (!userBookings || !Array.isArray(userBookings)) return false;
-    
+
     return true;
   } catch (error) {
     console.error('Booking flow error:', error);
@@ -107,37 +107,28 @@ export const runAllTests = async (): Promise<{
   results: { [name: string]: boolean };
 }> => {
   const results: { [name: string]: boolean } = {};
-  
+
   // Backend connectivity test
-  results.backendConnectivity = await runTest(
-    'Backend Connectivity',
-    testBackendConnectivity
-  );
-  
+  results.backendConnectivity = await runTest('Backend Connectivity', testBackendConnectivity);
+
   // Skip other tests if backend is not available
   if (!results.backendConnectivity) {
     return { success: false, results };
   }
-  
+
   // Authentication flow test
-  results.authentication = await runTest(
-    'Authentication Flow',
-    testAuthenticationFlow
-  );
-  
+  results.authentication = await runTest('Authentication Flow', testAuthenticationFlow);
+
   // Skip booking test if authentication failed
   if (!results.authentication) {
     return { success: false, results };
   }
-  
+
   // Booking flow test
-  results.booking = await runTest(
-    'Booking Flow',
-    testBookingFlow
-  );
-  
+  results.booking = await runTest('Booking Flow', testBookingFlow);
+
   // Overall success if all tests passed
   const success = Object.values(results).every(result => result);
-  
+
   return { success, results };
-}; 
+};

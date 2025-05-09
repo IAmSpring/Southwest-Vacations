@@ -20,7 +20,7 @@ export const login = async (email: string, password: string): Promise<string> =>
     }
 
     const data = await response.json();
-    
+
     // Store token in localStorage
     if (data.token) {
       localStorage.setItem('token', data.token);
@@ -35,7 +35,11 @@ export const login = async (email: string, password: string): Promise<string> =>
 };
 
 // Register a new user
-export const register = async (username: string, email: string, password: string): Promise<{id: string, username: string, email: string}> => {
+export const register = async (
+  username: string,
+  email: string,
+  password: string
+): Promise<{ id: string; username: string; email: string }> => {
   try {
     const response = await fetch(`${API_URL}/users/register`, {
       method: 'POST',
@@ -67,7 +71,7 @@ export const getCurrentUser = async (): Promise<any> => {
 
     const response = await fetch(`${API_URL}/users/me`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -91,4 +95,4 @@ export const logout = (): void => {
 // Check if the user is currently logged in
 export const isAuthenticated = (): boolean => {
   return !!localStorage.getItem('token');
-}; 
+};

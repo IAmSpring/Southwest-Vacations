@@ -12,14 +12,14 @@ jest.mock('../../context/AuthContext', () => ({
 
 describe('AdminPage', () => {
   const mockUseAuthContext = require('../../context/AuthContext').useAuthContext;
-  
+
   test('redirects to login when not authenticated', () => {
     // Mock not authenticated
     mockUseAuthContext.mockReturnValue({
       isAuthenticated: false,
       user: null,
     });
-    
+
     // Use memory router to test navigation
     const { container } = render(
       <MemoryRouter initialEntries={['/admin']}>
@@ -29,12 +29,12 @@ describe('AdminPage', () => {
         </Routes>
       </MemoryRouter>
     );
-    
+
     // Should redirect to login page
     expect(screen.getByTestId('login-page')).toBeInTheDocument();
     expect(container.textContent).toContain('Login Page');
   });
-  
+
   test('redirects to login when authenticated but not admin', () => {
     // Mock authenticated but not admin
     mockUseAuthContext.mockReturnValue({
@@ -46,7 +46,7 @@ describe('AdminPage', () => {
         isAdmin: false,
       },
     });
-    
+
     // Use memory router to test navigation
     const { container } = render(
       <MemoryRouter initialEntries={['/admin']}>
@@ -56,12 +56,12 @@ describe('AdminPage', () => {
         </Routes>
       </MemoryRouter>
     );
-    
+
     // Should redirect to login page
     expect(screen.getByTestId('login-page')).toBeInTheDocument();
     expect(container.textContent).toContain('Login Page');
   });
-  
+
   test('displays admin dashboard when authenticated as admin', () => {
     // Mock authenticated as admin
     mockUseAuthContext.mockReturnValue({
@@ -73,14 +73,14 @@ describe('AdminPage', () => {
         isAdmin: true,
       },
     });
-    
+
     // Render admin page
     render(
       <MemoryRouter initialEntries={['/admin']}>
         <AdminPage />
       </MemoryRouter>
     );
-    
+
     // Should display admin dashboard
     expect(screen.getByText('Admin Dashboard')).toBeInTheDocument();
     expect(screen.getByText('User Management')).toBeInTheDocument();
@@ -88,4 +88,4 @@ describe('AdminPage', () => {
     expect(screen.getByTestId('user-table')).toBeInTheDocument();
     expect(screen.getByTestId('booking-stats')).toBeInTheDocument();
   });
-}); 
+});

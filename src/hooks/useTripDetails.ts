@@ -10,11 +10,7 @@ const fetchTripDetails = async (tripId: string): Promise<TripDetail> => {
 };
 
 export const useTripDetails = (tripId: string) => {
-  return useQuery<TripDetail, Error>([
-    'tripDetails', tripId], 
-    () => fetchTripDetails(tripId), 
-    {
-      enabled: !!tripId, // Only run the query if tripId is available
-    }
-  );
-}; 
+  return useQuery<TripDetail, Error>(['tripDetails', tripId], () => fetchTripDetails(tripId), {
+    enabled: !!tripId, // Only run the query if tripId is available
+  });
+};

@@ -82,4 +82,4 @@ describe('useTrips', () => {
     expect(global.fetch).toHaveBeenCalledWith('/trips');
     expect(global.fetch).toHaveBeenCalledTimes(1);
   });
-}); 
+});

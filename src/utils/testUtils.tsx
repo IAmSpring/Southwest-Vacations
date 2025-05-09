@@ -24,4 +24,4 @@ export const wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 // Helper to wait for promises to resolve
-export const waitForPromises = () => new Promise(resolve => setTimeout(resolve, 0)); 
+export const waitForPromises = () => new Promise(resolve => setTimeout(resolve, 0));

@@ -13,7 +13,7 @@ describe('AboutPage', () => {
 
     // Check for the main heading
     expect(screen.getByText('Why Choose Southwest Vacations')).toBeInTheDocument();
-    
+
     // Check for subheading content
     expect(
       screen.getByText(/Experience the Southwest difference with our award-winning service/i)
@@ -80,4 +80,4 @@ describe('AboutPage', () => {
     expect(screen.getByText('Browse Destinations')).toBeInTheDocument();
     expect(screen.getByText('Book Now')).toBeInTheDocument();
   });
-}); 
+});

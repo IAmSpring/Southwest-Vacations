@@ -15,7 +15,7 @@ export const bookTrip = async (bookingData: BookingRequest): Promise<Booking> =>
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(bookingData),
     });
@@ -42,7 +42,7 @@ export const getUserBookings = async (): Promise<Booking[]> => {
 
     const response = await fetch(`${API_URL}/bookings/user`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -68,7 +68,7 @@ export const getBookingById = async (bookingId: string): Promise<Booking> => {
 
     const response = await fetch(`${API_URL}/bookings/${bookingId}`, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -85,7 +85,9 @@ export const getBookingById = async (bookingId: string): Promise<Booking> => {
 };
 
 // Cancel a booking
-export const cancelBooking = async (bookingId: string): Promise<{ success: boolean; message: string }> => {
+export const cancelBooking = async (
+  bookingId: string
+): Promise<{ success: boolean; message: string }> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -95,7 +97,7 @@ export const cancelBooking = async (bookingId: string): Promise<{ success: boole
     const response = await fetch(`${API_URL}/bookings/${bookingId}/cancel`, {
       method: 'PATCH',
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 
@@ -112,7 +114,10 @@ export const cancelBooking = async (bookingId: string): Promise<{ success: boole
 };
 
 // Update a booking (modify dates, travelers, etc.)
-export const updateBooking = async (bookingId: string, updates: Partial<BookingRequest>): Promise<Booking> => {
+export const updateBooking = async (
+  bookingId: string,
+  updates: Partial<BookingRequest>
+): Promise<Booking> => {
   try {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -123,7 +128,7 @@ export const updateBooking = async (bookingId: string, updates: Partial<BookingR
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(updates),
     });
@@ -138,4 +143,4 @@ export const updateBooking = async (bookingId: string, updates: Partial<BookingR
     console.error('Error updating booking:', error);
     throw error;
   }
-}; 
+};

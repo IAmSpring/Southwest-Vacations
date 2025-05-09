@@ -14,7 +14,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
+
     try {
       const success = await login(email, password);
       if (success) {
@@ -33,15 +33,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     try {
       let loginEmail = 'test@example.com';
       let loginPassword = 'Password123';
-      
+
       if (type === 'admin') {
         loginEmail = 'admin@example.com';
         loginPassword = 'Admin123';
       }
-      
+
       setEmail(loginEmail);
       setPassword(loginPassword);
-      
+
       const success = await login(loginEmail, loginPassword);
       if (success) {
         if (onSuccess) onSuccess();
@@ -58,13 +58,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
     <div className="login-form">
       <h2>Login Required</h2>
       <p>Please login to continue with your booking</p>
-      
-      {error && (
-        <div className="error-message">
-          {error}
-        </div>
-      )}
-      
+
+      {error && <div className="error-message">{error}</div>}
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label htmlFor="email">Email</label>
@@ -72,43 +68,39 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             required
           />
         </div>
-        
+
         <div className="form-group">
           <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             required
           />
         </div>
-        
-        <button 
-          type="submit" 
-          className="submit-button"
-          disabled={isLoading}
-        >
+
+        <button type="submit" className="submit-button" disabled={isLoading}>
           {isLoading ? 'Logging in...' : 'Login'}
         </button>
       </form>
-      
+
       <div className="quick-login">
         <p className="quick-login-title">Quick Login Options:</p>
         <div className="quick-login-buttons">
-          <button 
-            onClick={() => quickLogin('test')} 
+          <button
+            onClick={() => quickLogin('test')}
             className="quick-login-button test-button"
             disabled={isLoading}
           >
             Test User Login
           </button>
-          <button 
-            onClick={() => quickLogin('admin')} 
+          <button
+            onClick={() => quickLogin('admin')}
             className="quick-login-button admin-button"
             disabled={isLoading}
           >
@@ -116,13 +108,15 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           </button>
         </div>
       </div>
-      
+
       <div className="note">
-        <p><strong>Note:</strong> For testing, use:</p>
+        <p>
+          <strong>Note:</strong> For testing, use:
+        </p>
         <p>Email: test@example.com</p>
         <p>Password: Password123</p>
       </div>
-      
+
       <style jsx>{`
         .login-form {
           max-width: 400px;
@@ -132,12 +126,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           border-radius: 8px;
           background-color: #f9f9f9;
         }
-        
+
         h2 {
           margin-top: 0;
           color: #304050;
         }
-        
+
         .error-message {
           background-color: #fff0f0;
           color: #e74c3c;
@@ -146,17 +140,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           margin-bottom: 15px;
           border: 1px solid #e74c3c;
         }
-        
+
         .form-group {
           margin-bottom: 15px;
         }
-        
+
         label {
           display: block;
           margin-bottom: 5px;
           font-weight: 500;
         }
-        
+
         input {
           width: 100%;
           padding: 8px 12px;
@@ -164,7 +158,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           border-radius: 4px;
           font-size: 16px;
         }
-        
+
         .submit-button {
           width: 100%;
           padding: 10px;
@@ -175,29 +169,29 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           font-size: 16px;
           cursor: pointer;
         }
-        
+
         .submit-button:disabled {
           background-color: #77a7e0;
           cursor: not-allowed;
         }
-        
+
         .quick-login {
           margin-top: 20px;
           border-top: 1px solid #ddd;
           padding-top: 15px;
         }
-        
+
         .quick-login-title {
           margin-bottom: 10px;
           font-weight: 500;
           color: #304050;
         }
-        
+
         .quick-login-buttons {
           display: flex;
           gap: 10px;
         }
-        
+
         .quick-login-button {
           flex: 1;
           padding: 8px;
@@ -208,30 +202,30 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           font-weight: 500;
           transition: background-color 0.2s;
         }
-        
+
         .test-button {
           background-color: #28a745;
           color: white;
         }
-        
+
         .test-button:hover {
           background-color: #218838;
         }
-        
+
         .admin-button {
           background-color: #dc3545;
           color: white;
         }
-        
+
         .admin-button:hover {
           background-color: #c82333;
         }
-        
+
         .quick-login-button:disabled {
           opacity: 0.7;
           cursor: not-allowed;
         }
-        
+
         .note {
           margin-top: 20px;
           padding: 10px;
@@ -244,4 +238,4 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   );
 };
 
-export default LoginForm; 
+export default LoginForm;

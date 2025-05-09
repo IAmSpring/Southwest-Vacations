@@ -12,17 +12,21 @@ const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-12">
-        <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
+        <div className="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
           <div className="md:flex">
-            <div className="p-8 w-full">
-              <div className="uppercase tracking-wide text-sm text-[#304CB2] font-semibold mb-1">Southwest Vacations</div>
-              <h2 className="block mt-1 text-2xl leading-tight font-bold text-gray-900 mb-6">Login to Your Account</h2>
-              
-              <LoginForm onSuccess={() => window.location.href = '/'} />
-              
-              <div className="mt-6 pt-6 border-t border-gray-200 text-center text-gray-500 text-sm">
+            <div className="w-full p-8">
+              <div className="mb-1 text-sm font-semibold uppercase tracking-wide text-[#304CB2]">
+                Southwest Vacations
+              </div>
+              <h2 className="mb-6 mt-1 block text-2xl font-bold leading-tight text-gray-900">
+                Login to Your Account
+              </h2>
+
+              <LoginForm onSuccess={() => (window.location.href = '/')} />
+
+              <div className="mt-6 border-t border-gray-200 pt-6 text-center text-sm text-gray-500">
                 <p>For testing, use:</p>
                 <p className="font-medium">Regular User: test@example.com / Password123</p>
                 <p className="font-medium">Admin User: admin@example.com / Admin123</p>
@@ -35,4 +39,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage; 
+export default LoginPage;

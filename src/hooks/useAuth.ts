@@ -1,5 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { login as apiLogin, logout as apiLogout, register as apiRegister, getCurrentUser, isAuthenticated } from '../utils/authHelpers';
+import {
+  login as apiLogin,
+  logout as apiLogout,
+  register as apiRegister,
+  getCurrentUser,
+  isAuthenticated,
+} from '../utils/authHelpers';
 
 type AuthUser = {
   id: string;
@@ -106,4 +112,4 @@ export const useAuth = () => {
     register,
     logout,
   };
-}; 
+};

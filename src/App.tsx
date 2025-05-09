@@ -16,7 +16,7 @@ import SystemCheck from './components/SystemCheck';
 
 const App: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       <Header />
       <main className="flex-grow">
         <Routes>
@@ -39,4 +39,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App; 
+export default App;

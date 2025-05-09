@@ -56,15 +56,15 @@ export type BookingConfirmation = {
 };
 
 // User activity action types
-export type UserActionType = 
-  | 'login' 
-  | 'logout' 
-  | 'search' 
-  | 'view_trip' 
-  | 'add_favorite' 
-  | 'remove_favorite' 
-  | 'start_booking' 
-  | 'complete_booking' 
+export type UserActionType =
+  | 'login'
+  | 'logout'
+  | 'search'
+  | 'view_trip'
+  | 'add_favorite'
+  | 'remove_favorite'
+  | 'start_booking'
+  | 'complete_booking'
   | 'cancel_booking';
 
 // User activity data for tracking user behavior
@@ -136,7 +136,7 @@ export type AdminStats = {
   revenueToday: number;
   revenueThisWeek: number;
   revenueThisMonth: number;
-  popularDestinations: Array<{destination: string; count: number}>;
+  popularDestinations: Array<{ destination: string; count: number }>;
   conversionRate: number;
   bookingsByStatus: Record<Booking['status'], number>;
 };
