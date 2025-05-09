@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { Trip, TripDetail, User, Favorite, Booking } from '../src/sharedTypes.js';
+import { Trip, TripDetail, User, Favorite, Booking, UserActivity } from '../src/sharedTypes.js';
 
 // Get current file directory in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -15,6 +15,7 @@ type Schema = {
   users: User[];
   favorites: Favorite[];
   bookings: Booking[];
+  activities: UserActivity[];
 };
 
 // Custom JSONFile adapter that doesn't rely on lowdb imports
@@ -360,7 +361,8 @@ if (!fs.existsSync(DB_PATH)) {
     ],
     users: [],
     favorites: [],
-    bookings: []
+    bookings: [],
+    activities: []
   };
   
   // Write the default data to the file
@@ -379,7 +381,7 @@ class DB {
     this.db = new Low<Schema>(this.adapter);
     
     // Initialize with empty data
-    this.data = { trips: [], users: [], favorites: [], bookings: [] };
+    this.data = { trips: [], users: [], favorites: [], bookings: [], activities: [] };
     
     // Load the data
     this.loadData();
@@ -391,7 +393,7 @@ class DB {
       
       // Initialize data if not set
       if (this.db.data === null) {
-        this.db.data = { trips: [], users: [], favorites: [], bookings: [] };
+        this.db.data = { trips: [], users: [], favorites: [], bookings: [], activities: [] };
         await this.db.write();
       }
       

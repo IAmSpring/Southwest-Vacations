@@ -1,0 +1,26 @@
+[
+  {
+    "id": "trip1",
+    "destination": "Hawaii",
+    "imageUrl": "/images/southwest-hawaii.jpg",
+    "price": 1200,
+    "description": "Beautiful beaches and stunning landscapes",
+    "datesAvailable": ["2025-06-01", "2025-07-01", "2025-08-01"]
+  },
+  {
+    "id": "trip2",
+    "destination": "Cancun",
+    "imageUrl": "/images/southwest-cancun.jpg",
+    "price": 899,
+    "description": "Tropical paradise with crystal-clear waters",
+    "datesAvailable": ["2025-06-15", "2025-07-15", "2025-08-15"]
+  },
+  {
+    "id": "trip3",
+    "destination": "Las Vegas",
+    "imageUrl": "/images/southwest-vegas.jpg",
+    "price": 599,
+    "description": "Entertainment capital of the world",
+    "datesAvailable": ["2025-05-20", "2025-06-20", "2025-07-20"]
+  }
+] 

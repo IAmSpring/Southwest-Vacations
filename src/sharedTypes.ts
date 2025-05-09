@@ -55,6 +55,30 @@ export type BookingConfirmation = {
   totalPrice: number;
 };
 
+// User activity action types
+export type UserActionType = 
+  | 'login' 
+  | 'logout' 
+  | 'search' 
+  | 'view_trip' 
+  | 'add_favorite' 
+  | 'remove_favorite' 
+  | 'start_booking' 
+  | 'complete_booking' 
+  | 'cancel_booking';
+
+// User activity data for tracking user behavior
+export type UserActivity = {
+  id: string;
+  userId: string;
+  actionType: UserActionType;
+  details?: string;
+  timestamp: string;
+  metadata?: Record<string, any>;
+  ipAddress?: string;
+  userAgent?: string;
+};
+
 // New types for enhanced backend functionality
 export type User = {
   id: string;
@@ -63,6 +87,16 @@ export type User = {
   passwordHash: string;
   createdAt: string;
   lastLoginAt?: string;
+  isAdmin?: boolean;
+  preferences?: UserPreferences;
+  status?: 'active' | 'inactive' | 'suspended';
+};
+
+export type UserPreferences = {
+  currency?: string;
+  notifications?: boolean;
+  searchHistory?: boolean;
+  theme?: 'light' | 'dark' | 'system';
 };
 
 export type Favorite = {
@@ -92,4 +126,28 @@ export type Booking = {
   returnTime?: string;
   hotelId?: string;
   carRentalId?: string;
+};
+
+// Admin dashboard types
+export type AdminStats = {
+  totalUsers: number;
+  activeUsers: number;
+  totalBookings: number;
+  revenueToday: number;
+  revenueThisWeek: number;
+  revenueThisMonth: number;
+  popularDestinations: Array<{destination: string; count: number}>;
+  conversionRate: number;
+  bookingsByStatus: Record<Booking['status'], number>;
+};
+
+export type UserAnalytics = {
+  userId: string;
+  username: string;
+  email: string;
+  totalBookings: number;
+  totalSpent: number;
+  lastActivity: string;
+  registrationDate: string;
+  activitySummary: Record<UserActionType, number>;
 };

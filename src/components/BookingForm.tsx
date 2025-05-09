@@ -155,8 +155,8 @@ const BookingForm = () => {
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-      <h2 className="text-2xl font-bold text-[#304CB2] mb-6">Booking Details</h2>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6" data-testid="booking-form">
+      <h2 className="text-2xl font-bold text-[#304CB2] mb-6" data-testid="booking-details-title">Booking Details</h2>
       
       {searchParams.get('trip') && (
         <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
@@ -175,6 +175,7 @@ const BookingForm = () => {
           <div className="flex space-x-4">
             <button
               type="button"
+              data-testid="one-way-btn"
               onClick={() => handleTripTypeChange('one-way')}
               className={`px-4 py-2 rounded-lg flex-1 ${
                 form.tripType === 'one-way'
@@ -186,6 +187,7 @@ const BookingForm = () => {
             </button>
             <button
               type="button"
+              data-testid="round-trip-btn"
               onClick={() => handleTripTypeChange('round-trip')}
               className={`px-4 py-2 rounded-lg flex-1 ${
                 form.tripType === 'round-trip'

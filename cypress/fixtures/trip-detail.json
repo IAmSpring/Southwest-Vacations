@@ -1,0 +1,54 @@
+{
+  "id": "trip1",
+  "destination": "Hawaii",
+  "imageUrl": "/images/southwest-hawaii.jpg",
+  "price": 1200,
+  "description": "Experience the beauty of Hawaii with Southwest Vacations. Enjoy pristine beaches, stunning landscapes, and vibrant culture. Perfect for families, couples, and solo travelers seeking both adventure and relaxation.",
+  "datesAvailable": ["2025-06-01", "2025-07-01", "2025-08-01"],
+  "hotels": [
+    {
+      "id": "hotel1-1",
+      "name": "Oceanfront Resort",
+      "location": "Waikiki Beach",
+      "pricePerNight": 250,
+      "rating": 4.5,
+      "amenities": ["Pool", "Spa", "Restaurant", "WiFi", "Beach Access"],
+      "imageUrl": "/images/hotel-hawaii-1.jpg"
+    },
+    {
+      "id": "hotel1-2",
+      "name": "Sunset Villas",
+      "location": "Maui",
+      "pricePerNight": 350,
+      "rating": 4.8,
+      "amenities": ["Pool", "Spa", "Restaurant", "WiFi", "Ocean View"],
+      "imageUrl": "/images/hotel-hawaii-2.jpg"
+    }
+  ],
+  "carRentals": [
+    {
+      "id": "car1-1",
+      "company": "Island Rentals",
+      "model": "Jeep Wrangler",
+      "type": "suv",
+      "pricePerDay": 75,
+      "imageUrl": "/images/car-jeep.jpg"
+    },
+    {
+      "id": "car1-2",
+      "company": "Aloha Cars",
+      "model": "Ford Mustang Convertible",
+      "type": "luxury",
+      "pricePerDay": 95,
+      "imageUrl": "/images/car-mustang-convertible.jpg"
+    },
+    {
+      "id": "car1-3",
+      "company": "Budget Hawaii",
+      "model": "Toyota Prius",
+      "type": "economy",
+      "pricePerDay": 45,
+      "imageUrl": "/images/car-prius.jpg"
+    }
+  ]
+} 

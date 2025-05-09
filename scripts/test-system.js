@@ -3,15 +3,20 @@
 // This script runs the system tests from the command line
 // It can be used to verify the application is properly set up
 
-const { exec } = require('child_process');
-const http = require('http');
-const readline = require('readline');
-const path = require('path');
-const fs = require('fs');
+import { exec } from 'child_process';
+import http from 'http';
+import readline from 'readline';
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+
+// Get the current file name and directory in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
 const BACKEND_URL = 'http://localhost:4000';
-const FRONTEND_URL = 'http://localhost:5174'; // Adjusted for the port conflict mentioned
+const FRONTEND_URL = 'http://localhost:5173'; // Using correct Vite port
 
 // Text formatting helpers
 const colors = {

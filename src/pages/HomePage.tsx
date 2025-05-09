@@ -165,7 +165,7 @@ const HomePage = () => {
   const FeatureBanner = () => (
     <div className="relative bg-[#E31837] py-4 mb-12 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute h-[50%] w-[200%] bottom-0 left-0 bg-black/10 animate-wave-slow"></div>
+        <div className="absolute h-[50%] w-[200%] top-0 left-0 bg-black/10 animate-wave-slow rotate-180"></div>
       </div>
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex overflow-x-auto scrollbar-hide whitespace-nowrap py-2 gap-6 justify-center md:justify-start">

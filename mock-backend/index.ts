@@ -59,12 +59,14 @@ import tripsRouter from './routes/trips.js';
 import bookingsRouter from './routes/bookings.js';
 import favoritesRouter from './routes/favorites.js';
 import usersRouter from './routes/users.js';
+import adminRouter from './routes/admin.js';
 
 // Routes
 app.use('/trips', tripsRouter);
 app.use('/bookings', bookingsRouter);
 app.use('/favorites', favoritesRouter);
 app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
