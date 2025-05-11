@@ -1,13 +1,37 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTripDetails } from '../hooks/useTripDetails';
 import Loading from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
+import { formatDateForDisplay, getDayOfWeek, groupDatesByMonth } from '../utils/dateUtils';
 
 const TripDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data, isLoading, error } = useTripDetails(id!);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [groupedDates, setGroupedDates] = useState<Record<string, string[]>>({});
+
+  // Function to handle date selection
+  const handleDateSelect = (date: string) => {
+    setSelectedDate(date);
+    // For testing, log the selected date to console
+    console.log('Selected date:', date);
+  };
+
+  // Set default selected date once data is loaded
+  useEffect(() => {
+    if (data && data.datesAvailable && data.datesAvailable.length > 0 && !selectedDate) {
+      setSelectedDate(data.datesAvailable[0]);
+    }
+  }, [data, selectedDate]);
+
+  // Group dates by month when data changes
+  useEffect(() => {
+    if (data?.datesAvailable?.length) {
+      setGroupedDates(groupDatesByMonth(data.datesAvailable));
+    }
+  }, [data]);
 
   if (isLoading)
     return (
@@ -136,23 +160,49 @@ const TripDetailPage = () => {
                 </div>
               </div>
 
-              {/* Available dates */}
+              {/* Available dates - Updated to group by month */}
               {data.datesAvailable && data.datesAvailable.length > 0 && (
                 <div>
                   <h2 className="mb-4 text-2xl font-bold text-[#304CB2]">Available Dates</h2>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                    {data.datesAvailable.map((date, index) => (
-                      <div
-                        key={index}
-                        className="cursor-pointer rounded-lg border border-gray-200 bg-gray-50 p-3 text-center transition-colors hover:border-[#304CB2] hover:bg-blue-50"
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`Select date: ${date}`}
-                      >
-                        <span className="block font-medium text-gray-900">{date}</span>
+
+                  {Object.entries(groupedDates).map(([month, dates]) => (
+                    <div key={month} className="mb-6">
+                      <h3 className="mb-3 text-lg font-medium text-gray-700">{month}</h3>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                        {dates.map((date, index) => {
+                          const formattedDate = formatDateForDisplay(date);
+                          const dayOfWeek = getDayOfWeek(date);
+                          const dateIndex = data.datesAvailable.indexOf(date);
+
+                          return (
+                            <div
+                              key={date}
+                              className={`cursor-pointer rounded-lg border p-3 text-center transition-colors ${
+                                selectedDate === date
+                                  ? 'border-[#304CB2] bg-blue-100 text-[#304CB2]'
+                                  : 'border-gray-200 bg-gray-50 hover:border-[#304CB2] hover:bg-blue-50'
+                              }`}
+                              onClick={() => handleDateSelect(date)}
+                              role="button"
+                              tabIndex={0}
+                              onKeyDown={e => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  handleDateSelect(date);
+                                }
+                              }}
+                              aria-label={`Select date: ${formattedDate}`}
+                              aria-selected={selectedDate === date}
+                              data-testid={`date-option-${dateIndex}`}
+                            >
+                              <span className="block text-sm text-gray-500">{dayOfWeek}</span>
+                              <span className="block font-medium">{formattedDate}</span>
+                            </div>
+                          );
+                        })}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               )}
 
@@ -286,6 +336,12 @@ const TripDetailPage = () => {
                     <span className="text-gray-600">Taxes & fees</span>
                     <span className="font-medium">Included</span>
                   </div>
+                  {selectedDate && (
+                    <div className="mb-2 flex items-center justify-between text-sm">
+                      <span className="text-gray-600">Selected date</span>
+                      <span className="font-medium">{formatDateForDisplay(selectedDate)}</span>
+                    </div>
+                  )}
                   <div className="mt-3 flex items-center justify-between border-t border-gray-200 pt-3">
                     <span className="font-medium">Total from</span>
                     <span className="text-xl font-bold text-[#E31837]">
@@ -295,7 +351,7 @@ const TripDetailPage = () => {
                 </div>
 
                 <Link
-                  to={`/book?trip=${data.id}`}
+                  to={`/book?trip=${data.id}${selectedDate ? `&date=${selectedDate}` : ''}`}
                   className="flex w-full items-center justify-center space-x-2 rounded-full bg-[#E31837] px-6 py-3 text-center font-bold text-white shadow-sm transition-colors hover:bg-[#c41230] focus:outline-none focus:ring-2 focus:ring-[#E31837] focus:ring-offset-2"
                   aria-label={`Book trip to ${data.destination} now`}
                 >
@@ -432,7 +488,7 @@ const TripDetailPage = () => {
               <p className="mt-1 text-gray-600">Book now and start your adventure!</p>
             </div>
             <Link
-              to={`/book?trip=${data.id}`}
+              to={`/book?trip=${data.id}${selectedDate ? `&date=${selectedDate}` : ''}`}
               className="mt-4 inline-flex items-center justify-center space-x-2 rounded-full bg-[#E31837] px-6 py-3 text-center font-bold text-white shadow-sm transition-colors hover:bg-[#c41230] focus:outline-none focus:ring-2 focus:ring-[#E31837] focus:ring-offset-2 sm:mt-0"
               aria-label={`Proceed to book your trip to ${data.destination}`}
             >

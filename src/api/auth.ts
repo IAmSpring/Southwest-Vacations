@@ -1,6 +1,6 @@
 import { User } from '../sharedTypes';
 
-const API_URL = '';
+const API_URL = '/api';
 
 interface LoginResponse {
   token: string;

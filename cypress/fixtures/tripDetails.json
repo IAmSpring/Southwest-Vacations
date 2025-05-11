@@ -1,0 +1,37 @@
+{
+  "id": "trip1",
+  "destination": "Maui, Hawaii",
+  "description": "Relax on Maui's beautiful beaches and enjoy the stunning sunsets. Perfect for couples and families. Fly with Southwest's comfortable service.",
+  "price": 1499.99,
+  "duration": 7,
+  "imageUrl": "/images/southwest-hawaii.jpg",
+  "category": "beach",
+  "datesAvailable": ["2025-08-01", "2025-08-15", "2025-09-01", "2025-09-20"],
+  "hotels": [
+    {
+      "id": "hotel1",
+      "name": "Maui Beach Resort",
+      "location": "Kaanapali Beach",
+      "pricePerNight": 299.99,
+      "rating": 4.8,
+      "amenities": ["Ocean View Pool", "Spa", "Beach Access", "Free WiFi"],
+      "imageUrl": "/images/hotel-hawaii.jpg"
+    }
+  ],
+  "carRentals": [
+    {
+      "id": "car1",
+      "model": "Jeep Wrangler",
+      "company": "Southwest Car Rental",
+      "pricePerDay": 69.99,
+      "type": "suv",
+      "imageUrl": "/images/jeep-rental.jpg"
+    }
+  ],
+  "highlights": [
+    "All-inclusive resort packages",
+    "Beautiful sunset views",
+    "No change fees",
+    "Two free checked bags"
+  ]
+}

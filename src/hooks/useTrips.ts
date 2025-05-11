@@ -1,12 +1,13 @@
 import { useQuery } from 'react-query';
 import { Trip } from '../sharedTypes';
+import { mockTrips } from './useTripDetails';
 
 const fetchTrips = async (): Promise<Trip[]> => {
-  const response = await fetch('/trips');
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+
+  // Return mock trips
+  return mockTrips;
 };
 
 export const useTrips = () => {

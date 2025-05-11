@@ -7,8 +7,16 @@ export default defineConfig({
     supportFile: 'cypress/support/e2e.ts',
     viewportWidth: 1280,
     viewportHeight: 720,
-    video: false,
+    video: true,
     screenshotOnRunFailure: true,
+    testIsolation: false,
+    experimentalModifyObstructiveThirdPartyCode: true,
+    experimentalWebKitSupport: true,
+    experimentalStudio: true,
+    retries: {
+      runMode: 2,
+      openMode: 1,
+    },
   },
   component: {
     devServer: {
@@ -18,4 +26,4 @@ export default defineConfig({
     specPattern: 'src/**/*.cy.{js,jsx,ts,tsx}',
     supportFile: 'cypress/support/component.ts',
   },
-}); 
+});

@@ -1,0 +1,181 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(require("express"));
+var cors_1 = __importDefault(require("cors"));
+var path_1 = __importDefault(require("path"));
+var morgan_1 = __importDefault(require("morgan"));
+var fs_1 = __importDefault(require("fs"));
+var seedData_js_1 = require("./seedData.js");
+var db_js_1 = __importDefault(require("./db.js"));
+console.log('Starting server initialization...');
+// Startup validation - test file system access
+var tempDir = path_1.default.join(process.cwd(), 'temp');
+var testFile = path_1.default.join(tempDir, "startup-test-".concat(Date.now(), ".txt"));
+// Ensure temp directory exists
+if (!fs_1.default.existsSync(tempDir)) {
+    try {
+        fs_1.default.mkdirSync(tempDir, { recursive: true });
+        console.log('✅ Created temp directory');
+    }
+    catch (error) {
+        console.error('❌ Failed to create temp directory:', error);
+        process.exit(1);
+    }
+}
+// Test file write/read/delete operations
+try {
+    // Write test file
+    fs_1.default.writeFileSync(testFile, 'Startup validation check', 'utf8');
+    console.log('✅ File system write check successful');
+    // Read test file
+    var content = fs_1.default.readFileSync(testFile, 'utf8');
+    if (content !== 'Startup validation check') {
+        throw new Error('File content verification failed');
+    }
+    console.log('✅ File system read check successful');
+    // Delete test file
+    fs_1.default.unlinkSync(testFile);
+    console.log('✅ File system delete check successful');
+}
+catch (error) {
+    console.error('❌ File system validation failed:', error);
+    process.exit(1);
+}
+// Database 
+console.log('Loading database...');
+// Add test users if they don't exist
+function initializeUsers() {
+    return __awaiter(this, void 0, void 0, function () {
+        var testUser_1, adminUser_1, users, error_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 4, , 5]);
+                    testUser_1 = db_js_1.default.get('users').find({ email: 'test@example.com' }).value();
+                    adminUser_1 = db_js_1.default.get('users').find({ email: 'admin@example.com' }).value();
+                    if (!(!testUser_1 || !adminUser_1)) return [3 /*break*/, 2];
+                    console.log('Generating seed users...');
+                    return [4 /*yield*/, (0, seedData_js_1.generateSeedUsers)()];
+                case 1:
+                    users = _a.sent();
+                    // Add users to database if they don't exist
+                    users.forEach(function (user) {
+                        if (user.email === 'test@example.com' && !testUser_1) {
+                            db_js_1.default.get('users').push(user).write();
+                            console.log("\u2705 Test user created: ".concat(user.email));
+                        }
+                        if (user.email === 'admin@example.com' && !adminUser_1) {
+                            db_js_1.default.get('users').push(user).write();
+                            console.log("\u2705 Admin user created: ".concat(user.email));
+                        }
+                    });
+                    return [3 /*break*/, 3];
+                case 2:
+                    console.log('Test users already exist in the database');
+                    _a.label = 3;
+                case 3: return [3 /*break*/, 5];
+                case 4:
+                    error_1 = _a.sent();
+                    console.error('Error initializing users:', error_1);
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+// Initialize the users
+initializeUsers();
+console.log('Database loaded successfully');
+// Create Express app
+var app = (0, express_1.default)();
+var PORT = process.env.PORT || 4000;
+// Middleware
+app.use((0, cors_1.default)());
+app.use(express_1.default.json());
+app.use((0, morgan_1.default)('dev')); // Request logging
+// Global error handling middleware
+app.use(function (err, req, res, next) {
+    console.error('Unhandled error:', err);
+    res.status(500).json({
+        error: 'Server error',
+        message: process.env.NODE_ENV === 'development' ? err.message : 'An unexpected error occurred'
+    });
+});
+// Import routes
+var trips_js_1 = __importDefault(require("./routes/trips.js"));
+var bookings_js_1 = __importDefault(require("./routes/bookings.js"));
+var favorites_js_1 = __importDefault(require("./routes/favorites.js"));
+var users_js_1 = __importDefault(require("./routes/users.js"));
+var admin_js_1 = __importDefault(require("./routes/admin.js"));
+var training_js_1 = __importDefault(require("./routes/training.js"));
+var notifications_js_1 = __importDefault(require("./routes/notifications.js"));
+var roles_js_1 = __importDefault(require("./routes/roles.js"));
+var audit_js_1 = __importDefault(require("./routes/audit.js"));
+var two_factor_js_1 = __importDefault(require("./routes/two-factor.js"));
+// Routes
+app.use('/api/trips', trips_js_1.default);
+app.use('/api/bookings', bookings_js_1.default);
+app.use('/api/favorites', favorites_js_1.default);
+app.use('/api/users', users_js_1.default);
+app.use('/api/admin', admin_js_1.default);
+app.use('/api/training', training_js_1.default);
+app.use('/api/notifications', notifications_js_1.default);
+app.use('/api/roles', roles_js_1.default);
+app.use('/api/audit', audit_js_1.default);
+app.use('/api/two-factor', two_factor_js_1.default);
+// Health check endpoint
+app.get('/health', function (req, res) {
+    res.json({
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        dbStatus: 'connected',
+        apiVersion: '1.0.0'
+    });
+});
+// Root endpoint
+app.get('/', function (req, res) {
+    res.json({ message: 'Southwest Vacations Internal Booking System API' });
+});
+// Start server
+app.listen(PORT, function () {
+    console.log("\u2705 Server running on port ".concat(PORT));
+});

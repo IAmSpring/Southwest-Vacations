@@ -9,5 +9,23 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <!-- Test scripts -->
+    <script>
+      // Only load test scripts when in development environment and when requested via URL parameter
+      if (window.location.search.includes('test=dates')) {
+        const testScript = document.createElement('script');
+        testScript.src = '/test-startup.js';
+        document.body.appendChild(testScript);
+        console.log('Date selection test script loaded');
+      }
+      
+      // Load the full date selection flow test
+      if (window.location.search.includes('test=flow')) {
+        const flowTestScript = document.createElement('script');
+        flowTestScript.src = '/date-flow-test.js';
+        document.body.appendChild(flowTestScript);
+        console.log('Date flow test script loaded');
+      }
+    </script>
   </body>
 </html> 

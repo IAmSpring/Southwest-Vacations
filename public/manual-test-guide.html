@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Date Selection Test Guide</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      color: #304CB2;
+      border-bottom: 2px solid #304CB2;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #304CB2;
+      margin-top: 30px;
+    }
+    .step {
+      background-color: #f8f9fa;
+      border-left: 4px solid #304CB2;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 0 4px 4px 0;
+    }
+    .step h3 {
+      margin-top: 0;
+      color: #304CB2;
+    }
+    .step p {
+      margin-bottom: 0;
+    }
+    .expected {
+      background-color: #e6f7e6;
+      border: 1px solid #c3e6cb;
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .note {
+      background-color: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 10px 15px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    code {
+      background-color: #f1f1f1;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-family: monospace;
+      font-size: 90%;
+    }
+    .button {
+      display: inline-block;
+      background-color: #304CB2;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 4px;
+      text-decoration: none;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+    .button:hover {
+      background-color: #1a2a66;
+    }
+  </style>
+</head>
+<body>
+  <h1>Southwest Vacations - Date Selection Test Guide</h1>
+  
+  <p>This guide will help you test the date selection functionality on the trip details page and verify that selected dates flow correctly to the booking form.</p>
+
+  <div class="note">
+    <strong>Note:</strong> You need to have the application running locally for this test to work.
+  </div>
+
+  <h2>Manual Test Steps</h2>
+
+  <div class="step">
+    <h3>Step 1: Navigate to a Trip Detail Page</h3>
+    <p>Open the following URL in your browser:</p>
+    <code>http://localhost:5173/trip/trip1</code>
+    <div class="expected">
+      <strong>Expected result:</strong> The Orlando, Florida trip details page should load with available dates displayed.
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 2: Verify Default Date Selection</h3>
+    <p>Check the list of available dates.</p>
+    <div class="expected">
+      <strong>Expected result:</strong> The first date in the list should be selected by default (highlighted in blue).
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 3: Select a Different Date</h3>
+    <p>Click on a different date option (preferably the second date in the list).</p>
+    <div class="expected">
+      <strong>Expected result:</strong>
+      <ul>
+        <li>The clicked date should become highlighted</li>
+        <li>The previously selected date should no longer be highlighted</li>
+        <li>The selected date should appear in the booking summary section</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 4: Check the Book Now Button</h3>
+    <p>Inspect the Book Now button URL (you can hover over it and check the status bar, or right-click and copy the link).</p>
+    <div class="expected">
+      <strong>Expected result:</strong> The URL should include both the trip ID and the selected date as parameters, e.g., <code>/book?trip=trip1&date=2023-06-22</code>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 5: Navigate to the Booking Page</h3>
+    <p>Click the Book Now button.</p>
+    <div class="expected">
+      <strong>Expected result:</strong> You should be taken to the booking form page.
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 6: Verify Date in Booking Form</h3>
+    <p>Check that the selected date appears in the booking form.</p>
+    <div class="expected">
+      <strong>Expected result:</strong>
+      <ul>
+        <li>The selected date should be displayed at the top of the form under "Selected Date:"</li>
+        <li>The departure date input field should be pre-filled with the selected date</li>
+        <li>The date input field should be highlighted with a blue border and light blue background</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step">
+    <h3>Step 7: Complete a Test Booking</h3>
+    <p>Fill out the booking form with test data and submit.</p>
+    <div class="expected">
+      <strong>Expected result:</strong> The form should submit successfully, and you should be redirected to a confirmation page.
+    </div>
+  </div>
+
+  <h2>Automated Tests</h2>
+
+  <p>You can also run the automated test which will perform these steps for you:</p>
+
+  <a href="http://localhost:5173/?test=flow" class="button">Run Automated Flow Test</a>
+
+  <div class="note" style="margin-top: 20px;">
+    <strong>Note:</strong> The automated test will display a results panel in the top-right corner of the page. This panel will show the status of each test step and can be clicked to dismiss.
+  </div>
+
+  <h2>Cypress Test</h2>
+
+  <p>If you have Cypress installed, you can also run the comprehensive end-to-end test:</p>
+
+  <code>npx cypress run --spec "cypress/e2e/dateSelectionTest.cy.ts"</code>
+
+  <div style="margin-top: 40px; border-top: 1px solid #ddd; padding-top: 20px; font-size: 0.9em; color: #666;">
+    <p>This test guide was created to help verify the date selection functionality in the Southwest Vacations application.</p>
+  </div>
+</body>
+</html> 

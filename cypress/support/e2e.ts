@@ -3,8 +3,8 @@
 // See: https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
-// import './commands'
+// Import commands using ES2015 syntax:
+import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
@@ -22,4 +22,4 @@ if (!app.document.head.querySelector('[data-hide-command-log-request]')) {
   style.innerHTML = '.command-name-request, .command-name-xhr { display: none }';
   style.setAttribute('data-hide-command-log-request', '');
   app.document.head.appendChild(style);
-} 
+}

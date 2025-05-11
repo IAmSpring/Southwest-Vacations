@@ -22,21 +22,34 @@ const initialFormState: BookingRequest = {
 export const useBooking = () => {
   const [searchParams] = useSearchParams();
   const tripId = searchParams.get('trip') || '';
+  const selectedDate = searchParams.get('date') || '';
 
   const [form, setForm] = useState<BookingRequest>({
     ...initialFormState,
     tripId,
+    startDate: selectedDate,
   });
 
-  // Update tripId when searchParams changes
+  // Update tripId and selectedDate when searchParams changes
   useEffect(() => {
+    const formUpdates: Partial<BookingRequest> = {};
+
     if (tripId) {
+      formUpdates.tripId = tripId;
+    }
+
+    if (selectedDate) {
+      formUpdates.startDate = selectedDate;
+      console.log('Setting selected date from URL:', selectedDate);
+    }
+
+    if (Object.keys(formUpdates).length > 0) {
       setForm(prevForm => ({
         ...prevForm,
-        tripId,
+        ...formUpdates,
       }));
     }
-  }, [tripId]);
+  }, [tripId, selectedDate]);
 
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -82,6 +95,7 @@ export const useBooking = () => {
     // Use the enhanced form data if provided, otherwise use the local form state
     const formData = enhancedForm || form;
     console.log('Submitting booking with tripId:', formData.tripId);
+    console.log('Selected date for booking:', formData.startDate);
 
     // Ensure we have a tripId before submitting
     if (!formData.tripId || formData.tripId.trim() === '') {

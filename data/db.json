@@ -1,220 +1,25 @@
 {
   "users": [
     {
-      "id": "4a581890-62c3-4742-b8bb-b702b11e849d",
-      "username": "testuser",
+      "id": "1",
       "email": "test@example.com",
-      "passwordHash": "$2b$10$dDN.LMRwBV2zXgnW/QdeG.wzd61ei/OdSoWTayY6efcW6CjAD0hZW",
-      "createdAt": "2025-05-08T23:53:05.330Z"
+      "password": "$2a$10$yfIuEk1LAVnlJP7uZCVNqee39MYVa5qTH7nC74JP2zdIBN.ZUb7S2",
+      "name": "Test User",
+      "role": "user",
+      "createdAt": "2025-05-11T20:10:53.404Z"
     },
     {
-      "id": "4bf07b2b-eeb4-4620-bafc-5ab5b83890d6",
-      "username": "admin",
+      "id": "2",
       "email": "admin@example.com",
-      "passwordHash": "$2b$10$tgcmyj/Wj1Tf805ZsllJTOTD9j4aNouKOV9eAhAEfxles9b46fYgO",
-      "createdAt": "2025-05-08T23:53:06.128Z",
-      "isAdmin": true
-    },
-    {
-      "id": "064d3cfd-49bf-47fd-a1c8-1675529d5e4e",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$s2yA.5/a5.dODWwgQnvYz.xkpGMSfJLFiOhhz0WUB8Z22B/S9175C",
-      "createdAt": "2025-05-08T23:54:01.649Z"
-    },
-    {
-      "id": "5fdcf6d1-bf1c-42d1-9155-a2a3247696c5",
-      "username": "admin",
-      "email": "admin@example.com",
-      "passwordHash": "$2b$10$lrbXXFvILYreyabfNJZjnu3WxLIchnXROLXo.J2blUOzBHtNPhIzO",
-      "createdAt": "2025-05-08T23:54:01.650Z",
-      "isAdmin": true
-    },
-    {
-      "id": "c97cc94d-f981-4b56-875d-780dc404d42e",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$fSmVeytiKLLkTv.RonaeWOcRf5BSFJmP31rjcqOqxGv7/nBK8ldkC",
-      "createdAt": "2025-05-08T23:58:41.064Z"
-    },
-    {
-      "id": "83f0c813-8d98-4fac-a005-0b5d94559e5f",
-      "username": "admin",
-      "email": "admin@example.com",
-      "passwordHash": "$2b$10$AoiY6gq3QznobxFQyl5/nOwUAzmVmFokiC1c3oFu/t/5j1bpkP2UW",
-      "createdAt": "2025-05-08T23:58:41.064Z",
-      "isAdmin": true
-    },
-    {
-      "id": "dd0b64df-2c9d-40f6-bd80-c16b067b3694",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$YJeCgWlR5yI71SJKTx6GfunFtDcNe38KFUC/2gT64v1yZaqoMdhje",
-      "createdAt": "2025-05-09T00:00:47.758Z"
-    },
-    {
-      "id": "98c4137b-aa70-435f-aca8-7b535abd0994",
-      "username": "admin",
-      "email": "admin@example.com",
-      "passwordHash": "$2b$10$GF058MJV58uR0IBZ5LcFy.cNBXi.x1wUV6uFogJi7xVfC8vo3Jkve",
-      "createdAt": "2025-05-09T00:00:47.758Z",
-      "isAdmin": true
-    },
-    {
-      "id": "444b13c5-34c7-4b3a-bdc3-f30662703407",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$.gVe2L6KHE7L9glGxFRPq.wBBexG759.kdFkP9m41bgEhh.7MEClm",
-      "createdAt": "2025-05-09T00:03:04.255Z"
-    },
-    {
-      "id": "01cc183f-bc31-4a31-b2a0-206d80c811c3",
-      "username": "admin",
-      "email": "admin@example.com",
-      "passwordHash": "$2b$10$QFLKuwkzC4DZFqNYedcNdOa7Um1sir4KPNXSKPIG8cMKOT6MsDTGK",
-      "createdAt": "2025-05-09T00:03:04.255Z",
-      "isAdmin": true
-    },
-    {
-      "id": "542697ec-157b-4be1-a736-df9a3d25ac58",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$1211C0F7IjAZslWnwt/9SeKpSX8/2FNS1lhmYxNFAm/TV7.tlEW7m",
-      "createdAt": "2025-05-09T00:10:12.311Z"
-    },
-    {
-      "id": "a885d8bc-2d7e-4297-9a3f-da8823f122bc",
-      "username": "admin",
-      "email": "admin@example.com",
-      "passwordHash": "$2b$10$2Xw1zpkEjSYOvVaCuMhe3ezSPZ3Y8aGMk11WOABD0ZkUTBDrr6IFG",
-      "createdAt": "2025-05-09T00:10:12.311Z",
-      "isAdmin": true
-    },
-    {
-      "id": "b8f23ddd-a3c0-4d54-84ab-691be2135d6b",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$URbzjB4l9R58quWoCzrexuFdRn.mZU235c0HfnVJbCB9WrVegWEtS",
-      "createdAt": "2025-05-09T00:35:25.621Z"
-    },
-    {
-      "id": "0d14e6f3-ffd7-47eb-b5f1-c8fda48b307f",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$frw2R8rksO3KYResShZFC.jz8EHV123rQlw0yKMJi82/lvZ1zs2b.",
-      "createdAt": "2025-05-09T01:40:16.816Z"
-    },
-    {
-      "id": "5e1a3d71-6677-4455-89ba-5861a4b941da",
-      "username": "admin",
-      "email": "admin@example.com",
-      "passwordHash": "$2b$10$.Nf.m7ayPltuQ9SSuQ7GKu11cfE3pAQJv03qOh7FG5SpIVmsCTO6y",
-      "createdAt": "2025-05-09T01:40:16.817Z",
-      "isAdmin": true
-    },
-    {
-      "id": "15a7a80a-57d9-4671-9c83-18a93e2653e6",
-      "username": "testuser",
-      "email": "test@example.com",
-      "passwordHash": "$2b$10$N2MvwFqrYCE6QuTsrH5CbuPzjO.jSlalp74NlLFiHg4dP7roJOlxC",
-      "createdAt": "2025-05-09T01:59:26.970Z"
+      "password": "$2a$10$XTy.tQXHtAHmBkRZ9ZVMkO5Jz5QnwtlEOzJOZYovIVp4IOm5VG68y",
+      "name": "Admin User",
+      "role": "admin",
+      "createdAt": "2025-05-11T20:10:53.404Z"
     }
   ],
-  "bookings": [
-    {
-      "id": "aa53b0a2-705b-44a6-8d80-b981812e1dcc",
-      "userId": "4a581890-62c3-4742-b8bb-b702b11e849d",
-      "tripId": "trip1",
-      "fullName": "John Smith",
-      "email": "test@example.com",
-      "travelers": 2,
-      "startDate": "2025-06-05",
-      "tripType": "one-way",
-      "departureTime": "morning",
-      "totalPrice": 2598,
-      "status": "confirmed",
-      "confirmedAt": "2025-05-08T23:53:10.023Z",
-      "createdAt": "2025-05-08T23:53:10.023Z",
-      "specialRequests": "Window seats preferred."
-    },
-    {
-      "id": "f2d97fa7-0e72-4a6d-bf9e-6a50fd0da21a",
-      "userId": "4a581890-62c3-4742-b8bb-b702b11e849d",
-      "tripId": "trip2",
-      "fullName": "John Smith",
-      "email": "test@example.com",
-      "travelers": 2,
-      "startDate": "2025-08-18",
-      "returnDate": "2025-08-25",
-      "tripType": "round-trip",
-      "departureTime": "morning",
-      "returnTime": "evening",
-      "hotelId": "hotel2-1",
-      "totalPrice": 3796,
-      "status": "confirmed",
-      "confirmedAt": "2025-05-08T23:53:10.023Z",
-      "createdAt": "2025-05-08T23:53:10.023Z",
-      "specialRequests": "Early check-in requested"
-    },
-    {
-      "id": "4eb16f81-84a2-4b21-afde-b7498cba7ed6",
-      "userId": "4bf07b2b-eeb4-4620-bafc-5ab5b83890d6",
-      "tripId": "trip3",
-      "fullName": "Admin User",
-      "email": "admin@example.com",
-      "travelers": 4,
-      "startDate": "2025-05-30",
-      "returnDate": "2025-06-04",
-      "tripType": "round-trip",
-      "departureTime": "afternoon",
-      "returnTime": "afternoon",
-      "hotelId": "hotel3-2",
-      "carRentalId": "car3-1",
-      "totalPrice": 5730,
-      "status": "confirmed",
-      "confirmedAt": "2025-05-08T23:53:10.023Z",
-      "createdAt": "2025-05-08T23:53:10.023Z",
-      "specialRequests": "Non-smoking rooms, convertible car with GPS"
-    },
-    {
-      "id": "47401d05-69e4-4194-8aea-ccf0bb9afb38",
-      "userId": "4a581890-62c3-4742-b8bb-b702b11e849d",
-      "tripId": "trip5",
-      "fullName": "John Smith",
-      "email": "test@example.com",
-      "travelers": 5,
-      "startDate": "2025-06-12",
-      "returnDate": "2025-06-19",
-      "tripType": "round-trip",
-      "departureTime": "morning",
-      "returnTime": "afternoon",
-      "hotelId": "hotel5-3",
-      "carRentalId": "car5-1",
-      "totalPrice": 8990,
-      "status": "confirmed",
-      "confirmedAt": "2025-05-08T23:53:10.024Z",
-      "createdAt": "2025-05-08T23:53:10.024Z",
-      "specialRequests": "Need cribs for twin infants, theme park tickets, and grocery delivery"
-    },
-    {
-      "id": "50f7a5e0-ae9d-4281-9c15-3444236780fb",
-      "userId": "4a581890-62c3-4742-b8bb-b702b11e849d",
-      "tripId": "trip4",
-      "fullName": "John Smith",
-      "email": "test@example.com",
-      "travelers": 2,
-      "startDate": "2025-07-12",
-      "returnDate": "2025-07-16",
-      "tripType": "round-trip",
-      "departureTime": "afternoon",
-      "returnTime": "evening",
-      "hotelId": "hotel4-1",
-      "totalPrice": 2496,
-      "status": "cancelled",
-      "confirmedAt": "2025-05-08T23:53:10.024Z",
-      "createdAt": "2025-05-01T23:53:10.024Z",
-      "updatedAt": "2025-05-08T23:53:10.031Z",
-      "specialRequests": "Needed to cancel due to emergency"
-    }
-  ]
+  "trips": [],
+  "bookings": [],
+  "favorites": [],
+  "notifications": [],
+  "audit_logs": []
 }
