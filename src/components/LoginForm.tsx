@@ -7,8 +7,8 @@ type LoginFormProps = {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
   const { login, isLoading } = useAuth();
-  const [email, setEmail] = useState('test@example.com');
-  const [password, setPassword] = useState('Password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -109,10 +109,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         </div>
       </div>
 
-      <div className="note">
-        <p>
-          <strong>Note:</strong> For testing, use:
-        </p>
+      <div className="note" id="test-credentials">
+        <h3>Test Account</h3>
         <p>Email: test@example.com</p>
         <p>Password: Password123</p>
       </div>
@@ -228,10 +226,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
         .note {
           margin-top: 20px;
-          padding: 10px;
+          padding: 15px;
           background-color: #ffffdd;
           border-radius: 4px;
           font-size: 14px;
+          border: 1px solid #e6e600;
+        }
+
+        .note h3 {
+          margin-top: 0;
+          margin-bottom: 8px;
+          color: #333;
         }
       `}</style>
     </div>

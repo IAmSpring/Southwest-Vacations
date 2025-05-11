@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Basic UI Functionality', () => {
   test('should display login page with all UI elements', async ({ page }) => {
-    // Navigate to the login page
-    await page.goto('http://localhost:5173/login');
+    // Navigate to the login page using hash router format
+    await page.goto('http://localhost:5173/#/login');
 
     // Verify login form elements
     await expect(page.locator('text=Login to Your Account')).toBeVisible();
@@ -20,8 +20,8 @@ test.describe('Basic UI Functionality', () => {
   });
 
   test('should have interactive form fields', async ({ page }) => {
-    // Navigate to the login page
-    await page.goto('http://localhost:5173/login');
+    // Navigate to the login page using hash router format
+    await page.goto('http://localhost:5173/#/login');
 
     // Fill in credentials
     await page.fill('input[type="email"]', 'test@example.com');
@@ -41,8 +41,8 @@ test.describe('Basic UI Functionality', () => {
   });
 
   test('should have proper tab navigation', async ({ page }) => {
-    // Navigate to the login page
-    await page.goto('http://localhost:5173/login');
+    // Navigate to the login page using hash router format
+    await page.goto('http://localhost:5173/#/login');
 
     // Focus on email field
     await page.focus('input[type="email"]');
@@ -65,8 +65,8 @@ test.describe('Basic UI Functionality', () => {
   });
 
   test('should have responsive design', async ({ page }) => {
-    // Navigate to the login page
-    await page.goto('http://localhost:5173/login');
+    // Navigate to the login page using hash router format
+    await page.goto('http://localhost:5173/#/login');
 
     // Test desktop size
     await page.setViewportSize({ width: 1280, height: 800 });

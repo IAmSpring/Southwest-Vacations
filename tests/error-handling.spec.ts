@@ -2,8 +2,8 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Error Handling and Edge Cases', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to the login page
-    await page.goto('http://localhost:5173/login');
+    // Navigate to the login page using hash router format
+    await page.goto('http://localhost:5173/#/login');
   });
 
   test('should handle server connectivity issues gracefully', async ({ page }) => {

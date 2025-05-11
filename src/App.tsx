@@ -20,6 +20,7 @@ import AnnouncementsPage from './pages/AnnouncementsPage';
 import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
 import NotificationPreferencesPage from './pages/NotificationPreferencesPage';
+import CheckoutPage from './pages/CheckoutPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SystemCheck from './components/SystemCheck';
@@ -43,6 +44,7 @@ const App: React.FC = () => {
             <Route path="/corporate" element={<CorporatePage />} />
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/training" element={<TrainingPortalPage />} />
             <Route path="/training/course/:courseId" element={<CourseStudyPage />} />
