@@ -118,3 +118,35 @@ mock-backend/dist/
 *.njsproj
 *.sln
 *.sw?
+
+# Playwright specific
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+*.png
+*.zip
+
+# Project-specific data
+/data/
+
+# Additional test artifacts
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/cypress/videos/
+/cypress/screenshots/
+
+# Database files and logs
+/data/*.json
+/logs/
+
+# Development files
+*.local
+
+# Playwright specific (already covered above)
+# /test-results/
+# /playwright-report/
+# /blob-report/
+# /playwright/.cache/
