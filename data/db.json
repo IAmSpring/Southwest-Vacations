@@ -6,7 +6,7 @@
       "password": "$2a$10$yfIuEk1LAVnlJP7uZCVNqee39MYVa5qTH7nC74JP2zdIBN.ZUb7S2",
       "name": "Test User",
       "role": "user",
-      "createdAt": "2025-05-11T20:10:53.404Z"
+      "createdAt": "2025-05-11T20:39:52.018Z"
     },
     {
       "id": "2",
@@ -14,7 +14,7 @@
       "password": "$2a$10$XTy.tQXHtAHmBkRZ9ZVMkO5Jz5QnwtlEOzJOZYovIVp4IOm5VG68y",
       "name": "Admin User",
       "role": "admin",
-      "createdAt": "2025-05-11T20:10:53.404Z"
+      "createdAt": "2025-05-11T20:39:52.018Z"
     }
   ],
   "trips": [],
