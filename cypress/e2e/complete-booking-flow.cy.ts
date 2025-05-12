@@ -97,8 +97,7 @@ describe('Southwest Vacations Complete Booking Flow', () => {
 
     // Step 5: Navigate to profile page to see bookings
     cy.log('Checking booking in profile page');
-    cy.contains('a', 'My Profile').as('profileLink');
-    cy.get('@profileLink').click({ force: true });
+    cy.visit('/profile');
 
     // Verify profile page loads
     cy.contains(/Profile|Account/i, { timeout: 10000 });

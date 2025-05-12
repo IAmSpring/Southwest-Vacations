@@ -4,10 +4,13 @@ import path from 'path';
 import morgan from 'morgan';
 import fs from 'fs';
 import { generateSeedUsers } from './seedData.js';
-import db from './db.js';
+import * as dbModule from './db.js';
 import { v4 as uuidv4 } from 'uuid';
 
 console.log('Starting server initialization...');
+
+// Cast the db module to any type to handle both default and named exports
+const db = dbModule.default || (dbModule as any);
 
 // Startup validation - test file system access
 const tempDir = path.join(process.cwd(), 'temp');
