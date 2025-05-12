@@ -172,7 +172,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Import routes
 import tripsRouter from './routes/trips.js';
-import bookingsRouter from './routes/bookings.js';
+import * as bookingsModule from './routes/bookings.js';
 import favoritesRouter from './routes/favorites.js';
 import usersRouter from './routes/users.js';
 import * as adminModule from './routes/admin.js';
@@ -186,6 +186,7 @@ import promotionsRouter from './routes/promotions.js';
 // Create router instances for modules without default exports
 const adminRouter = adminModule.default || (adminModule as any);
 const auditRouter = auditModule.default || (auditModule as any);
+const bookingsRouter = bookingsModule.default || (bookingsModule as any);
 
 // Routes
 app.use('/api/trips', tripsRouter);
