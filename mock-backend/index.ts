@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import fs from 'fs';
 import { generateSeedUsers } from './seedData.js';
 import db from './db.js';
+import { v4 as uuidv4 } from 'uuid';
 
 console.log('Starting server initialization...');
 
@@ -80,6 +81,75 @@ async function initializeUsers() {
 // Initialize the users
 initializeUsers();
 
+// Initialize promotions if they don't exist
+async function initializePromotions() {
+  try {
+    // Check if promotions already exist
+    const existingPromotions = db.get('promotions').value();
+
+    if (!existingPromotions || existingPromotions.length === 0) {
+      console.log('Generating seed promotions...');
+
+      // Create some initial promotions
+      const promotions = [
+        {
+          id: uuidv4(),
+          code: 'SUMMER2023',
+          description: 'Summer Special: Get 15% off on all beach destinations',
+          discountType: 'percentage',
+          discountValue: 15,
+          startDate: '2023-06-01',
+          endDate: '2023-08-31',
+          restrictions: 'Not applicable with other discounts. Minimum 3-night stay required.',
+          status: 'active',
+          eligibleDestinations: ['Cancun', 'Miami', 'Honolulu', 'San Diego', 'Puerto Vallarta'],
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: uuidv4(),
+          code: 'FALL50',
+          description: '$50 off fall bookings to mountain destinations',
+          discountType: 'fixed',
+          discountValue: 50,
+          startDate: '2023-09-01',
+          endDate: '2023-11-30',
+          restrictions: 'Valid for bookings above $500. Cannot be combined with other promotions.',
+          status: 'upcoming',
+          eligibleDestinations: ['Denver', 'Salt Lake City', 'Vancouver', 'Portland', 'Seattle'],
+          minBookingValue: 500,
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: uuidv4(),
+          code: 'FAMILY25',
+          description: '25% discount for family packages with children',
+          discountType: 'percentage',
+          discountValue: 25,
+          startDate: '2023-05-01',
+          endDate: '2023-12-31',
+          restrictions: 'Must include at least 2 adults and 1 child. Maximum discount of $300.',
+          status: 'active',
+          createdAt: new Date().toISOString(),
+        },
+      ];
+
+      // Add to database
+      promotions.forEach(promo => {
+        db.get('promotions').push(promo).write();
+      });
+
+      console.log(`✅ Added ${promotions.length} initial promotions`);
+    } else {
+      console.log(`Found ${existingPromotions.length} existing promotions in database`);
+    }
+  } catch (error) {
+    console.error('Error initializing promotions:', error);
+  }
+}
+
+// Initialize the promotions
+initializePromotions();
+
 console.log('Database loaded successfully');
 
 // Create Express app
@@ -105,12 +175,17 @@ import tripsRouter from './routes/trips.js';
 import bookingsRouter from './routes/bookings.js';
 import favoritesRouter from './routes/favorites.js';
 import usersRouter from './routes/users.js';
-import adminRouter from './routes/admin.js';
+import * as adminModule from './routes/admin.js';
 import trainingRouter from './routes/training.js';
 import notificationsRouter from './routes/notifications.js';
 import rolesRouter from './routes/roles.js';
-import auditRouter from './routes/audit.js';
+import * as auditModule from './routes/audit.js';
 import twoFactorRouter from './routes/two-factor.js';
+import promotionsRouter from './routes/promotions.js';
+
+// Create router instances for modules without default exports
+const adminRouter = adminModule.default || (adminModule as any);
+const auditRouter = auditModule.default || (auditModule as any);
 
 // Routes
 app.use('/api/trips', tripsRouter);
@@ -123,6 +198,7 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/roles', rolesRouter);
 app.use('/api/audit', auditRouter);
 app.use('/api/two-factor', twoFactorRouter);
+app.use('/api/promotions', promotionsRouter);
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {

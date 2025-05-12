@@ -60,6 +60,8 @@ var generateSeedUsers = function () { return __awaiter(void 0, void 0, void 0, f
                             email: 'test@example.com',
                             passwordHash: testPasswordHash,
                             createdAt: new Date().toISOString(),
+                            isAdmin: false,
+                            role: 'agent'
                         },
                         {
                             id: (0, uuid_1.v4)(),
@@ -68,6 +70,7 @@ var generateSeedUsers = function () { return __awaiter(void 0, void 0, void 0, f
                             passwordHash: adminPasswordHash,
                             createdAt: new Date().toISOString(),
                             isAdmin: true,
+                            role: 'admin'
                         }
                     ]];
         }

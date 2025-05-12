@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useBooking } from '../hooks/useBooking';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { TripType, Hotel, CarRental } from '../sharedTypes';
+import { createMockBooking } from '../api/simpleClient';
 
 // Time options for dropdowns
 const TIME_OPTIONS = [
@@ -41,6 +42,8 @@ const BookingForm = () => {
   const [isMultiDestination, setIsMultiDestination] = useState(false);
   const [segments, setSegments] = useState([{ ...initialSegment }]);
   const [availableDestinations, setAvailableDestinations] = useState<string[]>([]);
+
+  const navigate = useNavigate();
 
   // Fetch available destinations on component mount
   useEffect(() => {
@@ -227,24 +230,9 @@ const BookingForm = () => {
 
     // If no errors, proceed with form submission
     if (Object.keys(newErrors).length === 0) {
-      // Add time, hotel, and car rental selections to the form data before submitting
-      const updatedForm = {
-        ...form,
-        departureTime,
-        returnTime: form.tripType === 'round-trip' ? returnTime : undefined,
-        hotelId: includeHotel ? selectedHotel : undefined,
-        carRentalId: includeCar ? selectedCar : undefined,
-        multiDestination: isMultiDestination,
-        segments: isMultiDestination ? segments : undefined,
-      };
-
-      // Call the submitBooking function from the hook with the enhanced form data
-      try {
-        submitBooking(event, updatedForm);
-      } catch (error) {
-        console.error('Error submitting booking:', error);
-      }
+      return true;
     }
+    return false;
   };
 
   // Tooltip toggles
@@ -253,6 +241,64 @@ const BookingForm = () => {
       ...prev,
       [field]: !prev[field],
     }));
+  };
+
+  // Update the handleSubmit function to use createMockBooking
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validate form inputs
+    if (validateForm(e)) {
+      try {
+        setErrors({});
+
+        // Show loading state
+        const loadingToast = document.getElementById('loading-toast');
+        if (loadingToast) {
+          loadingToast.classList.remove('hidden');
+        }
+
+        // Prepare booking data
+        const bookingData = {
+          tripType: form.tripType,
+          departureDate: form.startDate,
+          returnDate: form.tripType === 'round-trip' ? form.returnDate : null,
+          departureTime,
+          returnTime: form.tripType === 'round-trip' ? returnTime : null,
+          includeHotel,
+          includeCar,
+          hotelId: includeHotel ? selectedHotel : null,
+          carId: includeCar ? selectedCar : null,
+          passengers: form.travelers || 1,
+          isMultiDestination,
+          segments: isMultiDestination ? segments : null,
+        };
+
+        // Call the mock booking function
+        const booking = await createMockBooking(bookingData);
+
+        // Hide loading state
+        if (loadingToast) {
+          loadingToast.classList.add('hidden');
+        }
+
+        // Show success message
+        alert('Booking successful! Confirmation code: ' + booking.confirmationCode);
+
+        // Navigate to confirmation page
+        navigate(`/confirmation?id=${booking.id}`);
+      } catch (error) {
+        console.error('Error submitting booking:', error);
+        // Show error message
+        alert('Error submitting booking. Please try again.');
+
+        // Hide loading state
+        const loadingToast = document.getElementById('loading-toast');
+        if (loadingToast) {
+          loadingToast.classList.add('hidden');
+        }
+      }
+    }
   };
 
   return (
@@ -277,7 +323,18 @@ const BookingForm = () => {
         </div>
       )}
 
-      <form onSubmit={validateForm} className="space-y-5" noValidate>
+      {/* Loading toast */}
+      <div
+        id="loading-toast"
+        className="fixed left-1/2 top-4 z-50 hidden -translate-x-1/2 transform rounded-lg bg-blue-500 px-6 py-3 text-white shadow-lg"
+      >
+        <div className="flex items-center space-x-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+          <span>Processing your booking...</span>
+        </div>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
         {/* Multi-Destination Toggle */}
         <div className="mb-4">
           <div className="flex items-center space-x-2">
@@ -640,36 +697,9 @@ const BookingForm = () => {
           <button
             type="submit"
             className="w-full rounded-lg bg-[#304CB2] px-6 py-3 text-base font-bold text-white transition-colors hover:bg-[#1a2a66] focus:outline-none focus:ring-2 focus:ring-[#304CB2] focus:ring-offset-2 disabled:opacity-50"
-            disabled={isLoading}
             data-testid="submit-booking-btn"
           >
-            {isLoading ? (
-              <div className="flex items-center justify-center">
-                <svg
-                  className="mr-2 h-5 w-5 animate-spin text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth={4}
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Processing...
-              </div>
-            ) : (
-              'Book Now'
-            )}
+            Book Now
           </button>
         </div>
       </form>

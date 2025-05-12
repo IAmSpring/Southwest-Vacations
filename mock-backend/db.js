@@ -517,4 +517,14 @@ var DB = /** @class */ (function () {
 }());
 // Export the database instance
 var db = new DB();
+
+// Initialize promotions collection if it doesn't exist
+if (!db.data.promotions) {
+    db.data.promotions = [];
+    db.write();
+    console.log('Created promotions collection');
+}
+
 exports.default = db;
+module.exports = db; // Add commonjs compatibility
+module.exports.default = db; // Ensure default is available

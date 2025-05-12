@@ -15,14 +15,11 @@ const TrainingPortalPage: React.FC = () => {
   const { isAuthenticated, currentUser } = useAuthContext();
   const [modules, setModules] = useState<TrainingModule[]>([]);
   const [selectedModule, setSelectedModule] = useState<TrainingModule | null>(null);
-  const [employeeList, setEmployeeList] = useState<{ id: number; name: string; email: string }[]>([]);
+  const [employeeList, setEmployeeList] = useState<{ id: number; name: string; email: string }[]>(
+    []
+  );
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
-
-  // If not authenticated, redirect to login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
 
   useEffect(() => {
     // Check if user is admin
@@ -80,7 +77,12 @@ const TrainingPortalPage: React.FC = () => {
 
     setModules(mockModules);
     setEmployeeList(mockEmployees);
-  }, [currentUser]);
+  }, [currentUser]); // Only depends on currentUser
+
+  // Check if user is authenticated - moved after hooks
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   const handleStartModule = (moduleId: string) => {
     setModules(prevModules =>
@@ -136,25 +138,25 @@ const TrainingPortalPage: React.FC = () => {
   const renderModuleList = () => {
     return (
       <div className="module-list">
-        <h2 className="text-xl font-semibold mb-4">Available Training Modules</h2>
+        <h2 className="mb-4 text-xl font-semibold">Available Training Modules</h2>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {modules.map(module => (
             <div
               key={module.id}
-              className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
+              className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md"
               data-testid={`training-module-${module.id}`}
             >
               <div className="p-4">
                 <h3 className="text-lg font-semibold">{module.title}</h3>
-                <p className="text-gray-600 mt-1">{module.description}</p>
+                <p className="mt-1 text-gray-600">{module.description}</p>
                 <div className="mt-3">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div className="h-2.5 w-full rounded-full bg-gray-200">
                     <div
-                      className="bg-blue-600 h-2.5 rounded-full"
+                      className="h-2.5 rounded-full bg-blue-600"
                       style={{ width: `${module.completionPercentage}%` }}
                     ></div>
                   </div>
-                  <div className="flex justify-between mt-1">
+                  <div className="mt-1 flex justify-between">
                     <span className="text-sm text-gray-500">
                       {module.completionPercentage}% Complete
                     </span>
@@ -169,7 +171,7 @@ const TrainingPortalPage: React.FC = () => {
                   {module.status === 'not-started' ? (
                     <button
                       onClick={() => handleStartModule(module.id)}
-                      className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                      className="w-full rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700"
                       data-testid={`start-module-${module.id}`}
                     >
                       Start Training
@@ -177,14 +179,14 @@ const TrainingPortalPage: React.FC = () => {
                   ) : module.status === 'in-progress' ? (
                     <button
                       onClick={() => handleContinueModule(module.id)}
-                      className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                      className="w-full rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700"
                       data-testid={`continue-module-${module.id}`}
                     >
                       Continue Training
                     </button>
                   ) : (
                     <div className="text-center">
-                      <span className="text-green-600 font-medium">
+                      <span className="font-medium text-green-600">
                         Certified on {module.certificationDate}
                       </span>
                     </div>
@@ -202,8 +204,8 @@ const TrainingPortalPage: React.FC = () => {
     if (!selectedModule) return null;
 
     return (
-      <div className="module-content bg-white p-6 rounded-lg shadow-md border border-gray-200">
-        <h2 className="text-2xl font-bold mb-4">{selectedModule.title}</h2>
+      <div className="module-content rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+        <h2 className="mb-4 text-2xl font-bold">{selectedModule.title}</h2>
         <div className="mb-6">
           <p className="text-gray-700">
             This is the content for the {selectedModule.title} training module. In a real
@@ -214,13 +216,13 @@ const TrainingPortalPage: React.FC = () => {
         <div className="mt-8 flex justify-between">
           <button
             onClick={() => setSelectedModule(null)}
-            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
+            className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
           >
             Back to Modules
           </button>
           <button
             onClick={() => handleCompleteModule(selectedModule.id)}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
             data-testid={`complete-module-${selectedModule.id}`}
           >
             Mark as Complete
@@ -234,22 +236,22 @@ const TrainingPortalPage: React.FC = () => {
     if (!isAdmin) return null;
 
     return (
-      <div className="admin-controls bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-6">
-        <h2 className="text-xl font-semibold mb-4">Admin Controls</h2>
+      <div className="admin-controls mt-6 rounded-lg border border-gray-200 bg-white p-6 shadow-md">
+        <h2 className="mb-4 text-xl font-semibold">Admin Controls</h2>
         <div className="flex space-x-4">
           <button
             onClick={() => setShowAssignModal(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
             data-testid="assign-training-btn"
           >
             Assign Training
           </button>
           <button
             onClick={handleGenerateReport}
-            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            className="rounded-md bg-green-600 px-4 py-2 text-white hover:bg-green-700"
             data-testid="generate-report-btn"
           >
-            Generate Certification Report
+            Generate Report
           </button>
         </div>
       </div>
@@ -260,56 +262,47 @@ const TrainingPortalPage: React.FC = () => {
     if (!showAssignModal) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-        <div className="bg-white p-6 rounded-lg w-full max-w-md">
-          <h2 className="text-xl font-semibold mb-4">Assign Training Modules</h2>
-          
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-md">
+          <h2 className="mb-4 text-xl font-semibold">Assign Training</h2>
           <div className="mb-4">
-            <h3 className="font-medium mb-2">Select Employees</h3>
-            <div className="space-y-2">
+            <label className="mb-2 block text-gray-700">Select Employees</label>
+            <select
+              multiple
+              className="h-32 w-full rounded-md border border-gray-300 p-2"
+              data-testid="employee-select"
+            >
               {employeeList.map(employee => (
-                <div key={employee.id} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`employee-${employee.id}`}
-                    className="mr-2"
-                    data-testid={`employee-checkbox-${employee.id}`}
-                  />
-                  <label htmlFor={`employee-${employee.id}`}>
-                    {employee.name} ({employee.email})
-                  </label>
-                </div>
+                <option key={employee.id} value={employee.id}>
+                  {employee.name} ({employee.email})
+                </option>
               ))}
-            </div>
+            </select>
           </div>
-          
           <div className="mb-6">
-            <h3 className="font-medium mb-2">Select Modules</h3>
-            <div className="space-y-2">
+            <label className="mb-2 block text-gray-700">Select Modules</label>
+            <select
+              multiple
+              className="h-32 w-full rounded-md border border-gray-300 p-2"
+              data-testid="module-select"
+            >
               {modules.map(module => (
-                <div key={module.id} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={`module-${module.id}`}
-                    className="mr-2"
-                    data-testid={`module-checkbox-${module.id}`}
-                  />
-                  <label htmlFor={`module-${module.id}`}>{module.title}</label>
-                </div>
+                <option key={module.id} value={module.id}>
+                  {module.title}
+                </option>
               ))}
-            </div>
+            </select>
           </div>
-          
           <div className="flex justify-end space-x-3">
             <button
               onClick={() => setShowAssignModal(false)}
-              className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
+              className="rounded-md bg-gray-300 px-4 py-2 text-gray-800 hover:bg-gray-400"
             >
               Cancel
             </button>
             <button
               onClick={() => handleAssignTraining([1, 2], ['module-1', 'module-2'])}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
               data-testid="confirm-assign-btn"
             >
               Assign
@@ -321,15 +314,17 @@ const TrainingPortalPage: React.FC = () => {
   };
 
   return (
-    <div className="training-portal min-h-screen bg-gray-50 p-6">
-      <div className="container mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Employee Training Portal</h1>
-        
-        {selectedModule ? renderSelectedModule() : renderModuleList()}
-        
-        {renderAdminControls()}
-        {renderAssignModal()}
-      </div>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="mb-8 text-3xl font-bold">Training Portal</h1>
+      {selectedModule ? (
+        renderSelectedModule()
+      ) : (
+        <div>
+          {renderModuleList()}
+          {renderAdminControls()}
+          {renderAssignModal()}
+        </div>
+      )}
     </div>
   );
 };

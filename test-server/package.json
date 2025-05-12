@@ -1,0 +1,13 @@
+{
+  "name": "test-visualization-server",
+  "version": "1.0.0",
+  "description": "Server for visualizing Cypress and Playwright test runs",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node start.js"
+  },
+  "dependencies": {
+    "socket.io": "^4.7.2"
+  }
+}

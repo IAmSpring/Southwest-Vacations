@@ -7,7 +7,7 @@ export const generateSeedUsers = async (): Promise<User[]> => {
   // Generate hashed passwords
   const testPasswordHash = await bcrypt.hash('Password123', 10);
   const adminPasswordHash = await bcrypt.hash('Admin123', 10);
-  
+
   return [
     {
       id: uuidv4(),
@@ -15,6 +15,8 @@ export const generateSeedUsers = async (): Promise<User[]> => {
       email: 'test@example.com',
       passwordHash: testPasswordHash,
       createdAt: new Date().toISOString(),
+      isAdmin: false,
+      role: 'agent',
     },
     {
       id: uuidv4(),
@@ -23,6 +25,7 @@ export const generateSeedUsers = async (): Promise<User[]> => {
       passwordHash: adminPasswordHash,
       createdAt: new Date().toISOString(),
       isAdmin: true,
-    }
+      role: 'admin',
+    },
   ];
-}; 
+};

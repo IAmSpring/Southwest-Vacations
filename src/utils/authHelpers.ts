@@ -6,6 +6,8 @@ const API_URL = '/api';
 // Login and retrieve auth token
 export const login = async (email: string, password: string): Promise<string> => {
   try {
+    console.log(`Attempting login for user: ${email}`);
+
     const response = await fetch(`${API_URL}/users/login`, {
       method: 'POST',
       headers: {
@@ -14,18 +16,32 @@ export const login = async (email: string, password: string): Promise<string> =>
       body: JSON.stringify({ email, password }),
     });
 
+    console.log(`Login response status: ${response.status}`);
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Login failed');
+      // For development purposes, provide more detailed error logging
+      console.error('Login failed with status:', response.status);
+      const errorText = await response.text();
+      console.error('Error response body:', errorText);
+
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(errorData.error || 'Login failed');
+      } catch (parseError) {
+        console.error('Failed to parse error response as JSON:', parseError);
+        throw new Error('Login failed: ' + errorText);
+      }
     }
 
     const data = await response.json();
+    console.log('Login successful, received token');
 
     // Store token in localStorage
     if (data.token) {
       localStorage.setItem('token', data.token);
       return data.token;
     } else {
+      console.error('No token received in login response:', data);
       throw new Error('No token received from server');
     }
   } catch (error) {

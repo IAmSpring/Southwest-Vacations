@@ -1,0 +1,104 @@
+{
+  "trips": [
+    {
+      "id": "trip1",
+      "destination": "Maui, Hawaii",
+      "location": {
+        "country": "USA",
+        "region": "Hawaii"
+      },
+      "price": 1499.99,
+      "duration": 7,
+      "departureDate": "2025-07-10",
+      "returnDate": "2025-07-17",
+      "category": "beach",
+      "rating": 4.8,
+      "amenities": ["pool", "spa", "beachfront", "restaurant"],
+      "recommended": true,
+      "capacity": 4,
+      "availableDeals": ["Early Bird Special", "10% Southwest Employee Discount"],
+      "description": "Enjoy a relaxing week in paradise with white sandy beaches and crystal clear waters.",
+      "imageUrl": "https://images.unsplash.com/photo-1483168527879-c66136b56105?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1616&q=80"
+    },
+    {
+      "id": "trip2",
+      "destination": "Las Vegas, Nevada",
+      "location": {
+        "country": "USA",
+        "region": "West"
+      },
+      "price": 899.99,
+      "duration": 4,
+      "departureDate": "2025-08-15",
+      "returnDate": "2025-08-19",
+      "category": "entertainment",
+      "rating": 4.5,
+      "amenities": ["pool", "casino", "spa", "restaurant", "nightclub"],
+      "recommended": false,
+      "capacity": 2,
+      "availableDeals": ["Last Minute Deal", "Casino Credit"],
+      "description": "Experience the excitement of Las Vegas with world-class entertainment and dining.",
+      "imageUrl": "https://images.unsplash.com/photo-1581351721010-8cf859cb14f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "id": "trip3",
+      "destination": "New York City, New York",
+      "location": {
+        "country": "USA",
+        "region": "East"
+      },
+      "price": 1299.99,
+      "duration": 5,
+      "departureDate": "2025-09-20",
+      "returnDate": "2025-09-25",
+      "category": "city",
+      "rating": 4.3,
+      "amenities": ["central location", "restaurant", "fitness center"],
+      "recommended": true,
+      "capacity": 3,
+      "availableDeals": ["City Pass Included", "15% Southwest Employee Discount"],
+      "description": "Explore the Big Apple with its iconic landmarks, world-class museums, and diverse cuisine.",
+      "imageUrl": "https://images.unsplash.com/photo-1496588152823-86ff7695e68f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+    },
+    {
+      "id": "trip4",
+      "destination": "Cancun, Mexico",
+      "location": {
+        "country": "Mexico",
+        "region": "Caribbean"
+      },
+      "price": 1099.99,
+      "duration": 6,
+      "departureDate": "2025-06-05",
+      "returnDate": "2025-06-11",
+      "category": "beach",
+      "rating": 4.6,
+      "amenities": ["all-inclusive", "beachfront", "pool", "spa", "restaurant"],
+      "recommended": true,
+      "capacity": 4,
+      "availableDeals": ["All-Inclusive Package", "Free Airport Transfer"],
+      "description": "Enjoy the beautiful beaches and vibrant nightlife of Cancun with all-inclusive amenities.",
+      "imageUrl": "https://images.unsplash.com/photo-1590523741831-ab7e8b8f9c7f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80"
+    },
+    {
+      "id": "trip5",
+      "destination": "Aspen, Colorado",
+      "location": {
+        "country": "USA",
+        "region": "West"
+      },
+      "price": 1899.99,
+      "duration": 7,
+      "departureDate": "2025-12-10",
+      "returnDate": "2025-12-17",
+      "category": "mountain",
+      "rating": 4.7,
+      "amenities": ["ski-in/ski-out", "fireplace", "hot tub", "restaurant"],
+      "recommended": false,
+      "capacity": 6,
+      "availableDeals": ["Early Bird Ski Package", "5% Southwest Employee Discount"],
+      "description": "Experience world-class skiing and winter sports in the beautiful mountains of Aspen.",
+      "imageUrl": "https://images.unsplash.com/photo-1520986606214-8b456906c813?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+    }
+  ]
+}

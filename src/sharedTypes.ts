@@ -374,3 +374,21 @@ export interface SecuritySettings {
   isLocked: boolean;
   lockedUntil?: string;
 }
+
+export interface Promotion {
+  id: string;
+  code: string;
+  description: string;
+  discountType: 'percentage' | 'fixed';
+  discountValue: number;
+  startDate: string;
+  endDate: string;
+  restrictions: string;
+  status: 'active' | 'expired' | 'upcoming';
+  eligibleDestinations?: string[];
+  minBookingValue?: number;
+  createdAt: string;
+  createdBy?: string;
+  updatedAt?: string;
+  updatedBy?: string;
+}

@@ -26,6 +26,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import SystemCheck from './components/SystemCheck';
 import { NotificationProvider } from './context/NotificationContext';
+import ProfilePage from './pages/ProfilePage';
 
 const App: React.FC = () => {
   return (
@@ -46,7 +47,10 @@ const App: React.FC = () => {
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
-            <Route path="/multi-passenger-booking/:tripId" element={<MultiPassengerBookingPage />} />
+            <Route
+              path="/multi-passenger-booking/:tripId"
+              element={<MultiPassengerBookingPage />}
+            />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/training" element={<TrainingPortalPage />} />
             <Route path="/training/course/:courseId" element={<CourseStudyPage />} />
@@ -57,6 +61,7 @@ const App: React.FC = () => {
             <Route path="/notifications" element={<NotificationsPage />} />
             <Route path="/notifications/preferences" element={<NotificationPreferencesPage />} />
             <Route path="/system-check" element={<SystemCheck />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
