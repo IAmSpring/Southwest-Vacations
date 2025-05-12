@@ -1,586 +1,315 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { TrainingCourse, TrainingModule, Quiz, QuizQuestion } from '../sharedTypes';
-import {
-  getCourseById,
-  updateTrainingProgress,
-  submitQuizResults,
-  completeCourse,
-  getCourseProgress,
-} from '../api/training';
+import { useParams, Navigate, Link } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+
+interface CourseSection {
+  id: string;
+  title: string;
+  content: string;
+  completed: boolean;
+}
+
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  sections: CourseSection[];
+  progress: number;
+}
 
 const CourseStudyPage: React.FC = () => {
   const { courseId } = useParams<{ courseId: string }>();
-  const navigate = useNavigate();
-  const [course, setCourse] = useState<TrainingCourse | null>(null);
-  const [currentModuleIndex, setCurrentModuleIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [showQuiz, setShowQuiz] = useState(false);
-  const [quizAnswers, setQuizAnswers] = useState<number[]>([]);
-  const [quizResults, setQuizResults] = useState<{
-    score: number;
-    passed: boolean;
-    feedback: string;
-  } | null>(null);
-  const [showCompletion, setShowCompletion] = useState(false);
+  const { isAuthenticated } = useAuthContext();
+  const [course, setCourse] = useState<Course | null>(null);
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // Fetch course data
   useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
+    // Mock API call to fetch course details
+    const fetchCourseData = () => {
+      setLoading(true);
 
-        if (!courseId) {
-          setError('Course ID is missing');
-          setIsLoading(false);
-          return;
-        }
+      // Simulate API delay
+      setTimeout(() => {
+        // This is mock data - in a real app, this would come from an API
+        const mockCourse: Course = {
+          id: courseId || 'unknown',
+          title: courseId === 'module-1' 
+            ? 'Customer Service Basics' 
+            : courseId === 'module-2'
+              ? 'Booking System Training'
+              : 'Training Module',
+          description: 'Comprehensive training on providing exceptional customer service.',
+          progress: 0,
+          sections: [
+            {
+              id: 'section-1',
+              title: 'Introduction',
+              content: `
+                <h2>Introduction to Customer Service</h2>
+                <p>Welcome to the Customer Service Basics training module. This course will teach you the fundamental principles of providing excellent customer service at Southwest Vacations.</p>
+                <p>In this module, you will learn:</p>
+                <ul>
+                  <li>Core customer service principles</li>
+                  <li>Effective communication techniques</li>
+                  <li>Problem-solving strategies</li>
+                  <li>Handling difficult situations</li>
+                </ul>
+                <p>By the end of this course, you'll have the skills needed to provide outstanding service to our customers.</p>
+              `,
+              completed: false
+            },
+            {
+              id: 'section-2',
+              title: 'Communication Skills',
+              content: `
+                <h2>Effective Communication</h2>
+                <p>Communication is the foundation of excellent customer service. This section covers key techniques for clear and effective communication with customers.</p>
+                <h3>Active Listening</h3>
+                <p>Active listening involves fully concentrating on what the customer is saying, understanding their needs, and responding appropriately.</p>
+                <h3>Clear Expression</h3>
+                <p>Use simple language and avoid industry jargon when explaining options or policies to customers.</p>
+                <h3>Positive Language</h3>
+                <p>Focus on what you can do rather than what you can't do. For example, instead of saying "We can't check you in until 3pm," say "We'll be happy to check you in starting at 3pm."</p>
+              `,
+              completed: false
+            },
+            {
+              id: 'section-3',
+              title: 'Problem Solving',
+              content: `
+                <h2>Problem-Solving Strategies</h2>
+                <p>When customers face issues, your ability to solve problems quickly and effectively is crucial.</p>
+                <h3>The LAST Approach</h3>
+                <ul>
+                  <li><strong>L</strong>isten to the customer's concern</li>
+                  <li><strong>A</strong>cknowledge their feelings</li>
+                  <li><strong>S</strong>olve the problem</li>
+                  <li><strong>T</strong>hank them for their patience</li>
+                </ul>
+                <h3>Empowerment</h3>
+                <p>You are empowered to resolve customer issues within the guidelines provided. When in doubt, consult with your supervisor.</p>
+              `,
+              completed: false
+            },
+            {
+              id: 'section-4',
+              title: 'Assessment',
+              content: `
+                <h2>Course Assessment</h2>
+                <p>Complete this assessment to earn your certification in Customer Service Basics.</p>
+                <div id="assessment-questions">
+                  <div class="question">
+                    <p><strong>1. What is the key first step in the LAST problem-solving approach?</strong></p>
+                    <div class="options">
+                      <div><input type="radio" name="q1" value="a" id="q1a"><label for="q1a">Look for solutions</label></div>
+                      <div><input type="radio" name="q1" value="b" id="q1b"><label for="q1b">Listen to the customer</label></div>
+                      <div><input type="radio" name="q1" value="c" id="q1c"><label for="q1c">Launch an investigation</label></div>
+                    </div>
+                  </div>
+                  <div class="question">
+                    <p><strong>2. When explaining booking options to customers, you should:</strong></p>
+                    <div class="options">
+                      <div><input type="radio" name="q2" value="a" id="q2a"><label for="q2a">Use technical industry terms to sound professional</label></div>
+                      <div><input type="radio" name="q2" value="b" id="q2b"><label for="q2b">Use simple language and avoid jargon</label></div>
+                      <div><input type="radio" name="q2" value="c" id="q2c"><label for="q2c">Speak quickly to save time</label></div>
+                    </div>
+                  </div>
+                  <div class="question">
+                    <p><strong>3. What is an example of positive language?</strong></p>
+                    <div class="options">
+                      <div><input type="radio" name="q3" value="a" id="q3a"><label for="q3a">"We can't process refunds after 30 days."</label></div>
+                      <div><input type="radio" name="q3" value="b" id="q3b"><label for="q3b">"Unfortunately, there's nothing I can do."</label></div>
+                      <div><input type="radio" name="q3" value="c" id="q3c"><label for="q3c">"Refunds are available within 30 days of purchase."</label></div>
+                    </div>
+                  </div>
+                </div>
+                <button id="submit-assessment" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Submit Assessment</button>
+              `,
+              completed: false
+            }
+          ]
+        };
 
-        // Fetch course data from API
-        const courseData = await getCourseById(courseId);
-        setCourse(courseData);
-
-        // Fetch user's course progress
-        const progressData = await getCourseProgress(courseId);
-
-        // Set initial progress from API data
-        setProgress(progressData.progress || 0);
-
-        // If there's a moduleId in the progress data, set the current module index
-        if (progressData.moduleId && courseData.modules) {
-          const moduleIndex = courseData.modules.findIndex(m => m.id === progressData.moduleId);
-          if (moduleIndex > -1) {
-            setCurrentModuleIndex(moduleIndex);
-          }
-        }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching course:', error);
-        setError('Failed to load course. Please try again later.');
-        setIsLoading(false);
-      }
+        setCourse(mockCourse);
+        setLoading(false);
+      }, 1000);
     };
 
-    fetchCourse();
+    if (courseId) {
+      fetchCourseData();
+    }
   }, [courseId]);
 
-  // Get current module
-  const currentModule = course?.modules[currentModuleIndex] || null;
+  // If not authenticated, redirect to login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
-  // Handle module navigation
-  const goToNextModule = async () => {
-    if (!course) return;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
-    try {
-      const currentModule = course.modules[currentModuleIndex];
-      const nextModuleIndex = currentModuleIndex + 1;
+  if (!course) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-2xl font-bold mb-4">Course Not Found</h1>
+        <p>The course you're looking for doesn't exist or has been removed.</p>
+        <Link to="/training" className="text-blue-600 hover:underline">
+          Return to Training Portal
+        </Link>
+      </div>
+    );
+  }
 
-      // Calculate new progress percentage
-      const totalModules = course.modules.length;
-      const newProgress = Math.min(
-        Math.round((nextModuleIndex / totalModules) * 100),
-        99 // Cap at 99% until course is fully completed
-      );
+  const currentSection = course.sections[currentSectionIndex];
 
-      // Update progress in API
-      await updateTrainingProgress(course.id, {
-        progress: newProgress,
-        status: 'in-progress',
-        moduleId:
-          nextModuleIndex < totalModules ? course.modules[nextModuleIndex].id : currentModule.id,
+  const handleNextSection = () => {
+    if (currentSectionIndex < course.sections.length - 1) {
+      // Mark current section as completed
+      const updatedSections = [...course.sections];
+      updatedSections[currentSectionIndex].completed = true;
+      
+      setCourse({
+        ...course,
+        sections: updatedSections,
+        progress: ((currentSectionIndex + 1) / course.sections.length) * 100
       });
-
-      // Check if module has a quiz
-      if (currentModule.quizzes && currentModule.quizzes.length > 0) {
-        setQuizAnswers(new Array(currentModule.quizzes[0].questions.length).fill(-1));
-        setQuizResults(null);
-        setShowQuiz(true);
-      } else if (nextModuleIndex < course.modules.length) {
-        // Move to next module if no quiz
-        setCurrentModuleIndex(nextModuleIndex);
-        setProgress(newProgress);
-      } else {
-        // Course completed
-        setShowCompletion(true);
-        setProgress(100);
-      }
-    } catch (error) {
-      console.error('Error updating progress:', error);
-      // Still allow UI to proceed even if API update fails
-
-      const nextModuleIndex = currentModuleIndex + 1;
-      const currentModule = course.modules[currentModuleIndex];
-
-      if (currentModule.quizzes && currentModule.quizzes.length > 0) {
-        setQuizAnswers(new Array(currentModule.quizzes[0].questions.length).fill(-1));
-        setQuizResults(null);
-        setShowQuiz(true);
-      } else if (nextModuleIndex < course.modules.length) {
-        setCurrentModuleIndex(nextModuleIndex);
-      } else {
-        setShowCompletion(true);
-      }
+      
+      setCurrentSectionIndex(currentSectionIndex + 1);
+      
+      // Scroll to top when moving to next section
+      window.scrollTo(0, 0);
     }
   };
 
-  const goToPreviousModule = () => {
-    if (currentModuleIndex > 0) {
-      setCurrentModuleIndex(currentModuleIndex - 1);
-      setQuizResults(null);
-      setShowQuiz(false);
+  const handlePreviousSection = () => {
+    if (currentSectionIndex > 0) {
+      setCurrentSectionIndex(currentSectionIndex - 1);
+      // Scroll to top when moving to previous section
+      window.scrollTo(0, 0);
     }
   };
 
-  // Handle quiz answer selection
-  const handleAnswerSelect = (questionIndex: number, answerIndex: number) => {
-    const newAnswers = [...quizAnswers];
-    newAnswers[questionIndex] = answerIndex;
-    setQuizAnswers(newAnswers);
-  };
-
-  // Handle quiz submission
-  const handleQuizSubmit = async () => {
-    if (!course) return;
-
-    const currentModule = course.modules[currentModuleIndex];
-    const quiz = currentModule.quizzes?.[0];
-
-    if (!quiz) return;
-
-    // Calculate score
-    let correctAnswers = 0;
-    quiz.questions.forEach((question, index) => {
-      if (quizAnswers[index] === question.correctAnswerIndex) {
-        correctAnswers++;
-      }
+  const handleCompleteAssessment = () => {
+    // Mark all sections as completed
+    const completedSections = course.sections.map(section => ({ ...section, completed: true }));
+    
+    setCourse({
+      ...course,
+      sections: completedSections,
+      progress: 100
     });
-
-    const score = Math.round((correctAnswers / quiz.questions.length) * 100);
-    const passed = score >= quiz.passingScore;
-
-    try {
-      // Submit quiz results to API
-      await submitQuizResults(course.id, quiz.id, {
-        score,
-        passed,
-        answers: quizAnswers,
-      });
-
-      // Update local state with results
-      setQuizResults({
-        score,
-        passed,
-        feedback: passed
-          ? 'Congratulations! You passed the quiz.'
-          : `You didn't meet the passing score of ${quiz.passingScore}%. Please review the material and try again.`,
-      });
-
-      // If passed, update progress and move to next module
-      if (passed) {
-        const nextModuleIndex = currentModuleIndex + 1;
-
-        // Calculate new progress percentage
-        const totalModules = course.modules.length;
-        const newProgress = Math.min(
-          Math.round((nextModuleIndex / totalModules) * 100),
-          99 // Cap at 99% until course is fully completed
-        );
-
-        // Update progress in API
-        await updateTrainingProgress(course.id, {
-          progress: newProgress,
-          status: 'in-progress',
-          moduleId: nextModuleIndex < totalModules ? course.modules[nextModuleIndex].id : null,
-        });
-
-        setProgress(newProgress);
-      }
-    } catch (error) {
-      console.error('Error submitting quiz results:', error);
-
-      // Still update local state even if API call fails
-      setQuizResults({
-        score,
-        passed,
-        feedback: passed
-          ? 'Congratulations! You passed the quiz.'
-          : `You didn't meet the passing score of ${quiz.passingScore}%. Please review the material and try again.`,
-      });
-    }
-  };
-
-  // Handle retrying the quiz
-  const handleRetryQuiz = () => {
-    setQuizAnswers([]);
-    setQuizResults(null);
-  };
-
-  // Handle completing the course
-  const handleCompleteCourse = async () => {
-    if (!course) return;
-
-    try {
-      // Mark course as completed in API
-      await completeCourse(course.id);
-
-      // Update progress to 100%
-      setProgress(100);
-
-      // Navigate back to training portal
-      navigate('/training');
-    } catch (error) {
-      console.error('Error completing course:', error);
-      // Still navigate back even if API call fails
-      navigate('/training');
-    }
+    
+    // Show completion message
+    alert("Congratulations! You've completed the course assessment. Your certificate will be available in your training portal.");
   };
 
   return (
-    <>
-      <Helmet>
-        <title>
-          {course ? `${course.title} | Training Portal` : 'Course Study | Training Portal'}
-        </title>
-      </Helmet>
-
+    <div className="course-study min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
-        {/* Navigation Links */}
-        <div className="mb-8">
-          <div className="flex flex-wrap items-center text-sm text-gray-600">
-            <Link to="/training" className="hover:text-blue-600">
-              Training Portal
-            </Link>
-            <span className="mx-2">›</span>
-            <span className="text-gray-800">{course?.title || 'Loading Course...'}</span>
-          </div>
+        <div className="mb-6">
+          <Link to="/training" className="text-blue-600 hover:underline">
+            &larr; Back to Training Portal
+          </Link>
         </div>
 
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
+        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+          <div className="p-6 border-b border-gray-200">
+            <h1 className="text-2xl font-bold" data-testid="course-title">{course.title}</h1>
+            <p className="text-gray-600 mt-2">{course.description}</p>
           </div>
-        ) : error ? (
-          <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-800">{error}</div>
-        ) : course ? (
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-            {/* Course Sidebar */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-8 overflow-hidden rounded-lg bg-white shadow-md">
-                <div className="border-b border-blue-100 bg-blue-50 p-4">
-                  <h2 className="font-bold text-gray-900">{course.title}</h2>
-                  <div className="mt-2 flex items-center text-sm">
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                      {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                    </span>
-                    <span className="ml-2 text-gray-500">
-                      {Math.floor(course.duration / 60)}h {course.duration % 60}m
-                    </span>
-                  </div>
-                </div>
 
-                <div className="p-4">
-                  <div className="mb-4">
-                    <div className="mb-1 flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-700">Course Progress</span>
-                      <span className="text-sm font-medium text-gray-700">{progress}%</span>
-                    </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                      <div className="h-full bg-blue-500" style={{ width: `${progress}%` }}></div>
-                    </div>
-                  </div>
-
-                  <h3 className="mb-2 font-medium text-gray-900">Modules</h3>
-                  <ul className="space-y-1">
-                    {course.modules.map((module, index) => (
-                      <li key={module.id}>
-                        <button
-                          onClick={() => {
-                            setCurrentModuleIndex(index);
-                            setQuizResults(null);
-                            setShowQuiz(false);
-                            setShowCompletion(false);
-                          }}
-                          className={`w-full rounded px-3 py-2 text-left text-sm ${
-                            currentModuleIndex === index
-                              ? 'bg-blue-100 font-medium text-blue-700'
-                              : 'text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          <div className="flex items-center">
-                            <span className="mr-2 flex-shrink-0">{index + 1}.</span>
-                            <span className="truncate">{module.title}</span>
-                          </div>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+          <div className="p-4 bg-gray-100 border-b border-gray-200">
+            <div className="flex items-center">
+              <div className="flex-grow">
+                <div className="w-full bg-gray-300 rounded-full h-2.5">
+                  <div
+                    className="bg-blue-600 h-2.5 rounded-full"
+                    style={{ width: `${course.progress}%` }}
+                  ></div>
                 </div>
               </div>
+              <div className="ml-4 whitespace-nowrap">
+                <span className="font-medium">{Math.round(course.progress)}% Complete</span>
+              </div>
             </div>
+          </div>
 
-            {/* Course Content */}
-            <div className="lg:col-span-3">
-              <div className="overflow-hidden rounded-lg bg-white shadow-md">
-                {showCompletion ? (
-                  <div className="p-8 text-center">
-                    <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100">
-                      <svg
-                        className="h-10 w-10 text-green-600"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5 13l4 4L19 7"
-                        />
-                      </svg>
-                    </div>
-                    <h2 className="mb-2 text-2xl font-bold text-gray-900">Course Completed!</h2>
-                    <p className="mb-6 text-gray-600">
-                      Congratulations on completing {course.title}. You've successfully finished all
-                      modules and passed all quizzes.
-                    </p>
-                    <div className="mb-6 inline-block rounded-lg bg-blue-50 p-4">
-                      <p className="font-medium text-blue-800">
-                        Your certification is valid for 1 year from today.
-                      </p>
-                    </div>
+          <div className="flex border-b border-gray-200">
+            <div className="w-1/4 border-r border-gray-200 bg-gray-50 p-4 overflow-y-auto" style={{ maxHeight: '600px' }}>
+              <h2 className="font-semibold text-lg mb-4">Course Content</h2>
+              <ul className="space-y-2">
+                {course.sections.map((section, index) => (
+                  <li key={section.id} className="py-1">
                     <button
-                      onClick={handleCompleteCourse}
-                      className="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                      onClick={() => setCurrentSectionIndex(index)}
+                      className={`w-full text-left px-3 py-2 rounded ${
+                        currentSectionIndex === index
+                          ? 'bg-blue-100 text-blue-700'
+                          : 'hover:bg-gray-200'
+                      }`}
+                      data-testid={`section-${index + 1}-btn`}
                     >
-                      Return to Training Portal
-                    </button>
-                  </div>
-                ) : showQuiz && currentModule?.quizzes ? (
-                  <div className="p-6">
-                    <div className="mb-6">
-                      <h2 className="mb-2 text-xl font-bold text-gray-900">Module Quiz</h2>
-                      <p className="text-gray-600">
-                        Complete this quiz to test your knowledge of {currentModule.title}.
-                        {currentModule.quizzes[0].passingScore && (
-                          <span> You need {currentModule.quizzes[0].passingScore}% to pass.</span>
+                      <div className="flex items-center">
+                        <span className="flex-grow truncate">{section.title}</span>
+                        {section.completed && (
+                          <span className="ml-2 text-green-600">✓</span>
                         )}
-                      </p>
-                    </div>
-
-                    {quizResults ? (
-                      <div
-                        className={`mb-8 rounded-lg p-4 ${
-                          quizResults.passed
-                            ? 'border border-green-200 bg-green-50'
-                            : 'border border-red-200 bg-red-50'
-                        }`}
-                      >
-                        <div className="flex items-start">
-                          {quizResults.passed ? (
-                            <svg
-                              className="mr-2 mt-0.5 h-5 w-5 text-green-600"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                          ) : (
-                            <svg
-                              className="mr-2 mt-0.5 h-5 w-5 text-red-600"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M6 18L18 6M6 6l12 12"
-                              />
-                            </svg>
-                          )}
-                          <div>
-                            <h3
-                              className={`font-medium ${quizResults.passed ? 'text-green-800' : 'text-red-800'}`}
-                            >
-                              {quizResults.passed ? 'Quiz Passed!' : 'Quiz Failed'}
-                            </h3>
-                            <p
-                              className={`mt-1 text-sm ${quizResults.passed ? 'text-green-700' : 'text-red-700'}`}
-                            >
-                              Your score: {quizResults.score}%
-                            </p>
-                            <p
-                              className={`mt-2 text-sm ${quizResults.passed ? 'text-green-700' : 'text-red-700'}`}
-                            >
-                              {quizResults.feedback}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 flex justify-end">
-                          {quizResults.passed ? (
-                            <button
-                              onClick={goToNextModule}
-                              className="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
-                            >
-                              Continue
-                            </button>
-                          ) : (
-                            <button
-                              onClick={handleRetryQuiz}
-                              className="inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700"
-                            >
-                              Try Again
-                            </button>
-                          )}
-                        </div>
                       </div>
-                    ) : (
-                      <div className="space-y-8">
-                        {currentModule.quizzes[0].questions.map((question, questionIndex) => (
-                          <div key={question.id} className="rounded-lg border border-gray-200 p-4">
-                            <h3 className="mb-3 font-medium text-gray-900">
-                              {questionIndex + 1}. {question.question}
-                            </h3>
-                            <div className="space-y-2">
-                              {question.options.map((option, optionIndex) => (
-                                <div key={optionIndex} className="flex items-center">
-                                  <input
-                                    id={`question-${questionIndex}-option-${optionIndex}`}
-                                    type="radio"
-                                    name={`question-${questionIndex}`}
-                                    className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-500"
-                                    checked={quizAnswers[questionIndex] === optionIndex}
-                                    onChange={() => handleAnswerSelect(questionIndex, optionIndex)}
-                                  />
-                                  <label
-                                    htmlFor={`question-${questionIndex}-option-${optionIndex}`}
-                                    className="ml-3 block text-sm text-gray-700"
-                                  >
-                                    {option}
-                                  </label>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                        <div className="flex justify-end">
-                          <button
-                            onClick={handleQuizSubmit}
-                            disabled={
-                              quizAnswers.length !== currentModule.quizzes[0].questions.length
-                            }
-                            className="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-                          >
-                            Submit Quiz
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ) : currentModule ? (
-                  <div className="p-6">
-                    <div className="mb-6">
-                      <h2 className="mb-2 text-xl font-bold text-gray-900">
-                        {currentModule.title}
-                      </h2>
-                      <div className="text-sm text-gray-500">
-                        Estimated time: {currentModule.timeToComplete} minutes
-                      </div>
-                    </div>
+            <div className="w-3/4 p-6 overflow-y-auto" style={{ maxHeight: '600px' }}>
+              <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: currentSection.content }} />
+              
+              {currentSectionIndex === course.sections.length - 1 && (
+                <div className="mt-6">
+                  <button
+                    onClick={handleCompleteAssessment}
+                    className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+                    data-testid="complete-assessment-btn"
+                  >
+                    Complete Assessment
+                  </button>
+                </div>
+              )}
 
-                    <div
-                      className="prose mb-8 max-w-none"
-                      dangerouslySetInnerHTML={{ __html: currentModule.content }}
-                    />
-
-                    {currentModule.resourceLinks && currentModule.resourceLinks.length > 0 && (
-                      <div className="mb-8 rounded-lg bg-gray-50 p-4">
-                        <h3 className="mb-2 font-medium text-gray-900">Additional Resources</h3>
-                        <ul className="space-y-1">
-                          {currentModule.resourceLinks.map((link, index) => (
-                            <li key={index}>
-                              <a
-                                href={link}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-blue-600 hover:text-blue-800"
-                              >
-                                {link.split('/').pop()}
-                              </a>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <div className="flex justify-between">
-                      <button
-                        onClick={goToPreviousModule}
-                        disabled={currentModuleIndex === 0}
-                        className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-                      >
-                        <svg
-                          className="mr-2 h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                          />
-                        </svg>
-                        Previous
-                      </button>
-
-                      <button
-                        onClick={goToNextModule}
-                        className="inline-flex items-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                      >
-                        {currentModuleIndex === course.modules.length - 1
-                          ? 'Complete Course'
-                          : currentModule.quizzes && currentModule.quizzes.length > 0
-                            ? 'Take Quiz'
-                            : 'Next'}
-                        <svg
-                          className="ml-2 h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                ) : null}
+              <div className="mt-8 flex justify-between">
+                <button
+                  onClick={handlePreviousSection}
+                  disabled={currentSectionIndex === 0}
+                  className={`px-4 py-2 rounded ${
+                    currentSectionIndex === 0
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                      : 'bg-gray-300 text-gray-800 hover:bg-gray-400'
+                  }`}
+                >
+                  Previous
+                </button>
+                
+                {currentSectionIndex < course.sections.length - 1 && (
+                  <button
+                    onClick={handleNextSection}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    data-testid="next-section-btn"
+                  >
+                    Next Section
+                  </button>
+                )}
               </div>
             </div>
           </div>
-        ) : null}
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

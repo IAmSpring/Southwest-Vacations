@@ -1,482 +1,336 @@
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
-import { Link, useNavigate } from 'react-router-dom';
-import { TrainingCourse, EmployeeTraining } from '../sharedTypes';
-import { getCourses, getTrainingProgress } from '../api/training';
+import { Navigate } from 'react-router-dom';
+import { useAuthContext } from '../context/AuthContext';
+
+interface TrainingModule {
+  id: string;
+  title: string;
+  description: string;
+  status: 'not-started' | 'in-progress' | 'completed';
+  completionPercentage: number;
+  certificationDate?: string;
+}
 
 const TrainingPortalPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [courses, setCourses] = useState<TrainingCourse[]>([]);
-  const [myProgress, setMyProgress] = useState<EmployeeTraining[]>([]);
-  const [activeTab, setActiveTab] = useState<'required' | 'all' | 'certified' | 'inProgress'>(
-    'all'
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, currentUser } = useAuthContext();
+  const [modules, setModules] = useState<TrainingModule[]>([]);
+  const [selectedModule, setSelectedModule] = useState<TrainingModule | null>(null);
+  const [employeeList, setEmployeeList] = useState<{ id: number; name: string; email: string }[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAssignModal, setShowAssignModal] = useState(false);
 
-  // Fetch training data on component mount
+  // If not authenticated, redirect to login
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
   useEffect(() => {
-    const fetchTrainingData = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        // Fetch courses and progress data from API
-        const [coursesData, progressData] = await Promise.all([
-          getCourses(),
-          getTrainingProgress(),
-        ]);
-
-        setCourses(coursesData);
-        setMyProgress(progressData);
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Error fetching training data:', error);
-        setError('Failed to load training data. Please try again later.');
-        setIsLoading(false);
-      }
-    };
-
-    fetchTrainingData();
-  }, []);
-
-  // Get progress for a course
-  const getProgressForCourse = (courseId: string): EmployeeTraining | undefined => {
-    return myProgress.find(p => p.courseId === courseId);
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  // Filter courses based on active tab
-  const getFilteredCourses = () => {
-    if (activeTab === 'all') {
-      return courses;
+    // Check if user is admin
+    if (currentUser && currentUser.role === 'admin') {
+      setIsAdmin(true);
     }
 
-    if (activeTab === 'required') {
-      return courses.filter(course => course.category === 'required');
+    // Mock data - in a real app, this would come from an API
+    const mockModules: TrainingModule[] = [
+      {
+        id: 'module-1',
+        title: 'Customer Service Basics',
+        description: 'Learn the fundamentals of providing excellent customer service.',
+        status: 'completed',
+        completionPercentage: 100,
+        certificationDate: '2023-10-15',
+      },
+      {
+        id: 'module-2',
+        title: 'Booking System Training',
+        description: 'Master the Southwest Vacations booking platform.',
+        status: 'in-progress',
+        completionPercentage: 60,
+      },
+      {
+        id: 'module-3',
+        title: 'Travel Package Upselling',
+        description: 'Techniques for recommending premium travel packages.',
+        status: 'not-started',
+        completionPercentage: 0,
+      },
+      {
+        id: 'module-4',
+        title: 'Conflict Resolution',
+        description: 'Handle difficult customer situations with professionalism.',
+        status: 'not-started',
+        completionPercentage: 0,
+      },
+      {
+        id: 'module-5',
+        title: 'Travel Insurance Policies',
+        description: 'Understanding and explaining travel insurance options.',
+        status: 'not-started',
+        completionPercentage: 0,
+      },
+    ];
+
+    // Mock employee data for admin users
+    const mockEmployees = [
+      { id: 1, name: 'John Smith', email: 'john@example.com' },
+      { id: 2, name: 'Sarah Johnson', email: 'sarah@example.com' },
+      { id: 3, name: 'Michael Brown', email: 'michael@example.com' },
+      { id: 4, name: 'Jessica Davis', email: 'jessica@example.com' },
+    ];
+
+    setModules(mockModules);
+    setEmployeeList(mockEmployees);
+  }, [currentUser]);
+
+  const handleStartModule = (moduleId: string) => {
+    setModules(prevModules =>
+      prevModules.map(mod =>
+        mod.id === moduleId
+          ? { ...mod, status: 'in-progress' as const, completionPercentage: 10 }
+          : mod
+      )
+    );
+
+    const moduleToStart = modules.find(m => m.id === moduleId) || null;
+    if (moduleToStart) {
+      setSelectedModule(moduleToStart);
     }
-
-    if (activeTab === 'certified') {
-      const completedCourseIds = myProgress
-        .filter(p => p.status === 'completed')
-        .map(p => p.courseId);
-
-      return courses.filter(course => completedCourseIds.includes(course.id));
-    }
-
-    if (activeTab === 'inProgress') {
-      const inProgressCourseIds = myProgress
-        .filter(p => p.status === 'in-progress')
-        .map(p => p.courseId);
-
-      return courses.filter(course => inProgressCourseIds.includes(course.id));
-    }
-
-    return courses;
   };
 
-  // Handle starting a course
-  const handleStartCourse = (courseId: string) => {
-    navigate(`/training/course/${courseId}`);
+  const handleContinueModule = (moduleId: string) => {
+    const moduleToResume = modules.find(m => m.id === moduleId) || null;
+    if (moduleToResume) {
+      setSelectedModule(moduleToResume);
+    }
   };
 
-  // Handle continuing a course
-  const handleContinueCourse = (courseId: string) => {
-    navigate(`/training/course/${courseId}`);
+  const handleCompleteModule = (moduleId: string) => {
+    const today = new Date().toISOString().split('T')[0];
+
+    setModules(prevModules =>
+      prevModules.map(mod =>
+        mod.id === moduleId
+          ? {
+              ...mod,
+              status: 'completed' as const,
+              completionPercentage: 100,
+              certificationDate: today,
+            }
+          : mod
+      )
+    );
+
+    setSelectedModule(null);
   };
 
-  return (
-    <>
-      <Helmet>
-        <title>Training Portal | Southwest Vacations</title>
-      </Helmet>
+  const handleAssignTraining = (employeeIds: number[], moduleIds: string[]) => {
+    alert(`Training modules assigned to selected employees`);
+    setShowAssignModal(false);
+  };
 
-      <div className="container mx-auto px-4 py-8">
-        {/* Header Section */}
-        <div className="mb-8 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-900 shadow-lg">
-          <div className="p-6 md:p-8">
-            <h1 className="mb-2 text-2xl font-bold text-white md:text-3xl">
-              Southwest Vacations Training Portal
-            </h1>
-            <p className="max-w-3xl text-blue-100">
-              Complete required training and certifications to ensure you're up to date with the
-              latest policies and procedures.
-            </p>
-            <div className="mt-4">
-              <Link
-                to="/policies"
-                className="inline-flex items-center rounded-md border border-transparent bg-white px-4 py-2 text-sm font-medium text-blue-800 shadow-sm hover:bg-blue-50"
-              >
-                View Booking Policies
-              </Link>
-            </div>
-          </div>
+  const handleGenerateReport = () => {
+    // In a real app, this would call an API endpoint to generate a report
+    alert('Certification report generated successfully.');
+  };
 
-          {/* Training Stats */}
-          <div className="border-t border-blue-900 bg-white px-6 py-4">
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-              <div className="rounded-lg bg-blue-50 p-4">
-                <h3 className="text-sm font-medium text-blue-700">Total Courses</h3>
-                <p className="text-2xl font-bold text-blue-900">{courses.length}</p>
-              </div>
-
-              <div className="rounded-lg bg-green-50 p-4">
-                <h3 className="text-sm font-medium text-green-700">Completed</h3>
-                <p className="text-2xl font-bold text-green-900">
-                  {myProgress.filter(p => p.status === 'completed').length}
-                </p>
-              </div>
-
-              <div className="rounded-lg bg-yellow-50 p-4">
-                <h3 className="text-sm font-medium text-yellow-700">In Progress</h3>
-                <p className="text-2xl font-bold text-yellow-900">
-                  {myProgress.filter(p => p.status === 'in-progress').length}
-                </p>
-              </div>
-
-              <div className="rounded-lg bg-red-50 p-4">
-                <h3 className="text-sm font-medium text-red-700">Not Started</h3>
-                <p className="text-2xl font-bold text-red-900">
-                  {myProgress.filter(p => p.status === 'not-started').length}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Course Filters */}
-        <div className="mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-4">
-              <button
-                className={`whitespace-nowrap border-b-2 px-1 pb-3 text-sm font-medium ${
-                  activeTab === 'all'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab('all')}
-              >
-                All Courses
-              </button>
-
-              <button
-                className={`whitespace-nowrap border-b-2 px-1 pb-3 text-sm font-medium ${
-                  activeTab === 'required'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab('required')}
-              >
-                Required
-              </button>
-
-              <button
-                className={`whitespace-nowrap border-b-2 px-1 pb-3 text-sm font-medium ${
-                  activeTab === 'inProgress'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab('inProgress')}
-              >
-                In Progress
-              </button>
-
-              <button
-                className={`whitespace-nowrap border-b-2 px-1 pb-3 text-sm font-medium ${
-                  activeTab === 'certified'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                }`}
-                onClick={() => setActiveTab('certified')}
-              >
-                Completed
-              </button>
-            </nav>
-          </div>
-        </div>
-
-        {/* Course Listings */}
-        {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
-          </div>
-        ) : error ? (
-          <div className="rounded-md border border-red-200 bg-red-50 p-4 text-red-800">{error}</div>
-        ) : getFilteredCourses().length === 0 ? (
-          <div className="rounded-md bg-gray-50 p-12 text-center">
-            <p className="text-lg text-gray-500">No courses found matching your current filter.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {getFilteredCourses().map(course => {
-              const progress = getProgressForCourse(course.id);
-              return (
-                <div
-                  key={course.id}
-                  className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow-md"
-                >
-                  <div className="border-b border-gray-200 p-4">
-                    <div className="flex items-start justify-between">
-                      <h2 className="flex-1 text-lg font-medium text-gray-900">{course.title}</h2>
-                      <span
-                        className={`ml-2 rounded-full px-2 py-1 text-xs font-medium ${
-                          course.category === 'required'
-                            ? 'bg-red-100 text-red-800'
-                            : course.category === 'certification'
-                              ? 'bg-purple-100 text-purple-800'
-                              : 'bg-blue-100 text-blue-800'
-                        }`}
-                      >
-                        {course.category === 'required'
-                          ? 'Required'
-                          : course.category === 'certification'
-                            ? 'Certification'
-                            : 'Optional'}
-                      </span>
-                    </div>
-
-                    <div className="mt-1 flex items-center">
-                      <span
-                        className={`rounded-full px-2 py-1 text-xs font-medium ${
-                          course.level === 'beginner'
-                            ? 'bg-green-100 text-green-800'
-                            : course.level === 'intermediate'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : 'bg-red-100 text-red-800'
-                        }`}
-                      >
-                        {course.level.charAt(0).toUpperCase() + course.level.slice(1)}
-                      </span>
-                      <span className="ml-2 text-sm text-gray-500">
-                        {Math.floor(course.duration / 60)} hours {course.duration % 60} min
-                      </span>
-                    </div>
-
-                    <p className="mt-3 text-sm text-gray-600">{course.description}</p>
-                  </div>
-
-                  <div className="p-4">
-                    {/* Progress Bar */}
-                    <div className="mb-4">
-                      <div className="mb-1 flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-700">
-                          {progress
-                            ? progress.status === 'completed'
-                              ? 'Completed'
-                              : progress.status === 'in-progress'
-                                ? 'In Progress'
-                                : 'Not Started'
-                            : 'Not Started'}
-                        </span>
-                        <span className="text-sm font-medium text-gray-700">
-                          {progress ? `${progress.progress}%` : '0%'}
-                        </span>
-                      </div>
-                      <div className="h-2 overflow-hidden rounded-full bg-gray-200">
-                        <div
-                          className={`h-full ${
-                            progress?.status === 'completed' ? 'bg-green-500' : 'bg-blue-500'
-                          }`}
-                          style={{ width: `${progress?.progress || 0}%` }}
-                        ></div>
-                      </div>
-                    </div>
-
-                    {/* Certification Status */}
-                    {progress?.status === 'completed' && progress.certificationExpiresAt && (
-                      <div className="mb-4 rounded bg-green-50 p-2 text-sm">
-                        <div className="font-medium text-green-800">Certification Valid</div>
-                        <div className="text-green-700">
-                          Expires: {formatDate(progress.certificationExpiresAt)}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Action Button */}
-                    <div className="mt-2">
-                      {!progress || progress.status === 'not-started' ? (
-                        <button
-                          onClick={() => handleStartCourse(course.id)}
-                          className="w-full rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
-                        >
-                          Start Course
-                        </button>
-                      ) : progress.status === 'in-progress' ? (
-                        <button
-                          onClick={() => handleContinueCourse(course.id)}
-                          className="w-full rounded bg-yellow-600 px-4 py-2 text-white transition hover:bg-yellow-700"
-                        >
-                          Continue ({progress.progress}% Complete)
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => handleStartCourse(course.id)}
-                          className="w-full rounded bg-green-600 px-4 py-2 text-white transition hover:bg-green-700"
-                        >
-                          Review Course
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-
-        {/* Upcoming Deadlines Section */}
-        <div className="mt-12 overflow-hidden rounded-lg bg-white shadow-md">
-          <div className="border-b border-yellow-100 bg-yellow-50 px-6 py-4">
-            <h2 className="text-lg font-medium text-yellow-800">
-              Upcoming Certification Deadlines
-            </h2>
-          </div>
-
-          <div className="p-6">
-            <div className="space-y-4">
-              {myProgress
-                .filter(p => p.status === 'completed' && p.certificationExpiresAt)
-                .sort(
-                  (a, b) =>
-                    new Date(a.certificationExpiresAt!).getTime() -
-                    new Date(b.certificationExpiresAt!).getTime()
-                )
-                .slice(0, 3)
-                .map(p => {
-                  const course = courses.find(c => c.id === p.courseId);
-                  const daysRemaining = Math.ceil(
-                    (new Date(p.certificationExpiresAt!).getTime() - Date.now()) /
-                      (1000 * 60 * 60 * 24)
-                  );
-
-                  return (
+  const renderModuleList = () => {
+    return (
+      <div className="module-list">
+        <h2 className="text-xl font-semibold mb-4">Available Training Modules</h2>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {modules.map(module => (
+            <div
+              key={module.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200"
+              data-testid={`training-module-${module.id}`}
+            >
+              <div className="p-4">
+                <h3 className="text-lg font-semibold">{module.title}</h3>
+                <p className="text-gray-600 mt-1">{module.description}</p>
+                <div className="mt-3">
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div
-                      key={p.id}
-                      className="flex items-center justify-between rounded-md bg-gray-50 p-4"
+                      className="bg-blue-600 h-2.5 rounded-full"
+                      style={{ width: `${module.completionPercentage}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between mt-1">
+                    <span className="text-sm text-gray-500">
+                      {module.completionPercentage}% Complete
+                    </span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {module.status === 'not-started' && 'Not Started'}
+                      {module.status === 'in-progress' && 'In Progress'}
+                      {module.status === 'completed' && 'Completed'}
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-4">
+                  {module.status === 'not-started' ? (
+                    <button
+                      onClick={() => handleStartModule(module.id)}
+                      className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                      data-testid={`start-module-${module.id}`}
                     >
-                      <div>
-                        <h3 className="font-medium">{course?.title || 'Unknown Course'}</h3>
-                        <p className="text-sm text-gray-500">
-                          Expires: {formatDate(p.certificationExpiresAt!)}
-                        </p>
-                      </div>
-
-                      <div
-                        className={`text-sm font-medium ${
-                          daysRemaining < 30
-                            ? 'text-red-600'
-                            : daysRemaining < 90
-                              ? 'text-yellow-600'
-                              : 'text-green-600'
-                        }`}
-                      >
-                        {daysRemaining} days remaining
-                      </div>
+                      Start Training
+                    </button>
+                  ) : module.status === 'in-progress' ? (
+                    <button
+                      onClick={() => handleContinueModule(module.id)}
+                      className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                      data-testid={`continue-module-${module.id}`}
+                    >
+                      Continue Training
+                    </button>
+                  ) : (
+                    <div className="text-center">
+                      <span className="text-green-600 font-medium">
+                        Certified on {module.certificationDate}
+                      </span>
                     </div>
-                  );
-                })}
-
-              {myProgress.filter(p => p.status === 'completed' && p.certificationExpiresAt)
-                .length === 0 && (
-                <p className="py-4 text-center text-gray-500">
-                  No upcoming certification deadlines.
-                </p>
-              )}
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
+      </div>
+    );
+  };
 
-        {/* Booking Policies Section */}
-        <div className="mt-12 overflow-hidden rounded-lg bg-white shadow-md">
-          <div className="border-b border-blue-100 bg-blue-50 px-6 py-4">
-            <h2 className="text-lg font-medium text-blue-800">Booking Policies</h2>
+  const renderSelectedModule = () => {
+    if (!selectedModule) return null;
+
+    return (
+      <div className="module-content bg-white p-6 rounded-lg shadow-md border border-gray-200">
+        <h2 className="text-2xl font-bold mb-4">{selectedModule.title}</h2>
+        <div className="mb-6">
+          <p className="text-gray-700">
+            This is the content for the {selectedModule.title} training module. In a real
+            application, this would include videos, interactive exercises, quizzes, and other
+            training materials.
+          </p>
+        </div>
+        <div className="mt-8 flex justify-between">
+          <button
+            onClick={() => setSelectedModule(null)}
+            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
+          >
+            Back to Modules
+          </button>
+          <button
+            onClick={() => handleCompleteModule(selectedModule.id)}
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            data-testid={`complete-module-${selectedModule.id}`}
+          >
+            Mark as Complete
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderAdminControls = () => {
+    if (!isAdmin) return null;
+
+    return (
+      <div className="admin-controls bg-white p-6 rounded-lg shadow-md border border-gray-200 mt-6">
+        <h2 className="text-xl font-semibold mb-4">Admin Controls</h2>
+        <div className="flex space-x-4">
+          <button
+            onClick={() => setShowAssignModal(true)}
+            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            data-testid="assign-training-btn"
+          >
+            Assign Training
+          </button>
+          <button
+            onClick={handleGenerateReport}
+            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            data-testid="generate-report-btn"
+          >
+            Generate Certification Report
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderAssignModal = () => {
+    if (!showAssignModal) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-6 rounded-lg w-full max-w-md">
+          <h2 className="text-xl font-semibold mb-4">Assign Training Modules</h2>
+          
+          <div className="mb-4">
+            <h3 className="font-medium mb-2">Select Employees</h3>
+            <div className="space-y-2">
+              {employeeList.map(employee => (
+                <div key={employee.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`employee-${employee.id}`}
+                    className="mr-2"
+                    data-testid={`employee-checkbox-${employee.id}`}
+                  />
+                  <label htmlFor={`employee-${employee.id}`}>
+                    {employee.name} ({employee.email})
+                  </label>
+                </div>
+              ))}
+            </div>
           </div>
-
-          <div className="p-6">
-            <div className="space-y-4">
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <div className="flex justify-between">
-                  <h3 className="font-medium">General Booking Terms & Conditions</h3>
-                  <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                    v2.1
-                  </span>
+          
+          <div className="mb-6">
+            <h3 className="font-medium mb-2">Select Modules</h3>
+            <div className="space-y-2">
+              {modules.map(module => (
+                <div key={module.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id={`module-${module.id}`}
+                    className="mr-2"
+                    data-testid={`module-checkbox-${module.id}`}
+                  />
+                  <label htmlFor={`module-${module.id}`}>{module.title}</label>
                 </div>
-                <p className="mt-2 text-sm text-gray-600">
-                  These terms and conditions govern all bookings made through Southwest Vacations...
-                </p>
-                <div className="mt-4 flex justify-end">
-                  <Link
-                    to="/policies/general"
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                  >
-                    View Policy
-                  </Link>
-                </div>
-              </div>
-
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <div className="flex justify-between">
-                  <h3 className="font-medium">Refund & Cancellation Policy</h3>
-                  <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                    v3.2
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-gray-600">
-                  Customers may cancel their booking and receive a full refund within 24 hours of
-                  booking...
-                </p>
-                <div className="mt-4 flex justify-end">
-                  <Link
-                    to="/policies/refunds"
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                  >
-                    View Policy
-                  </Link>
-                </div>
-              </div>
-
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <div className="flex justify-between">
-                  <h3 className="font-medium">Multi-destination Booking Guidelines</h3>
-                  <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
-                    v1.5 - Updated
-                  </span>
-                </div>
-                <p className="mt-2 text-sm text-gray-600">
-                  When booking multi-destination itineraries, each segment must have valid
-                  connecting options...
-                </p>
-                <div className="mt-4 flex justify-end">
-                  <Link
-                    to="/policies/multi-destination"
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                  >
-                    View Policy
-                  </Link>
-                </div>
-              </div>
+              ))}
             </div>
-
-            <div className="mt-6 flex justify-center">
-              <Link
-                to="/policies"
-                className="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
-              >
-                View All Policies
-              </Link>
-            </div>
+          </div>
+          
+          <div className="flex justify-end space-x-3">
+            <button
+              onClick={() => setShowAssignModal(false)}
+              className="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleAssignTraining([1, 2], ['module-1', 'module-2'])}
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              data-testid="confirm-assign-btn"
+            >
+              Assign
+            </button>
           </div>
         </div>
       </div>
-    </>
+    );
+  };
+
+  return (
+    <div className="training-portal min-h-screen bg-gray-50 p-6">
+      <div className="container mx-auto">
+        <h1 className="text-2xl font-bold mb-6">Employee Training Portal</h1>
+        
+        {selectedModule ? renderSelectedModule() : renderModuleList()}
+        
+        {renderAdminControls()}
+        {renderAssignModal()}
+      </div>
+    </div>
   );
 };
 

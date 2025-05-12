@@ -21,6 +21,7 @@ import AnalyticsDashboardPage from './pages/AnalyticsDashboardPage';
 import NotificationsPage from './pages/NotificationsPage';
 import NotificationPreferencesPage from './pages/NotificationPreferencesPage';
 import CheckoutPage from './pages/CheckoutPage';
+import MultiPassengerBookingPage from './pages/MultiPassengerBookingPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import SystemCheck from './components/SystemCheck';
@@ -45,6 +46,7 @@ const App: React.FC = () => {
             <Route path="/admin" element={<AdminPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/multi-passenger-booking/:tripId" element={<MultiPassengerBookingPage />} />
             <Route path="/search" element={<SearchPage />} />
             <Route path="/training" element={<TrainingPortalPage />} />
             <Route path="/training/course/:courseId" element={<CourseStudyPage />} />
