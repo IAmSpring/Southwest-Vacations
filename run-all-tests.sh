@@ -7,7 +7,7 @@ echo "🧪 Starting Southwest Vacations E2E Test Suite"
 
 # Kill any processes that might be using our ports
 echo "Cleaning up any existing processes..."
-pkill -f "node simple-backend.js" || true
+pkill -f "node simple-test-backend.js" || true
 pkill -f "npm run dev" || true
 sleep 2
 

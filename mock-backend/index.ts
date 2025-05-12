@@ -3,7 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import morgan from 'morgan';
 import fs from 'fs';
-import { generateSeedUsers } from './seedData.js';
+import * as seedDataModule from './seedData.js';
 import * as dbModule from './db.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -11,6 +11,8 @@ console.log('Starting server initialization...');
 
 // Cast the db module to any type to handle both default and named exports
 const db = dbModule.default || (dbModule as any);
+// Get generateSeedUsers from seedData module
+const { generateSeedUsers } = seedDataModule;
 
 // Startup validation - test file system access
 const tempDir = path.join(process.cwd(), 'temp');
@@ -174,22 +176,30 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Import routes
-import tripsRouter from './routes/trips.js';
+import * as tripsModule from './routes/trips.js';
 import * as bookingsModule from './routes/bookings.js';
-import favoritesRouter from './routes/favorites.js';
-import usersRouter from './routes/users.js';
+import * as favoritesModule from './routes/favorites.js';
+import * as usersModule from './routes/users.js';
 import * as adminModule from './routes/admin.js';
-import trainingRouter from './routes/training.js';
-import notificationsRouter from './routes/notifications.js';
-import rolesRouter from './routes/roles.js';
+import * as trainingModule from './routes/training.js';
+import * as notificationsModule from './routes/notifications.js';
+import * as rolesModule from './routes/roles.js';
 import * as auditModule from './routes/audit.js';
-import twoFactorRouter from './routes/two-factor.js';
-import promotionsRouter from './routes/promotions.js';
+import * as twoFactorModule from './routes/two-factor.js';
+import * as promotionsModule from './routes/promotions.js';
 
-// Create router instances for modules without default exports
-const adminRouter = adminModule.default || (adminModule as any);
-const auditRouter = auditModule.default || (auditModule as any);
+// Create router instances for all modules, handling both default and named exports
+const tripsRouter = tripsModule.default || (tripsModule as any);
 const bookingsRouter = bookingsModule.default || (bookingsModule as any);
+const favoritesRouter = favoritesModule.default || (favoritesModule as any);
+const usersRouter = usersModule.default || (usersModule as any);
+const adminRouter = adminModule.default || (adminModule as any);
+const trainingRouter = trainingModule.default || (trainingModule as any);
+const notificationsRouter = notificationsModule.default || (notificationsModule as any);
+const rolesRouter = rolesModule.default || (rolesModule as any);
+const auditRouter = auditModule.default || (auditModule as any);
+const twoFactorRouter = twoFactorModule.default || (twoFactorModule as any);
+const promotionsRouter = promotionsModule.default || (promotionsModule as any);
 
 // Routes
 app.use('/api/trips', tripsRouter);

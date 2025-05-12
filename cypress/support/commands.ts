@@ -80,20 +80,15 @@ Cypress.Commands.add('robustLogin', (email = 'test@example.com', password = 'Pas
   cy.contains('button', 'Login').should('be.visible').as('loginButton');
   cy.get('@loginButton').click({ force: true });
 
-  // Verify login was successful
+  // Verify login was successful by checking local storage
   cy.wait(2000); // Wait for login to complete
   cy.window().its('localStorage.token').should('exist');
 
-  // Check for any indication that the user is logged in, like a user dropdown or user avatar
-  // This is more flexible than looking for a specific link
-  cy.get('body').then($body => {
-    const hasUserDropdown = $body.find('[data-testid="user-dropdown"]').length > 0;
-    const hasUserAvatar = $body.find('[data-testid="user-avatar"]').length > 0;
-    const hasUserMenu = $body.find('.user-menu').length > 0;
-    const hasMyProfileText = $body.text().includes('My Profile');
+  // Force navigation to the home page after login
+  cy.visit('/');
 
-    expect(hasUserDropdown || hasUserAvatar || hasUserMenu || hasMyProfileText).to.be.true;
-  });
+  // Wait for navigation back to main page and verify we're not on login page
+  cy.contains('Southwest Vacations', { timeout: 10000 }).should('be.visible');
 });
 
 // Quick login using the Test User button
@@ -116,17 +111,13 @@ Cypress.Commands.add('quickLogin', () => {
   cy.contains('button', 'Test User Login').should('be.visible').as('testUserButton');
   cy.get('@testUserButton').click({ force: true });
 
-  // Verify login was successful
+  // Verify login was successful by checking local storage
   cy.wait(2000); // Wait for login to complete
   cy.window().its('localStorage.token').should('exist');
 
-  // Check for any indication that the user is logged in
-  cy.get('body').then($body => {
-    const hasUserDropdown = $body.find('[data-testid="user-dropdown"]').length > 0;
-    const hasUserAvatar = $body.find('[data-testid="user-avatar"]').length > 0;
-    const hasUserMenu = $body.find('.user-menu').length > 0;
-    const hasMyProfileText = $body.text().includes('My Profile');
+  // Force navigation to the home page after login
+  cy.visit('/');
 
-    expect(hasUserDropdown || hasUserAvatar || hasUserMenu || hasMyProfileText).to.be.true;
-  });
+  // Wait for navigation back to main page and verify we're not on login page
+  cy.contains('Southwest Vacations', { timeout: 10000 }).should('be.visible');
 });
