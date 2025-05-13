@@ -2,6 +2,8 @@
 
 A full-stack vacation booking application built with React, TypeScript, and Express, featuring a persistent database for storing user data, bookings, and favorites.
 
+![SouthwestAirlinesVacations](https://github.com/user-attachments/assets/3cf8207c-15c2-4514-ac29-09dca386249e)
+
 ## Features
 
 - Complete vacation booking experience
@@ -12,7 +14,7 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - Responsive design for all devices
 - AI-powered assistant with personalized trip recommendations
 
-![Southwest Vacations Landing Page](https://github.com/user-attachments/assets/44142e17-0920-404b-a650-858a5bfaae4d)
+
 
 ## Tech Stack
 
