@@ -14,6 +14,7 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - Responsive design for all devices
 - AI-powered assistant with personalized trip recommendations
 
+# Vacation Bookings
 ![Bookings](https://github.com/user-attachments/assets/b65d444e-c951-4aa3-bcf1-630f5dd44c12)
 
 
@@ -34,7 +35,8 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - JWT for authentication
 - TypeScript for type safety
 - OpenAI API integration for AI assistant
-  
+
+# Analytics
 ![Analytics](https://github.com/user-attachments/assets/efc7fd45-6870-4a43-adf7-939d77df9032)
 
 
