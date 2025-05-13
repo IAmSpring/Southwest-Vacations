@@ -10,7 +10,6 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - Favorites system for saving trips
 - Modern UI with Southwest Airlines branding
 - Responsive design for all devices
-- AI-powered assistant with personalized trip recommendations
 
 ![Southwest Vacations Landing Page](https://github.com/user-attachments/assets/44142e17-0920-404b-a650-858a5bfaae4d)
 
@@ -30,7 +29,6 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - LowDB for persistent JSON storage
 - JWT for authentication
 - TypeScript for type safety
-- OpenAI API integration for AI assistant
 
 ## Getting Started
 
@@ -64,15 +62,6 @@ This will launch both the frontend and backend with colored output in a single t
 
 - Frontend: [http://localhost:5173](http://localhost:5173)
 - Backend API: [http://localhost:4000](http://localhost:4000)
-
-### Environment Setup
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-OPENAI_API_KEY=your_openai_api_key
-OPENAI_ASSISTANT_ID=asst_Le5hAPkk1mriAIVsRK06qGsm
-```
 
 ## API Endpoints
 
@@ -289,30 +278,6 @@ We've made significant improvements to the testing infrastructure to make it mor
 
 For more details on testing, see the [Testing Guide](./README-testing.md).
 
-### AI Assistant Integration
-
-We've added a powerful AI assistant feature to enhance the user experience:
-
-- **Interactive Chat Bubble**: AI assistant appears in the bottom right corner of the UI
-- **OpenAI Integration**: Powered by GPT-4o for intelligent, contextual responses
-- **JSON Response Structure**: Provides structured guidance with suggestions for next steps
-- **Dual Functionality**:
-  - **User Assistant**: Helps with finding destinations, booking flow, and travel questions
-  - **Admin Assistant**: Provides system analytics and advanced debugging capabilities
-- **Thread Management**: Maintains conversation history for context-aware responses
-- **Smart Suggestions**: Offers clickable suggestion chips for seamless user guidance
-
-For detailed information on the AI assistant implementation and usage, see the [AI Assistant Guide](./AI_ASSISTANT_USAGE.md).
-
-### Clean Startup Script
-
-Added a comprehensive `clean-startup.sh` script that:
-
-- Checks for running services on required ports
-- Starts services in the correct sequence
-- Runs validation tests to ensure all components are working correctly
-- Can be run with `npm run clean-start`
-
 ---
 
 ## 🔧 Tech Stack Overview
@@ -344,17 +309,10 @@ npm run dev
 ```
 .
 ├── README.md
-├── AI_ASSISTANT_USAGE.md     # AI assistant documentation
-├── clean-startup.sh          # Clean startup script
 ├── mock-backend/            # Node backend
 │   ├── index.ts             # Express server
-│   ├── ai.ts                # AI assistant backend routes
-│   ├── admin-ai.ts          # Admin AI routes
 │   ├── seedData.json        # Mock data
 ├── src/
-│   ├── components/
-│   │   ├── AIAssistant.tsx  # AI chat bubble component
-│   │   └── ...
 │   └── sharedTypes.ts       # Shared trip/booking types
 ├── vite.config.ts
 ├── package.json             # Root with scripts for both apps
@@ -367,12 +325,6 @@ npm run dev
 - `GET /trips`
 - `GET /trips/:tripId`
 - `POST /bookings`
-- `GET /api/ai/threads` - Get all conversation threads for current user
-- `POST /api/ai/threads` - Create a new conversation thread
-- `GET /api/ai/threads/:threadId` - Get a specific thread with messages
-- `POST /api/ai/threads/:threadId/messages` - Send a message and get AI response
-- `GET /api/admin/ai/threads` - Get all user threads (admin only)
-- `GET /api/admin/ai/threads/:threadId` - Get detailed thread data (admin only)
 
 Backed by `seedData.json`.
 
@@ -386,10 +338,7 @@ Backed by `seedData.json`.
   "build": "vite build",
   "start": "node dist/index.js",
   "test": "jest",
-  "cypress": "cypress open",
-  "clean-start": "bash clean-startup.sh",
-  "test-ai-assistant": "jest --testPathPattern=ai-assistant",
-  "dev:ai": "ts-node mock-backend/ai.ts"
+  "cypress": "cypress open"
 }
 ```
 

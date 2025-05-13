@@ -56,14 +56,14 @@ router.post('/login', async (req, res) => {
 });
 
 // Get current user profile
-router.get('/me', (req, res) => {
+router.get('/me', async (req, res) => {
   try {
     const userId = extractUserId(req);
     if (!userId) {
       return res.status(401).json({ error: 'Authentication required' });
     }
     
-    const user = getUserById(userId);
+    const user = await getUserById(userId);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -78,7 +78,7 @@ router.get('/me', (req, res) => {
 });
 
 // Get user bookings for Manage Vacations page
-router.get('/:userId/bookings', (req, res) => {
+router.get('/:userId/bookings', async (req, res) => {
   try {
     const { userId } = req.params;
     const currentUserId = extractUserId(req);
@@ -88,16 +88,14 @@ router.get('/:userId/bookings', (req, res) => {
       return res.status(401).json({ error: 'Unauthorized access' });
     }
     
+    await db.read();
+    
     // Get all bookings for this user
-    const bookings = db.get('bookings')
-      .filter({ userId: userId })
-      .value();
+    const bookings = db.data.bookings.filter(booking => booking.userId === userId);
       
     // Get trip details for each booking
     const bookingsWithDetails = bookings.map(booking => {
-      const trip = db.get('trips')
-        .find({ id: booking.tripId })
-        .value();
+      const trip = db.data.trips.find(trip => trip.id === booking.tripId);
         
       return {
         ...booking,

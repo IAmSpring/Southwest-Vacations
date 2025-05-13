@@ -5,7 +5,8 @@ import morgan from 'morgan';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import { generateSeedUsers } from './seedData.js';
+import * as seedDataModule from './seedData.js';
+const { generateSeedUsers } = seedDataModule;
 import db from './db.js';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -57,9 +58,11 @@ console.log('Loading database...');
 // Add test users if they don't exist
 async function initializeUsers() {
   try {
+    await db.read();
+
     // Check if users already exist
-    const testUser = db.get('users').find({ email: 'test@example.com' }).value();
-    const adminUser = db.get('users').find({ email: 'admin@example.com' }).value();
+    const testUser = db.data.users.find(user => user.email === 'test@example.com');
+    const adminUser = db.data.users.find(user => user.email === 'admin@example.com');
 
     // Only generate if users don't exist
     if (!testUser || !adminUser) {
@@ -69,14 +72,17 @@ async function initializeUsers() {
       // Add users to database if they don't exist
       users.forEach(user => {
         if (user.email === 'test@example.com' && !testUser) {
-          db.get('users').push(user).write();
+          db.data.users.push(user);
           console.log(`✅ Test user created: ${user.email}`);
         }
         if (user.email === 'admin@example.com' && !adminUser) {
-          db.get('users').push(user).write();
+          db.data.users.push(user);
           console.log(`✅ Admin user created: ${user.email}`);
         }
       });
+
+      // Save changes
+      await db.write();
     } else {
       console.log('Test users already exist in the database');
     }
@@ -91,8 +97,10 @@ await initializeUsers();
 // Initialize promotions if they don't exist
 async function initializePromotions() {
   try {
+    await db.read();
+
     // Check if promotions already exist
-    const existingPromotions = db.get('promotions').value();
+    const existingPromotions = db.data.promotions;
 
     if (!existingPromotions || existingPromotions.length === 0) {
       console.log('Generating seed promotions...');
@@ -142,8 +150,11 @@ async function initializePromotions() {
 
       // Add to database
       promotions.forEach(promo => {
-        db.get('promotions').push(promo).write();
+        db.data.promotions.push(promo);
       });
+
+      // Save changes
+      await db.write();
 
       console.log(`✅ Added ${promotions.length} initial promotions`);
     } else {
@@ -178,8 +189,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Import routes
-import tripsRouter from './routes/trips.js';
-import usersRouter from './routes/users.js';
+import * as tripsModule from './routes/trips.js';
+import * as usersModule from './routes/users.js';
 
 // Only include routes that have been converted to ES modules
 app.use('/api/trips', tripsRouter);
@@ -200,6 +211,24 @@ try {
   console.log('✅ Loaded bookings router');
 } catch (e: any) {
   console.warn('⚠️ Bookings router not available:', e.message);
+}
+
+// Add AI assistant router
+try {
+  const aiRouter = await import('./routes/ai.js').then(m => m.default);
+  app.use('/api/ai', aiRouter);
+  console.log('✅ Loaded AI assistant router');
+} catch (e: any) {
+  console.warn('⚠️ AI assistant router not available:', e.message);
+}
+
+// Add Admin AI router for admin/ai/* routes
+try {
+  const adminAiRouter = await import('./routes/admin-ai.js').then(m => m.default);
+  app.use('/api/admin', adminAiRouter);
+  console.log('✅ Loaded Admin AI router');
+} catch (e: any) {
+  console.warn('⚠️ Admin AI router not available:', e.message);
 }
 
 // Comment out other routes until they're converted to ES modules

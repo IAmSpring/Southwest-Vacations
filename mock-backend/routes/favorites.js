@@ -17,20 +17,18 @@ const authMiddleware = (req, res, next) => {
 };
 
 // Get all favorites for a user
-router.get('/:userId', (req, res) => {
+router.get('/:userId', async (req, res) => {
     try {
+        await db.read();
+        
         const userId = req.params.userId;
         
         // Get user's favorites
-        const favorites = db.get('favorites')
-            .filter({ userId })
-            .value();
+        const favorites = db.data.favorites.filter(favorite => favorite.userId === userId);
         
         // For each favorite, fetch the trip details
         const favoritesWithDetails = favorites.map(favorite => {
-            const trip = db.get('trips')
-                .find({ id: favorite.tripId })
-                .value();
+            const trip = db.data.trips.find(trip => trip.id === favorite.tripId);
             
             return {
                 ...favorite,
@@ -46,8 +44,10 @@ router.get('/:userId', (req, res) => {
 });
 
 // Add a trip to favorites
-router.post('/', authMiddleware, (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
     try {
+        await db.read();
+        
         const { userId, tripId } = req.body;
         
         // Validate required fields
@@ -56,9 +56,9 @@ router.post('/', authMiddleware, (req, res) => {
         }
         
         // Check if already in favorites
-        const existingFavorite = db.get('favorites')
-            .find({ userId, tripId })
-            .value();
+        const existingFavorite = db.data.favorites.find(
+            favorite => favorite.userId === userId && favorite.tripId === tripId
+        );
         
         if (existingFavorite) {
             return res.status(409).json({ 
@@ -75,9 +75,8 @@ router.post('/', authMiddleware, (req, res) => {
             addedAt: new Date().toISOString()
         };
         
-        db.get('favorites')
-            .push(newFavorite)
-            .write();
+        db.data.favorites.push(newFavorite);
+        await db.write();
         
         res.status(201).json(newFavorite);
     } catch (error) {
@@ -87,23 +86,22 @@ router.post('/', authMiddleware, (req, res) => {
 });
 
 // Remove a trip from favorites
-router.delete('/:favoriteId', authMiddleware, (req, res) => {
+router.delete('/:favoriteId', authMiddleware, async (req, res) => {
     try {
+        await db.read();
+        
         const favoriteId = req.params.favoriteId;
         
         // Check if favorite exists
-        const favorite = db.get('favorites')
-            .find({ id: favoriteId })
-            .value();
+        const favorite = db.data.favorites.find(fav => fav.id === favoriteId);
         
         if (!favorite) {
             return res.status(404).json({ error: 'Favorite not found' });
         }
         
         // Remove from favorites
-        db.get('favorites')
-            .remove({ id: favoriteId })
-            .write();
+        db.data.favorites = db.data.favorites.filter(fav => fav.id !== favoriteId);
+        await db.write();
         
         res.json({ message: 'Removed from favorites', favoriteId });
     } catch (error) {

@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTrips } from '../hooks/useTrips';
 import TripCard from '../components/TripCard';
-import Loading from '../components/Loading';
+import Loading, {
+  AnnouncementSkeleton,
+  DashboardStatsSkeleton,
+  ResourceCardSkeleton,
+} from '../components/Loading';
 import ErrorMessage from '../components/ErrorMessage';
 import SearchBar from '../components/SearchBar';
 import { Trip } from '../sharedTypes';
@@ -440,18 +444,28 @@ const HomePage: React.FC = () => {
                 </p>
               </div>
               <div className="flex space-x-4">
-                <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
-                  <div className="text-2xl font-bold text-white">386</div>
-                  <div className="text-xs text-blue-100">Active Bookings</div>
-                </div>
-                <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
-                  <div className="text-2xl font-bold text-white">124</div>
-                  <div className="text-xs text-blue-100">Today's Bookings</div>
-                </div>
-                <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
-                  <div className="text-2xl font-bold text-white">43</div>
-                  <div className="text-xs text-blue-100">New Destinations</div>
-                </div>
+                {isLoading ? (
+                  <>
+                    <DashboardStatsSkeleton />
+                    <DashboardStatsSkeleton />
+                    <DashboardStatsSkeleton />
+                  </>
+                ) : (
+                  <>
+                    <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
+                      <div className="text-2xl font-bold text-white">386</div>
+                      <div className="text-xs text-blue-100">Active Bookings</div>
+                    </div>
+                    <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
+                      <div className="text-2xl font-bold text-white">124</div>
+                      <div className="text-xs text-blue-100">Today's Bookings</div>
+                    </div>
+                    <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
+                      <div className="text-2xl font-bold text-white">43</div>
+                      <div className="text-xs text-blue-100">New Destinations</div>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -578,68 +592,93 @@ const HomePage: React.FC = () => {
             <h2 className="text-lg font-semibold text-white">Important Announcements</h2>
           </div>
           <div className="divide-y p-6">
-            <div className="pb-4">
-              <div className="mb-2 flex items-center">
-                <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600">
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </span>
-                <h3 className="font-semibold text-gray-800">New Cancellation Policy Update</h3>
-                <span className="ml-2 text-xs text-gray-500">Today</span>
-              </div>
-              <p className="pl-11 text-sm text-gray-600">
-                The updated cancellation policy for all vacation packages goes into effect on July
-                1st. All bookings must adhere to the new guidelines.
-              </p>
-            </div>
+            {isLoading ? (
+              <>
+                <AnnouncementSkeleton />
+                <AnnouncementSkeleton />
+                <AnnouncementSkeleton />
+              </>
+            ) : (
+              <>
+                <div className="pb-4">
+                  <div className="mb-2 flex items-center">
+                    <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-red-100 text-red-600">
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </span>
+                    <h3 className="font-semibold text-gray-800">New Cancellation Policy Update</h3>
+                    <span className="ml-2 text-xs text-gray-500">Today</span>
+                  </div>
+                  <p className="pl-11 text-sm text-gray-600">
+                    The updated cancellation policy for all vacation packages goes into effect on
+                    July 1st. All bookings must adhere to the new guidelines.
+                  </p>
+                </div>
 
-            <div className="py-4">
-              <div className="mb-2 flex items-center">
-                <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                </span>
-                <h3 className="font-semibold text-gray-800">System Maintenance Schedule</h3>
-                <span className="ml-2 text-xs text-gray-500">2 days ago</span>
-              </div>
-              <p className="pl-11 text-sm text-gray-600">
-                The booking system will be down for scheduled maintenance on Sunday, June 30th from
-                2:00 AM to 5:00 AM CDT. Please plan accordingly.
-              </p>
-            </div>
+                <div className="py-4">
+                  <div className="mb-2 flex items-center">
+                    <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                    </span>
+                    <h3 className="font-semibold text-gray-800">System Maintenance Schedule</h3>
+                    <span className="ml-2 text-xs text-gray-500">2 days ago</span>
+                  </div>
+                  <p className="pl-11 text-sm text-gray-600">
+                    The booking system will be down for scheduled maintenance on Sunday, June 30th
+                    from 2:00 AM to 5:00 AM CDT. Please plan accordingly.
+                  </p>
+                </div>
 
-            <div className="pt-4">
-              <div className="mb-2 flex items-center">
-                <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
-                    />
-                  </svg>
-                </span>
-                <h3 className="font-semibold text-gray-800">Summer Promotions Now Available</h3>
-                <span className="ml-2 text-xs text-gray-500">1 week ago</span>
-              </div>
-              <p className="pl-11 text-sm text-gray-600">
-                New summer promotion codes have been added to the system. Use code SUMMER2023 for
-                additional 15% off selected destinations.
-              </p>
-            </div>
+                <div className="pt-4">
+                  <div className="mb-2 flex items-center">
+                    <span className="mr-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600">
+                      <svg
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"
+                        />
+                      </svg>
+                    </span>
+                    <h3 className="font-semibold text-gray-800">Summer Promotions Now Available</h3>
+                    <span className="ml-2 text-xs text-gray-500">1 week ago</span>
+                  </div>
+                  <p className="pl-11 text-sm text-gray-600">
+                    New summer promotion codes have been added to the system. Use code SUMMER2023
+                    for additional 15% off selected destinations.
+                  </p>
+                </div>
+              </>
+            )}
           </div>
           <div className="bg-gray-50 px-6 py-3 text-right">
             <Link to="/announcements" className="text-sm font-medium text-blue-600 hover:underline">
@@ -792,9 +831,7 @@ const HomePage: React.FC = () => {
           </div>
 
           {isLoading ? (
-            <div className="flex justify-center">
-              <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-500"></div>
-            </div>
+            <TripCardSkeletons count={6} />
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {popularDestinations.map(destination => (
@@ -860,105 +897,116 @@ const HomePage: React.FC = () => {
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <h3 className="mb-2 flex items-center font-medium">
-                  <svg
-                    className="mr-2 h-5 w-5 text-blue-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                  Booking Policies
-                </h3>
-                <p className="mb-3 text-sm text-gray-600">
-                  Latest internal policies and procedures for customer vacation bookings.
-                </p>
-                <Link to="/policies" className="text-sm text-blue-600 hover:underline">
-                  View Policies
-                </Link>
-              </div>
+              {isLoading ? (
+                <>
+                  <ResourceCardSkeleton />
+                  <ResourceCardSkeleton />
+                  <ResourceCardSkeleton />
+                  <ResourceCardSkeleton />
+                </>
+              ) : (
+                <>
+                  <div className="rounded-lg border p-4 transition hover:bg-gray-50">
+                    <h3 className="mb-2 flex items-center font-medium">
+                      <svg
+                        className="mr-2 h-5 w-5 text-blue-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                      Booking Policies
+                    </h3>
+                    <p className="mb-3 text-sm text-gray-600">
+                      Latest internal policies and procedures for customer vacation bookings.
+                    </p>
+                    <Link to="/policies" className="text-sm text-blue-600 hover:underline">
+                      View Policies
+                    </Link>
+                  </div>
 
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <h3 className="mb-2 flex items-center font-medium">
-                  <svg
-                    className="mr-2 h-5 w-5 text-green-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                    />
-                  </svg>
-                  Promo Codes & Discounts
-                </h3>
-                <p className="mb-3 text-sm text-gray-600">
-                  Current promotional offers to apply to customer bookings.
-                </p>
-                <Link to="/promotions" className="text-sm text-blue-600 hover:underline">
-                  View Active Promotions
-                </Link>
-              </div>
+                  <div className="rounded-lg border p-4 transition hover:bg-gray-50">
+                    <h3 className="mb-2 flex items-center font-medium">
+                      <svg
+                        className="mr-2 h-5 w-5 text-green-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                        />
+                      </svg>
+                      Promo Codes & Discounts
+                    </h3>
+                    <p className="mb-3 text-sm text-gray-600">
+                      Current promotional offers to apply to customer bookings.
+                    </p>
+                    <Link to="/promotions" className="text-sm text-blue-600 hover:underline">
+                      View Active Promotions
+                    </Link>
+                  </div>
 
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <h3 className="mb-2 flex items-center font-medium">
-                  <svg
-                    className="mr-2 h-5 w-5 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  Support Center
-                </h3>
-                <p className="mb-3 text-sm text-gray-600">
-                  Access customer service tools and escalation procedures.
-                </p>
-                <a href="#" className="text-sm text-blue-600 hover:underline">
-                  Open Support Center
-                </a>
-              </div>
+                  <div className="rounded-lg border p-4 transition hover:bg-gray-50">
+                    <h3 className="mb-2 flex items-center font-medium">
+                      <svg
+                        className="mr-2 h-5 w-5 text-purple-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      Support Center
+                    </h3>
+                    <p className="mb-3 text-sm text-gray-600">
+                      Access customer service tools and escalation procedures.
+                    </p>
+                    <a href="#" className="text-sm text-blue-600 hover:underline">
+                      Open Support Center
+                    </a>
+                  </div>
 
-              <div className="rounded-lg border p-4 transition hover:bg-gray-50">
-                <h3 className="mb-2 flex items-center font-medium">
-                  <svg
-                    className="mr-2 h-5 w-5 text-yellow-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                  Training & Certification
-                </h3>
-                <p className="mb-3 text-sm text-gray-600">
-                  Required training courses and certification programs.
-                </p>
-                <Link to="/training" className="text-sm text-blue-600 hover:underline">
-                  View Training Portal
-                </Link>
-              </div>
+                  <div className="rounded-lg border p-4 transition hover:bg-gray-50">
+                    <h3 className="mb-2 flex items-center font-medium">
+                      <svg
+                        className="mr-2 h-5 w-5 text-yellow-600"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                        />
+                      </svg>
+                      Training & Certification
+                    </h3>
+                    <p className="mb-3 text-sm text-gray-600">
+                      Required training courses and certification programs.
+                    </p>
+                    <Link to="/training" className="text-sm text-blue-600 hover:underline">
+                      View Training Portal
+                    </Link>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

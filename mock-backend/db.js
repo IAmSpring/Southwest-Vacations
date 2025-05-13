@@ -1,9 +1,25 @@
-import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
+import { Low } from 'lowdb';
+import { JSONFile } from 'lowdb/node';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
+// Define the type of our database
+export class Database {
+  data;
+  
+  constructor() {
+    this.data = {
+      trips: [],
+      users: [],
+      bookings: [],
+      favorites: [],
+      promotions: [],
+      aiThreads: []  // Add aiThreads to store AI assistant conversations
+    };
+  }
+}
 
 // Get current file directory in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -70,23 +86,22 @@ if (!fs.existsSync(DB_PATH)) {
     users: [],
     bookings: [],
     favorites: [],
-    promotions: []
+    promotions: [],
+    aiThreads: []  // Add aiThreads to store AI assistant conversations
   };
 
   fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2));
 }
 
 // Create the adapter and the db
-const adapter = new FileSync(DB_PATH);
-const db = low(adapter);
+const adapter = new JSONFile(DB_PATH);
+const db = new Low(adapter, new Database());
 
-// If db.data is null, set default data
-db.defaults({ 
-  trips: [],
-  users: [],
-  bookings: [],
-  favorites: [],
-  promotions: []
-}).write();
+// Initialize database
+await db.read();
+if (db.data === null) {
+  db.data = new Database().data;
+  await db.write();
+}
 
 export default db; 

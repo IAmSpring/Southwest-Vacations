@@ -5,8 +5,10 @@ import db from '../db.js';
 const router = express.Router();
 
 // Get all trips with advanced filtering for internal employees
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
+    await db.read();
+    
     // Extended query params for employee filtering
     const { 
       category, 
@@ -19,7 +21,7 @@ router.get('/', (req, res) => {
       availability 
     } = req.query;
 
-    let trips = db.get('trips').value();
+    let trips = [...db.data.trips];
 
     // Apply filters
     if (category && category !== 'all') {
@@ -87,8 +89,10 @@ router.get('/', (req, res) => {
 });
 
 // Search trips - Enhanced for employee use
-router.get('/search', (req, res) => {
+router.get('/search', async (req, res) => {
   try {
+    await db.read();
+    
     const { 
       destination, 
       minPrice, 
@@ -101,7 +105,7 @@ router.get('/search', (req, res) => {
       includeCarRentals = true 
     } = req.query;
 
-    let filteredTrips = db.get('trips').value();
+    let filteredTrips = [...db.data.trips];
 
     // Basic filters
     if (destination) {
@@ -170,13 +174,13 @@ router.get('/search', (req, res) => {
 });
 
 // Get single trip details - Enhanced for employee booking tool
-router.get('/:tripId', (req, res) => {
+router.get('/:tripId', async (req, res) => {
   try {
+    await db.read();
+    
     const { includeBookingStats, date } = req.query;
     
-    const trip = db.get('trips')
-      .find({ id: req.params.tripId })
-      .value();
+    const trip = db.data.trips.find(trip => trip.id === req.params.tripId);
 
     if (!trip) {
       return res.status(404).json({ error: 'Trip not found' });
@@ -185,9 +189,7 @@ router.get('/:tripId', (req, res) => {
     // For employee tool, add enhanced data if requested
     if (includeBookingStats === 'true') {
       // Get all bookings for this trip
-      const bookings = db.get('bookings')
-        .filter({ tripId: trip.id })
-        .value();
+      const bookings = db.data.bookings.filter(booking => booking.tripId === trip.id);
 
       // Add booking statistics useful for employees
       const tripWithStats = {
@@ -219,8 +221,10 @@ router.get('/:tripId', (req, res) => {
 });
 
 // NEW: Create a new trip (for employee use)
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   try {
+    await db.read();
+    
     const tripData = req.body;
 
     // Validate required fields
@@ -236,9 +240,8 @@ router.post('/', (req, res) => {
     };
 
     // Add to database
-    db.get('trips')
-      .push(newTrip)
-      .write();
+    db.data.trips.push(newTrip);
+    await db.write();
 
     res.status(201).json(newTrip);
   } catch (error) {
@@ -248,34 +251,67 @@ router.post('/', (req, res) => {
 });
 
 // NEW: Update a trip (for employee use)
-router.put('/:tripId', (req, res) => {
+router.put('/:tripId', async (req, res) => {
   try {
-    const tripId = req.params.tripId;
-    const tripData = req.body;
-
-    // Check if trip exists
-    const existingTrip = db.get('trips')
-      .find({ id: tripId })
-      .value();
-
-    if (!existingTrip) {
+    await db.read();
+    
+    const { tripId } = req.params;
+    const updateData = req.body;
+    
+    // Find trip index
+    const tripIndex = db.data.trips.findIndex(trip => trip.id === tripId);
+    
+    if (tripIndex === -1) {
       return res.status(404).json({ error: 'Trip not found' });
     }
-
-    // Update trip
-    db.get('trips')
-      .find({ id: tripId })
-      .assign(tripData)
-      .write();
-
-    // Get updated trip
-    const updatedTrip = db.get('trips')
-      .find({ id: tripId })
-      .value();
-
+    
+    // Update trip data (preserving id)
+    const updatedTrip = {
+      ...db.data.trips[tripIndex],
+      ...updateData,
+      id: tripId // Ensure id doesn't change
+    };
+    
+    // Save back to database
+    db.data.trips[tripIndex] = updatedTrip;
+    await db.write();
+    
     res.json(updatedTrip);
   } catch (error) {
     console.error('Error updating trip:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// NEW: Delete a trip (for employee use) 
+router.delete('/:tripId', async (req, res) => {
+  try {
+    await db.read();
+    
+    const { tripId } = req.params;
+    
+    // Check if trip exists
+    const tripExists = db.data.trips.some(trip => trip.id === tripId);
+    
+    if (!tripExists) {
+      return res.status(404).json({ error: 'Trip not found' });
+    }
+    
+    // Remove trip
+    db.data.trips = db.data.trips.filter(trip => trip.id !== tripId);
+    await db.write();
+    
+    // Also delete any associated bookings
+    const bookingsToDelete = db.data.bookings.filter(booking => booking.tripId === tripId);
+    
+    if (bookingsToDelete.length > 0) {
+      db.data.bookings = db.data.bookings.filter(booking => booking.tripId !== tripId);
+      await db.write();
+    }
+    
+    res.json({ success: true, message: 'Trip deleted' });
+  } catch (error) {
+    console.error('Error deleting trip:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });

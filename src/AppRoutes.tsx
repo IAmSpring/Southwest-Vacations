@@ -26,6 +26,7 @@ import SystemCheck from './components/SystemCheck';
 import TestVisualizationPage from './pages/TestVisualizationPage';
 import StartupPage from './pages/StartupPage';
 import PromotionsPage from './pages/PromotionsPage';
+import AIDPage from './pages/AIDPage';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -59,6 +60,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/promotions" element={<PromotionsPage />} />
       <Route path="/system-check" element={<SystemCheck />} />
       <Route path="/test-visualization" element={<TestVisualizationPage />} />
+      <Route path="/aid" element={<AIDPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

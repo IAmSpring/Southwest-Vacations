@@ -8,9 +8,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'southwest-vacations-secret-key';
 
 // Register a new user
 export const registerUser = async (username, email, password) => {
-  const existingUser = db.get('users')
-    .find({ email: email })
-    .value();
+  await db.read();
+  const existingUser = db.data.users.find(user => user.email === email);
 
   if (existingUser) {
     return null;
@@ -28,18 +27,16 @@ export const registerUser = async (username, email, password) => {
   };
 
   // Save to database
-  db.get('users')
-    .push(newUser)
-    .write();
+  db.data.users.push(newUser);
+  await db.write();
 
   return newUser;
 };
 
 // Login user
 export const loginUser = async (email, password) => {
-  const user = db.get('users')
-    .find({ email: email })
-    .value();
+  await db.read();
+  const user = db.data.users.find(user => user.email === email);
 
   if (!user) {
     return null;
@@ -51,10 +48,11 @@ export const loginUser = async (email, password) => {
   }
 
   // Update last login
-  db.get('users')
-    .find({ id: user.id })
-    .assign({ lastLoginAt: new Date().toISOString() })
-    .write();
+  const userIndex = db.data.users.findIndex(u => u.id === user.id);
+  if (userIndex !== -1) {
+    db.data.users[userIndex].lastLoginAt = new Date().toISOString();
+    await db.write();
+  }
 
   const token = jwt.sign(
     { id: user.id, email: user.email },
@@ -75,10 +73,9 @@ export const verifyToken = (token) => {
 };
 
 // Get user by ID
-export const getUserById = (id) => {
-  return db.get('users')
-    .find({ id: id })
-    .value();
+export const getUserById = async (id) => {
+  await db.read();
+  return db.data.users.find(user => user.id === id);
 };
 
 // Helper to extract user ID from request

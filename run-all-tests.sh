@@ -20,7 +20,7 @@ mkdir -p temp # For mock-backend temp files
 
 # Start the simple backend server first
 echo "Starting simple backend server..."
-node simple-backend.js &
+node simple-test-backend.js &
 BACKEND_PID=$!
 
 # Wait for backend to start

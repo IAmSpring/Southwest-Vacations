@@ -12,7 +12,7 @@ pkill -f "npm run dev" || true
 
 # Start the simple backend server
 echo "Starting simple backend server..."
-node simple-backend.js &
+node simple-test-backend.js &
 BACKEND_PID=$!
 
 # Wait for backend to start

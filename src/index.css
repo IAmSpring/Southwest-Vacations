@@ -18,6 +18,25 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* AI Assistant highlight effect */
+@keyframes ai-assistant-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.ai-assistant-highlight {
+  animation: ai-assistant-pulse 1.5s infinite;
+  position: relative;
+  z-index: 20;
+}
+
 /* Basic styling for inputs and buttons if not using a UI library extensively */
 .input {
   border: 1px solid #ccc;

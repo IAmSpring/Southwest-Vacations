@@ -90,7 +90,7 @@ const StartupPage: React.FC = () => {
       addLog('SUCCESS', 'Test visualization server ready ✅');
 
       // All services are ready - show success animation
-      addLog('SUCCESS', 'Application initialization complete! Redirecting to test dashboard...');
+      addLog('SUCCESS', 'Application initialization complete! Redirecting to home page...');
 
       // Begin transition sequence
       setFadeOut(true); // Start fade out animation
@@ -136,7 +136,7 @@ const StartupPage: React.FC = () => {
 
   // Redirect when ready
   if (isReady) {
-    return <Navigate to="/test-visualization" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   // Success checkmark screen
