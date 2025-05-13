@@ -401,7 +401,7 @@ Backed by `seedData.json`.
 }
 ```
 
-# Full GitHub System Documentation (Easy Exandability)
+# Full GitHub System Documentation (Easy Expandability)
 
 ---![Automatic GitHub Documentation ](https://github.com/user-attachments/assets/ce6d35a0-11ec-4a0a-94c1-28cd23212701)
 
