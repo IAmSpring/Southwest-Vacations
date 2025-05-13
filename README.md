@@ -34,6 +34,9 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - JWT for authentication
 - TypeScript for type safety
 - OpenAI API integration for AI assistant
+  
+![ScreenRecording2025-05-13at4 53 00PM-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/efc7fd45-6870-4a43-adf7-939d77df9032)
+
 
 ## Getting Started
 
