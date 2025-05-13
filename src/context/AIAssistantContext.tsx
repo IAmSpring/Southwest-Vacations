@@ -59,25 +59,171 @@ interface AIAssistantContextType {
 
 const AIAssistantContext = createContext<AIAssistantContextType | undefined>(undefined);
 
+// Local storage keys
+const LOCAL_ANONYMOUS_THREAD_KEY = 'swv_anonymous_chat_thread';
+const LOCAL_CHAT_EXPANDED_KEY = 'swv_chat_expanded';
+
 export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { user, isAuthenticated } = useAuthContext();
   const [threads, setThreads] = useState<Thread[]>([]);
   const [activeThread, setActiveThreadState] = useState<Thread | null>(null);
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = useState<boolean>(
+    localStorage.getItem(LOCAL_CHAT_EXPANDED_KEY) === 'true'
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Initialize or load saved anonymous thread
+  useEffect(() => {
+    // If no active thread and not loading, try to load anonymous thread from localStorage
+    if (!activeThread && !isLoading) {
+      console.log('Initializing AI thread...');
+      const savedAnonymousThread = localStorage.getItem(LOCAL_ANONYMOUS_THREAD_KEY);
+
+      if (savedAnonymousThread) {
+        try {
+          console.log('Found saved anonymous thread, loading it...');
+          const parsedThread = JSON.parse(savedAnonymousThread) as Thread;
+          setActiveThreadState(parsedThread);
+          console.log('Anonymous thread loaded successfully');
+        } catch (err) {
+          console.error('Error parsing saved anonymous thread:', err);
+          // If error parsing, create a new one
+          console.log('Creating new anonymous thread due to parsing error');
+          createAnonymousThread().catch(console.error);
+        }
+      } else {
+        // No saved thread, create a new one
+        console.log('No saved thread found, creating new anonymous thread');
+        createAnonymousThread().catch(console.error);
+      }
+    }
+  }, []);
+
+  // Save expanded state to localStorage
+  useEffect(() => {
+    localStorage.setItem(LOCAL_CHAT_EXPANDED_KEY, isExpanded.toString());
+  }, [isExpanded]);
 
   // Fetch threads when user is authenticated
   useEffect(() => {
     if (isAuthenticated && user) {
-      getAllThreads().catch(console.error);
+      getAllThreads()
+        .then(fetchedThreads => {
+          // If we have an anonymous thread with messages and there are no existing threads or none with messages
+          const anonymousThread = localStorage.getItem(LOCAL_ANONYMOUS_THREAD_KEY);
+          if (anonymousThread) {
+            const parsedAnonymousThread = JSON.parse(anonymousThread) as Thread;
+
+            if (parsedAnonymousThread.messages.length > 1) {
+              // Has messages beyond the system message
+              const hasThreadsWithMessages = fetchedThreads.some(t => t.messages.length > 1);
+
+              if (!hasThreadsWithMessages) {
+                // Transfer the anonymous thread to the user account
+                migrateAnonymousThread(parsedAnonymousThread, user.id).catch(console.error);
+              }
+            }
+          }
+        })
+        .catch(console.error);
     }
   }, [isAuthenticated, user]);
 
+  // Create anonymous thread for non-authenticated users
+  const createAnonymousThread = useCallback(async (): Promise<Thread> => {
+    const newThread: Thread = {
+      id: uuidv4(),
+      userId: 'anonymous',
+      title: 'Vacation Assistant',
+      messages: [
+        {
+          id: uuidv4(),
+          role: 'system',
+          content:
+            'I am an AI assistant for Southwest Vacations. I can help you find destinations, answer questions about bookings, and provide travel recommendations.',
+          createdAt: new Date().toISOString(),
+        },
+        {
+          id: uuidv4(),
+          role: 'assistant',
+          content: JSON.stringify({
+            message: 'Ask me anything about Southwest Vacations!',
+            suggestions: [
+              'What destinations do you offer?',
+              'Tell me about package deals',
+              'How do I book a flight?',
+            ],
+            status: 'success',
+            timestamp: new Date().toISOString(),
+          }),
+          createdAt: new Date().toISOString(),
+        },
+      ],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    // Store in localStorage
+    localStorage.setItem(LOCAL_ANONYMOUS_THREAD_KEY, JSON.stringify(newThread));
+    setActiveThreadState(newThread);
+
+    return newThread;
+  }, []);
+
+  // Migrate anonymous thread to user account
+  const migrateAnonymousThread = async (anonymousThread: Thread, userId: string): Promise<void> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const token = localStorage.getItem('token');
+
+      // Create a new thread with the user's ID but maintain chat history
+      const threadToMigrate = {
+        ...anonymousThread,
+        userId,
+        title: 'Migrated Conversation',
+      };
+
+      const response = await fetch('/api/ai/threads', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(threadToMigrate),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to migrate anonymous thread');
+      }
+
+      const migratedThread = await response.json();
+
+      // Update state with the migrated thread
+      setThreads(prevThreads => [...prevThreads, migratedThread]);
+      setActiveThreadState(migratedThread);
+
+      // Clear anonymous thread from localStorage
+      localStorage.removeItem(LOCAL_ANONYMOUS_THREAD_KEY);
+    } catch (err) {
+      console.error('Error migrating anonymous thread:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const createThread = useCallback(
     async (title?: string): Promise<Thread> => {
+      // If not authenticated, create or use existing anonymous thread
       if (!isAuthenticated || !user) {
-        throw new Error('You must be logged in to create a thread');
+        const existingThread = localStorage.getItem(LOCAL_ANONYMOUS_THREAD_KEY);
+        if (existingThread) {
+          return JSON.parse(existingThread);
+        }
+        return createAnonymousThread();
       }
 
       setIsLoading(true);
@@ -114,13 +260,21 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
         setIsLoading(false);
       }
     },
-    [isAuthenticated, user]
+    [isAuthenticated, user, createAnonymousThread]
   );
 
   const getThread = useCallback(
     async (threadId: string): Promise<Thread | null> => {
+      // For anonymous users, get thread from localStorage
       if (!isAuthenticated || !user) {
-        throw new Error('You must be logged in to get thread details');
+        const savedThread = localStorage.getItem(LOCAL_ANONYMOUS_THREAD_KEY);
+        if (savedThread) {
+          const thread = JSON.parse(savedThread) as Thread;
+          if (thread.id === threadId) {
+            return thread;
+          }
+        }
+        return null;
       }
 
       setIsLoading(true);
@@ -154,11 +308,10 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
 
   const sendMessage = useCallback(
     async (content: string): Promise<void> => {
-      if (!isAuthenticated || !user) {
-        throw new Error('You must be logged in to send a message');
-      }
+      console.log('sendMessage called with content:', content);
 
       if (!activeThread) {
+        console.error('No active thread to send message to');
         throw new Error('No active thread to send message to');
       }
 
@@ -175,6 +328,8 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
           createdAt: new Date().toISOString(),
         };
 
+        console.log('Adding user message to thread:', tempMessage);
+
         // Update the UI optimistically
         const updatedThread = {
           ...activeThread,
@@ -183,6 +338,34 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
         };
         setActiveThreadState(updatedThread);
 
+        // For anonymous users, handle locally
+        if (!isAuthenticated || !user || activeThread.userId === 'anonymous') {
+          console.log('Handling message locally for anonymous user');
+          // Save updated thread to localStorage
+          localStorage.setItem(LOCAL_ANONYMOUS_THREAD_KEY, JSON.stringify(updatedThread));
+
+          // Generate a mock response after a short delay
+          console.log('Generating mock AI response...');
+          await new Promise(resolve => setTimeout(resolve, 1000));
+
+          // Create mock AI response
+          const mockResponse = await createMockAIResponse(content);
+          console.log('Mock AI response generated:', mockResponse);
+
+          // Add AI response to thread
+          const threadWithResponse = {
+            ...updatedThread,
+            messages: [...updatedThread.messages, mockResponse],
+            updatedAt: new Date().toISOString(),
+          };
+
+          console.log('Updating thread with AI response');
+          setActiveThreadState(threadWithResponse);
+          localStorage.setItem(LOCAL_ANONYMOUS_THREAD_KEY, JSON.stringify(threadWithResponse));
+          return;
+        }
+
+        // For authenticated users, send to API
         // Update threads list
         setThreads(prevThreads =>
           prevThreads.map(t => (t.id === activeThread.id ? updatedThread : t))
@@ -221,6 +404,72 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
     },
     [isAuthenticated, user, activeThread]
   );
+
+  // Create a mock AI response for anonymous users
+  const createMockAIResponse = async (userMessage: string): Promise<Message> => {
+    // Simple responses based on user input
+    const lowercaseMessage = userMessage.toLowerCase();
+
+    // Create response object
+    const jsonResponse: any = {
+      message: '',
+      suggestions: [] as string[],
+      status: 'success' as 'success' | 'error',
+      timestamp: new Date().toISOString(),
+    };
+
+    if (lowercaseMessage.includes('hello') || lowercaseMessage.includes('hi')) {
+      jsonResponse.message = 'Hello! How can I help you with your Southwest Vacations plans today?';
+      jsonResponse.suggestions = [
+        'Tell me about popular destinations',
+        'How do I book a flight?',
+        'What deals are available now?',
+      ];
+    } else if (lowercaseMessage.includes('booking') || lowercaseMessage.includes('reservation')) {
+      jsonResponse.message =
+        'I can help you with your booking. What specific information do you need about your reservation?';
+      jsonResponse.suggestions = [
+        'How do I modify my booking?',
+        'Can I add hotel to my flight reservation?',
+        "What's your cancellation policy?",
+      ];
+    } else if (lowercaseMessage.includes('flight') || lowercaseMessage.includes('flights')) {
+      jsonResponse.message =
+        'Southwest Airlines offers flights to many destinations. When are you planning to travel and where would you like to go?';
+      jsonResponse.suggestions = [
+        'Show me flights to Hawaii',
+        "What's included in my flight?",
+        'Do you offer international flights?',
+      ];
+    } else if (lowercaseMessage.includes('hotel') || lowercaseMessage.includes('accommodation')) {
+      jsonResponse.message =
+        'We have partnered with many quality hotels. What destination are you interested in, and what amenities are most important to you?';
+      jsonResponse.suggestions = [
+        'Do you have all-inclusive resorts?',
+        'What hotel amenities are available?',
+        'Can I book just a hotel without flights?',
+      ];
+    } else {
+      jsonResponse.message =
+        'Thank you for your message. How else can I assist you with your Southwest Vacations experience?';
+      jsonResponse.suggestions = [
+        'Tell me about your services',
+        'I need help with a booking',
+        'What destinations do you offer?',
+      ];
+    }
+
+    // Serialize the JSON response
+    const responseContent = JSON.stringify(jsonResponse);
+
+    // Create the AI message
+    return {
+      id: uuidv4(),
+      role: 'assistant',
+      content: responseContent,
+      createdAt: new Date().toISOString(),
+    };
+  };
 
   const getAllThreads = useCallback(async (): Promise<Thread[]> => {
     if (!isAuthenticated || !user) {

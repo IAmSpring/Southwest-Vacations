@@ -26,6 +26,7 @@ const AIAssistant: React.FC = () => {
   // Create a new thread if none exists
   useEffect(() => {
     if (!activeThread && !isLoading) {
+      console.log('Creating new thread...');
       createThread().catch(console.error);
     }
   }, [activeThread, createThread, isLoading]);
@@ -34,9 +35,19 @@ const AIAssistant: React.FC = () => {
     e.preventDefault();
     if (inputValue.trim() === '' || isLoading) return;
 
+    // Store the message before resetting input
     const message = inputValue;
+
+    // Reset input immediately for better UX
     setInputValue('');
-    await sendMessage(message);
+
+    console.log('Sending message:', message);
+
+    try {
+      await sendMessage(message);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -88,9 +99,11 @@ const AIAssistant: React.FC = () => {
           </div>
         ) : (
           <>
-            {activeThread.messages.map((message: Message) => (
-              <MessageBubble key={message.id} message={message} />
-            ))}
+            {activeThread.messages
+              .filter(m => m.role !== 'system')
+              .map((message: Message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
             <div ref={messagesEndRef} />
           </>
         )}
@@ -117,7 +130,7 @@ const AIAssistant: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading || inputValue.trim() === ''}
-            className="absolute bottom-2 right-2 text-blue-600 hover:text-blue-800 focus:outline-none disabled:text-gray-400 disabled:hover:text-gray-400"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 focus:outline-none disabled:text-gray-400 disabled:hover:text-gray-400"
           >
             {isLoading ? (
               <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
