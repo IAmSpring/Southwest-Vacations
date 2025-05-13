@@ -3,16 +3,17 @@ import cors from 'cors';
 import path from 'path';
 import morgan from 'morgan';
 import fs from 'fs';
-import * as seedDataModule from './seedData.js';
-import * as dbModule from './db.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import { generateSeedUsers } from './seedData.js';
+import db from './db.js';
 import { v4 as uuidv4 } from 'uuid';
 
-console.log('Starting server initialization...');
+// Get current file directory in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-// Cast the db module to any type to handle both default and named exports
-const db = dbModule.default || (dbModule as any);
-// Get generateSeedUsers from seedData module
-const { generateSeedUsers } = seedDataModule;
+console.log('Starting server initialization...');
 
 // Startup validation - test file system access
 const tempDir = path.join(process.cwd(), 'temp');
@@ -52,6 +53,7 @@ try {
 
 // Database
 console.log('Loading database...');
+
 // Add test users if they don't exist
 async function initializeUsers() {
   try {
@@ -84,7 +86,7 @@ async function initializeUsers() {
 }
 
 // Initialize the users
-initializeUsers();
+await initializeUsers();
 
 // Initialize promotions if they don't exist
 async function initializePromotions() {
@@ -153,7 +155,7 @@ async function initializePromotions() {
 }
 
 // Initialize the promotions
-initializePromotions();
+await initializePromotions();
 
 console.log('Database loaded successfully');
 
@@ -176,10 +178,32 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Import routes
-import * as tripsModule from './routes/trips.js';
-import * as bookingsModule from './routes/bookings.js';
-import * as favoritesModule from './routes/favorites.js';
-import * as usersModule from './routes/users.js';
+import tripsRouter from './routes/trips.js';
+import usersRouter from './routes/users.js';
+
+// Only include routes that have been converted to ES modules
+app.use('/api/trips', tripsRouter);
+app.use('/api/users', usersRouter);
+
+// Try to import other routes if they exist
+try {
+  const favoritesRouter = await import('./routes/favorites.js').then(m => m.default);
+  app.use('/api/favorites', favoritesRouter);
+  console.log('✅ Loaded favorites router');
+} catch (e: any) {
+  console.warn('⚠️ Favorites router not available:', e.message);
+}
+
+try {
+  const bookingsRouter = await import('./routes/bookings.js').then(m => m.default);
+  app.use('/api/bookings', bookingsRouter);
+  console.log('✅ Loaded bookings router');
+} catch (e: any) {
+  console.warn('⚠️ Bookings router not available:', e.message);
+}
+
+// Comment out other routes until they're converted to ES modules
+/*
 import * as adminModule from './routes/admin.js';
 import * as trainingModule from './routes/training.js';
 import * as notificationsModule from './routes/notifications.js';
@@ -188,11 +212,6 @@ import * as auditModule from './routes/audit.js';
 import * as twoFactorModule from './routes/two-factor.js';
 import * as promotionsModule from './routes/promotions.js';
 
-// Create router instances for all modules, handling both default and named exports
-const tripsRouter = tripsModule.default || (tripsModule as any);
-const bookingsRouter = bookingsModule.default || (bookingsModule as any);
-const favoritesRouter = favoritesModule.default || (favoritesModule as any);
-const usersRouter = usersModule.default || (usersModule as any);
 const adminRouter = adminModule.default || (adminModule as any);
 const trainingRouter = trainingModule.default || (trainingModule as any);
 const notificationsRouter = notificationsModule.default || (notificationsModule as any);
@@ -201,11 +220,6 @@ const auditRouter = auditModule.default || (auditModule as any);
 const twoFactorRouter = twoFactorModule.default || (twoFactorModule as any);
 const promotionsRouter = promotionsModule.default || (promotionsModule as any);
 
-// Routes
-app.use('/api/trips', tripsRouter);
-app.use('/api/bookings', bookingsRouter);
-app.use('/api/favorites', favoritesRouter);
-app.use('/api/users', usersRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/training', trainingRouter);
 app.use('/api/notifications', notificationsRouter);
@@ -213,6 +227,7 @@ app.use('/api/roles', rolesRouter);
 app.use('/api/audit', auditRouter);
 app.use('/api/two-factor', twoFactorRouter);
 app.use('/api/promotions', promotionsRouter);
+*/
 
 // Health check endpoint
 app.get('/health', (req: Request, res: Response) => {
