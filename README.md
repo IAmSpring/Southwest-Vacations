@@ -14,6 +14,7 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - Responsive design for all devices
 - AI-powered assistant with personalized trip recommendations
 
+![ScreenRecording2025-05-13at4 53 51PM-ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/b65d444e-c951-4aa3-bcf1-630f5dd44c12)
 
 
 ## Tech Stack
