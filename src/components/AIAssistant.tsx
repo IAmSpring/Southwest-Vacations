@@ -222,4 +222,154 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   );
 };
 
+// Add interface for browser control actions
+interface BrowserControlAction {
+  type: 'navigate' | 'click' | 'fill' | 'scroll' | 'highlight';
+  target?: string;
+  value?: string;
+  selector?: string;
+  description?: string;
+}
+
+// Add browser control function
+const executeBrowserAction = (action: BrowserControlAction) => {
+  switch (action.type) {
+    case 'navigate':
+      if (action.target) {
+        window.location.href = action.target;
+      }
+      break;
+
+    case 'click':
+      if (action.selector) {
+        const element = document.querySelector(action.selector) as HTMLElement;
+        if (element) {
+          element.click();
+        }
+      }
+      break;
+
+    case 'fill':
+      if (action.selector && action.value) {
+        const element = document.querySelector(action.selector) as HTMLInputElement;
+        if (element) {
+          element.value = action.value;
+          // Dispatch input event to trigger any listeners
+          const event = new Event('input', { bubbles: true });
+          element.dispatchEvent(event);
+        }
+      }
+      break;
+
+    case 'scroll':
+      if (action.selector) {
+        const element = document.querySelector(action.selector);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      break;
+
+    case 'highlight':
+      if (action.selector) {
+        // Remove any previous highlights
+        const previousHighlights = document.querySelectorAll('.ai-highlight');
+        previousHighlights.forEach(el => {
+          el.classList.remove('ai-highlight');
+        });
+
+        // Add new highlight
+        const element = document.querySelector(action.selector);
+        if (element) {
+          element.classList.add('ai-highlight');
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+          // Remove highlight after 3 seconds
+          setTimeout(() => {
+            element.classList.remove('ai-highlight');
+          }, 3000);
+        }
+      }
+      break;
+  }
+};
+
+// Update parseMessage function to handle browser control actions
+const parseMessage = (content: string) => {
+  try {
+    // Try to parse as JSON
+    const jsonData = JSON.parse(content);
+
+    // Check if message contains browser control actions
+    if (jsonData.browserActions && Array.isArray(jsonData.browserActions)) {
+      // Execute each browser action
+      jsonData.browserActions.forEach((action: BrowserControlAction) => {
+        executeBrowserAction(action);
+      });
+    }
+
+    return {
+      message: jsonData.message || content,
+      suggestions: jsonData.suggestions || [],
+      browserActions: jsonData.browserActions || [],
+    };
+  } catch (e) {
+    // If not valid JSON, return as plain text
+    return {
+      message: content,
+      suggestions: [],
+      browserActions: [],
+    };
+  }
+};
+
+// Update the renderMessages function to include information about browser control actions
+const renderMessages = () => {
+  if (!activeThread || !activeThread.messages) return null;
+
+  return activeThread.messages.map((msg: any) => {
+    if (msg.role === 'system') return null; // Don't show system messages
+
+    const isUser = msg.role === 'user';
+    const messageContent = isUser ? msg.content : parseMessage(msg.content);
+
+    return (
+      <div key={msg.id} className={`message ${isUser ? 'user-message' : 'ai-message'}`}>
+        <div className="message-content">
+          {isUser ? (
+            <p>{msg.content}</p>
+          ) : (
+            <>
+              <p>{messageContent.message}</p>
+              {messageContent.browserActions && messageContent.browserActions.length > 0 && (
+                <div className="browser-actions-info">
+                  <p className="browser-actions-note">
+                    <small>
+                      <i>The assistant is helping navigate the page</i>
+                    </small>
+                  </p>
+                </div>
+              )}
+              {messageContent.suggestions && messageContent.suggestions.length > 0 && (
+                <div className="suggestion-chips">
+                  {messageContent.suggestions.map((suggestion: string, i: number) => (
+                    <button
+                      key={i}
+                      className="suggestion-chip"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        <div className="message-timestamp">{new Date(msg.createdAt).toLocaleTimeString()}</div>
+      </div>
+    );
+  });
+};
+
 export default AIAssistant;

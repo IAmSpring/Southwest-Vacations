@@ -16,7 +16,8 @@ export class Database {
       bookings: [],
       favorites: [],
       promotions: [],
-      aiThreads: []  // Add aiThreads to store AI assistant conversations
+      aiThreads: [],  // Add aiThreads to store AI assistant conversations
+      adminAiThreads: []  // New collection for admin AI threads
     };
   }
 }
@@ -87,7 +88,8 @@ if (!fs.existsSync(DB_PATH)) {
     bookings: [],
     favorites: [],
     promotions: [],
-    aiThreads: []  // Add aiThreads to store AI assistant conversations
+    aiThreads: [],  // Add aiThreads to store AI assistant conversations
+    adminAiThreads: []  // New collection for admin AI threads
   };
 
   fs.writeFileSync(DB_PATH, JSON.stringify(defaultData, null, 2));

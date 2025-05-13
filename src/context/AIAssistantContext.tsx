@@ -32,19 +32,29 @@ export interface Task {
   params: Record<string, any>;
 }
 
+// Add browser control action interface
+export interface BrowserControlAction {
+  type: 'navigate' | 'click' | 'fill' | 'scroll' | 'highlight';
+  target?: string;
+  value?: string;
+  selector?: string;
+  description?: string;
+}
+
 interface AIAssistantContextType {
   threads: Thread[];
   activeThread: Thread | null;
   isExpanded: boolean;
   isLoading: boolean;
   error: string | null;
-  createThread: () => Promise<Thread>;
+  createThread: (title?: string) => Promise<Thread>;
   getThread: (threadId: string) => Promise<Thread | null>;
   sendMessage: (content: string) => Promise<void>;
   getAllThreads: () => Promise<Thread[]>;
-  setActiveThread: (threadId: string) => void;
+  setActiveThread: (threadId: string) => Promise<void>;
   toggleExpanded: () => void;
   executeTask: (task: Task) => Promise<boolean>;
+  executeBrowserAction: (action: BrowserControlAction) => void;
 }
 
 const AIAssistantContext = createContext<AIAssistantContextType | undefined>(undefined);
@@ -64,45 +74,48 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   }, [isAuthenticated, user]);
 
-  const createThread = useCallback(async (): Promise<Thread> => {
-    if (!isAuthenticated || !user) {
-      throw new Error('You must be logged in to create a thread');
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/ai/threads', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          title: 'New Conversation',
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create thread');
+  const createThread = useCallback(
+    async (title?: string): Promise<Thread> => {
+      if (!isAuthenticated || !user) {
+        throw new Error('You must be logged in to create a thread');
       }
 
-      const newThread = await response.json();
-      setThreads(prevThreads => [...prevThreads, newThread]);
-      setActiveThreadState(newThread);
-      return newThread;
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      console.error('Error creating thread:', err);
-      throw err;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isAuthenticated, user]);
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch('/api/ai/threads', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            userId: user.id,
+            title: title || 'New Conversation',
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to create thread');
+        }
+
+        const newThread = await response.json();
+        setThreads(prevThreads => [...prevThreads, newThread]);
+        setActiveThreadState(newThread);
+        return newThread;
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        console.error('Error creating thread:', err);
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [isAuthenticated, user]
+  );
 
   const getThread = useCallback(
     async (threadId: string): Promise<Thread | null> => {
@@ -243,7 +256,7 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
   }, [isAuthenticated, user]);
 
   const setActiveThread = useCallback(
-    (threadId: string) => {
+    async (threadId: string) => {
       const thread = threads.find(t => t.id === threadId);
       if (thread) {
         setActiveThreadState(thread);
@@ -304,6 +317,71 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
     }
   }, []);
 
+  // Add executeBrowserAction function
+  const executeBrowserAction = (action: BrowserControlAction) => {
+    console.log('Executing browser action:', action);
+
+    switch (action.type) {
+      case 'navigate':
+        if (action.target) {
+          window.location.href = action.target;
+        }
+        break;
+
+      case 'click':
+        if (action.selector) {
+          const element = document.querySelector(action.selector) as HTMLElement;
+          if (element) {
+            element.click();
+          }
+        }
+        break;
+
+      case 'fill':
+        if (action.selector && action.value) {
+          const element = document.querySelector(action.selector) as HTMLInputElement;
+          if (element) {
+            element.value = action.value;
+            // Dispatch input event to trigger any listeners
+            const event = new Event('input', { bubbles: true });
+            element.dispatchEvent(event);
+          }
+        }
+        break;
+
+      case 'scroll':
+        if (action.selector) {
+          const element = document.querySelector(action.selector);
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+        break;
+
+      case 'highlight':
+        if (action.selector) {
+          // Remove any previous highlights
+          const previousHighlights = document.querySelectorAll('.ai-highlight');
+          previousHighlights.forEach(el => {
+            el.classList.remove('ai-highlight');
+          });
+
+          // Add new highlight
+          const element = document.querySelector(action.selector);
+          if (element) {
+            element.classList.add('ai-highlight');
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Remove highlight after 3 seconds
+            setTimeout(() => {
+              element.classList.remove('ai-highlight');
+            }, 3000);
+          }
+        }
+        break;
+    }
+  };
+
   const value = {
     threads,
     activeThread,
@@ -317,6 +395,7 @@ export const AIAssistantProvider: React.FC<{ children: ReactNode }> = ({ childre
     setActiveThread,
     toggleExpanded,
     executeTask,
+    executeBrowserAction,
   };
 
   return <AIAssistantContext.Provider value={value}>{children}</AIAssistantContext.Provider>;

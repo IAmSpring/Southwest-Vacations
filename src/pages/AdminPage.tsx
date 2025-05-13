@@ -1,74 +1,239 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import UserManagement from '../components/UserManagement';
 import AdminChatHistory from '../components/AdminChatHistory';
 import { Tab } from '@headlessui/react';
+import AdminAIAssistant from '../components/AdminAIAssistant';
+import { useAdmin } from '../context/AdminContext';
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-const AdminPage: React.FC = () => {
-  const { isAuthenticated, user } = useAuthContext();
+const UserConversationReview: React.FC = () => {
+  const { userThreads, selectedThread, loadUserThreads, selectThread } = useAdmin();
 
-  // If not authenticated or not admin, redirect to login
-  if (!isAuthenticated || !user?.isAdmin) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    loadUserThreads();
+  }, []);
 
-  const tabs = [
-    { name: 'User Management', component: <UserManagement /> },
-    { name: 'AI Chat History', component: <AdminChatHistory /> },
-    {
-      name: 'Booking Statistics',
-      component: (
-        <div data-testid="booking-stats" className="overflow-auto">
-          <p className="p-4">Booking statistics will be displayed here.</p>
+  const parseMessage = (content: string) => {
+    try {
+      // Try to parse as JSON
+      const jsonData = JSON.parse(content);
+      return {
+        message: jsonData.message || content,
+        suggestions: jsonData.suggestions || [],
+        browserActions: jsonData.browserActions || [],
+      };
+    } catch (e) {
+      // If not valid JSON, return as plain text
+      return {
+        message: content,
+        suggestions: [],
+        browserActions: [],
+      };
+    }
+  };
+
+  const renderConversationList = () => {
+    if (!userThreads || userThreads.length === 0) {
+      return <p>No user conversations found.</p>;
+    }
+
+    return (
+      <div className="conversation-history">
+        {userThreads.map(thread => (
+          <div key={thread.id} className="conversation-item" onClick={() => selectThread(thread)}>
+            <div className="conversation-title">{thread.title}</div>
+            <div className="conversation-preview">
+              {thread.messages && thread.messages.length > 0
+                ? thread.messages[0].role === 'assistant'
+                  ? parseMessage(thread.messages[0].content).message.substring(0, 50) + '...'
+                  : thread.messages[0].content.substring(0, 50) + '...'
+                : 'No messages'}
+            </div>
+            <div className="conversation-date">{new Date(thread.updatedAt).toLocaleString()}</div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderConversationDetail = () => {
+    if (!selectedThread) {
+      return <p>Select a conversation to view details.</p>;
+    }
+
+    return (
+      <div className="conversation-detail">
+        <h3>{selectedThread.title}</h3>
+        <div className="conversation-messages">
+          {selectedThread.messages.map((msg: any) => {
+            if (msg.role === 'system') return null; // Don't show system messages
+
+            const isUser = msg.role === 'user';
+            const messageContent = isUser ? msg.content : parseMessage(msg.content);
+
+            return (
+              <div key={msg.id} className={`message ${isUser ? 'user-message' : 'ai-message'}`}>
+                <div className="message-role">{isUser ? 'User' : 'Assistant'}</div>
+                <div className="message-content">
+                  {isUser ? (
+                    <p>{msg.content}</p>
+                  ) : (
+                    <>
+                      <p>{messageContent.message}</p>
+                      {messageContent.browserActions &&
+                        messageContent.browserActions.length > 0 && (
+                          <div className="browser-actions-detail">
+                            <p className="browser-actions-title">Browser Actions:</p>
+                            <ul>
+                              {messageContent.browserActions.map((action: any, i: number) => (
+                                <li key={i}>
+                                  <strong>{action.type}</strong>:{' '}
+                                  {action.description ||
+                                    `${
+                                      action.type === 'navigate'
+                                        ? action.target
+                                        : action.type === 'fill'
+                                          ? `${action.selector} with "${action.value}"`
+                                          : action.selector
+                                    }`}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      {messageContent.suggestions && messageContent.suggestions.length > 0 && (
+                        <div className="suggestion-detail">
+                          <p className="suggestion-title">Suggestions:</p>
+                          <ul>
+                            {messageContent.suggestions.map((suggestion: string, i: number) => (
+                              <li key={i}>{suggestion}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div className="message-timestamp">{new Date(msg.createdAt).toLocaleString()}</div>
+              </div>
+            );
+          })}
         </div>
-      ),
-    },
-  ];
+      </div>
+    );
+  };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-6 text-3xl font-bold">Admin Dashboard</h1>
+    <div className="user-conversation-review">
+      <h2>User Conversations</h2>
+      <div className="conversation-container">
+        <div className="conversation-list">
+          <h3>Conversation History</h3>
+          {renderConversationList()}
+        </div>
+        <div className="conversation-view">{renderConversationDetail()}</div>
+      </div>
+    </div>
+  );
+};
 
-      <div className="w-full">
-        <Tab.Group>
-          <Tab.List className="flex space-x-1 rounded-xl bg-blue-100 p-1">
-            {tabs.map(tab => (
-              <Tab
-                key={tab.name}
-                className={({ selected }) =>
-                  classNames(
-                    'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-                    'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-                    selected
-                      ? 'bg-white text-blue-700 shadow'
-                      : 'text-blue-500 hover:bg-white/[0.12] hover:text-blue-700'
-                  )
-                }
-              >
-                {tab.name}
-              </Tab>
-            ))}
+const AdminPage: React.FC = () => {
+  const { isAuthenticated, user } = useAuthContext();
+  const [activeTab, setActiveTab] = useState(0);
+
+  // Redirect if not authenticated or not an admin
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  if (user?.role !== 'admin') {
+    return <Navigate to="/" />;
+  }
+
+  return (
+    <div className="admin-page container mx-auto px-4 py-8">
+      <h1 className="mb-6 text-3xl font-bold text-[#304CB2]">Admin Dashboard</h1>
+
+      <div className="mb-8">
+        <Tab.Group selectedIndex={activeTab} onChange={setActiveTab}>
+          <Tab.List className="flex rounded-xl bg-gray-100 p-1">
+            <Tab
+              className={({ selected }) =>
+                classNames(
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-[#304CB2] focus:outline-none focus:ring-2',
+                  selected
+                    ? 'bg-white text-[#304CB2] shadow'
+                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-[#304CB2]'
+                )
+              }
+            >
+              User Management
+            </Tab>
+            <Tab
+              className={({ selected }) =>
+                classNames(
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-[#304CB2] focus:outline-none focus:ring-2',
+                  selected
+                    ? 'bg-white text-[#304CB2] shadow'
+                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-[#304CB2]'
+                )
+              }
+            >
+              Chat History
+            </Tab>
+            <Tab
+              className={({ selected }) =>
+                classNames(
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'ring-white ring-opacity-60 ring-offset-2 ring-offset-[#304CB2] focus:outline-none focus:ring-2',
+                  selected
+                    ? 'bg-white text-[#304CB2] shadow'
+                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-[#304CB2]'
+                )
+              }
+            >
+              AI Conversations
+            </Tab>
           </Tab.List>
-          <Tab.Panels className="mt-6">
-            {tabs.map((tab, idx) => (
-              <Tab.Panel
-                key={idx}
-                className={classNames(
-                  'rounded-xl bg-white p-4',
-                  'ring-white ring-opacity-60 focus:outline-none'
-                )}
-              >
-                {tab.component}
-              </Tab.Panel>
-            ))}
+
+          <Tab.Panels className="mt-2">
+            <Tab.Panel
+              className={classNames(
+                'rounded-xl bg-white p-3',
+                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+              )}
+            >
+              <UserManagement />
+            </Tab.Panel>
+            <Tab.Panel
+              className={classNames(
+                'rounded-xl bg-white p-3',
+                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+              )}
+            >
+              <AdminChatHistory />
+            </Tab.Panel>
+            <Tab.Panel
+              className={classNames(
+                'rounded-xl bg-white p-3',
+                'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2'
+              )}
+            >
+              <UserConversationReview />
+            </Tab.Panel>
           </Tab.Panels>
         </Tab.Group>
       </div>
+
+      {/* Admin AI Assistant is always accessible regardless of which tab is active */}
+      <AdminAIAssistant />
     </div>
   );
 };
