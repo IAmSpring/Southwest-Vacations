@@ -850,7 +850,11 @@ const HomePage: React.FC = () => {
                     </div>
                   </div>
                   <div className="p-4">
-                    <h3 className="text-xl font-semibold">{destination.destination}</h3>
+                    <Link to={`/trip/${destination.id}`}>
+                      <h3 className="text-xl font-semibold hover:text-blue-600 hover:underline">
+                        {destination.destination}
+                      </h3>
+                    </Link>
                     <div className="mt-1 flex items-center">
                       <span className="text-sm text-gray-500">Customer satisfaction:</span>
                       <div className="ml-2 flex">

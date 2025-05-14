@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
+    <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           <Link to="/" className="transition-colors hover:text-blue-200">
