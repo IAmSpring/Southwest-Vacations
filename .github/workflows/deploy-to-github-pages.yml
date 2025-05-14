@@ -36,12 +36,12 @@ jobs:
       - name: Build for GitHub Pages
         run: npm run build
         env:
-          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || '/Southwest-Vacations/api' }}
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || '/home/api' }}
           VITE_USE_HASH_ROUTER: ${{ vars.VITE_USE_HASH_ROUTER || 'true' }}
           VITE_MOCK_AUTH: ${{ vars.VITE_MOCK_AUTH || 'true' }}
           VITE_ENABLE_SERVICE_WORKER: ${{ vars.VITE_ENABLE_SERVICE_WORKER || 'true' }}
-          VITE_ASSET_PREFIX: ${{ vars.VITE_ASSET_PREFIX || '/Southwest-Vacations' }}
-          REPOSITORY_NAME: 'Southwest-Vacations'
+          VITE_ASSET_PREFIX: ${{ vars.VITE_ASSET_PREFIX || '/home' }}
+          REPOSITORY_NAME: 'home'
 
       - name: Setup Pages
         uses: actions/configure-pages@v4

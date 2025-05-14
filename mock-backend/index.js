@@ -151,6 +151,7 @@ var notifications_js_1 = __importDefault(require("./routes/notifications.js"));
 var roles_js_1 = __importDefault(require("./routes/roles.js"));
 var audit_js_1 = __importDefault(require("./routes/audit.js"));
 var two_factor_js_1 = __importDefault(require("./routes/two-factor.js"));
+var support_js_1 = __importDefault(require("./routes/support.js"));
 // Routes
 app.use('/api/trips', trips_js_1.default);
 app.use('/api/bookings', bookings_js_1.default);
@@ -162,6 +163,7 @@ app.use('/api/notifications', notifications_js_1.default);
 app.use('/api/roles', roles_js_1.default);
 app.use('/api/audit', audit_js_1.default);
 app.use('/api/two-factor', two_factor_js_1.default);
+app.use('/api/support', support_js_1.default);
 // Health check endpoint
 app.get('/health', function (req, res) {
     res.json({
