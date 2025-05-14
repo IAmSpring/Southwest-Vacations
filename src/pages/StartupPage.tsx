@@ -17,6 +17,13 @@ const animationStyles = `
   }
 `;
 
+// Add TypeScript declaration for the custom window property
+declare global {
+  interface Window {
+    __swvInitialized?: boolean;
+  }
+}
+
 const StartupPage: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -202,6 +209,17 @@ const StartupPage: React.FC = () => {
       // Begin transition sequence
       setFadeOut(true); // Start fade out animation
 
+      // IMPORTANT: Set localStorage flag BEFORE animations to ensure it's set early
+      try {
+        localStorage.setItem('swv_app_initialized', 'true');
+        sessionStorage.setItem('swv_session_initialized', 'true');
+      } catch (error) {
+        console.warn('Could not set storage initialization flags:', error);
+        // In case localStorage is unavailable (incognito mode), use a temporary flag in memory
+        // This ensures the startup page won't show again in the current browser session
+        window.__swvInitialized = true;
+      }
+
       // After fade out, show success checkmark
       setTimeout(() => {
         setShowSuccess(true);
@@ -241,9 +259,24 @@ const StartupPage: React.FC = () => {
     return new Promise<void>(resolve => setTimeout(resolve, delay));
   };
 
-  // Redirect when ready
+  // Update the return statement with improved redirection
   if (isReady) {
-    return <Navigate to="/" replace />;
+    // Add a forced redirect as ultimate fallback
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
+
+    return (
+      <>
+        <Navigate to="/" replace />
+        <div className="fixed inset-0 flex items-center justify-center bg-blue-800">
+          <div className="text-center text-white">
+            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-t-2 border-white"></div>
+            <p>Redirecting to home page...</p>
+          </div>
+        </div>
+      </>
+    );
   }
 
   // Success checkmark screen

@@ -34,20 +34,25 @@ import SupportCenterPage from './pages/SupportCenterPage';
 
 const LOCAL_STORAGE_KEY = 'swv_app_initialized';
 
+// Add TypeScript declaration for the custom window property
+declare global {
+  interface Window {
+    __swvInitialized?: boolean;
+  }
+}
+
 const AppRoutes: React.FC = () => {
   const [hasInitialized, setHasInitialized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Check localStorage to see if the app has been initialized before
-    const appInitialized = localStorage.getItem(LOCAL_STORAGE_KEY) === 'true';
+    // Also check window.__swvInitialized as fallback for incognito mode
+    const appInitialized =
+      localStorage.getItem(LOCAL_STORAGE_KEY) === 'true' || window.__swvInitialized === true;
+
     setHasInitialized(appInitialized);
     setIsLoading(false);
-
-    // Set initialized flag for future visits
-    if (!appInitialized) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
-    }
   }, []);
 
   // Show loading state while checking initialization
@@ -57,7 +62,7 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
-      {/* Root path - Show startup visualization on first visit, then home page */}
+      {/* Root path - Show startup visualization only on first visit */}
       <Route path="/" element={hasInitialized ? <HomePage /> : <StartupPage />} />
 
       {/* Home path - for backward compatibility */}
