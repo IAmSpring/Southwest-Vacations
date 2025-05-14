@@ -259,30 +259,14 @@ const StartupPage: React.FC = () => {
     return new Promise<void>(resolve => setTimeout(resolve, delay));
   };
 
-  // Update the return statement with improved redirection
-  if (isReady) {
-    // Add a forced redirect as ultimate fallback
-    setTimeout(() => {
-      window.location.href = '/';
-    }, 1000);
-
-    return (
-      <>
-        <Navigate to="/" replace />
-        <div className="fixed inset-0 flex items-center justify-center bg-blue-800">
-          <div className="text-center text-white">
-            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-t-2 border-white"></div>
-            <p>Redirecting to home page...</p>
-          </div>
-        </div>
-      </>
-    );
-  }
-
   // Success checkmark screen
   if (showSuccess) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-blue-800 text-white">
+      <div
+        className="fixed inset-0 flex items-center justify-center bg-blue-800 text-white"
+        role="status"
+        aria-live="polite"
+      >
         <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
         <div className="animate-success text-center">
           <svg
@@ -291,6 +275,7 @@ const StartupPage: React.FC = () => {
             stroke="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
@@ -301,9 +286,37 @@ const StartupPage: React.FC = () => {
     );
   }
 
+  // Update the redirect status screen
+  if (isReady) {
+    // Add a forced redirect as ultimate fallback
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
+
+    return (
+      <>
+        <Navigate to="/" replace />
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-blue-800"
+          role="status"
+          aria-live="polite"
+        >
+          <div className="text-center text-white">
+            <div
+              className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-t-2 border-white"
+              aria-hidden="true"
+            ></div>
+            <p>Redirecting to home page...</p>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   return (
     <div
       className={`flex min-h-screen flex-col bg-gray-100 transition-opacity duration-700 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
+      role="main"
     >
       <style dangerouslySetInnerHTML={{ __html: animationStyles }} />
       <div className="flex flex-grow items-center justify-center p-4">
@@ -316,7 +329,7 @@ const StartupPage: React.FC = () => {
           <div className="p-6">
             <h2 className="mb-4 text-xl font-semibold">System Startup</h2>
 
-            <div className="grid gap-4">
+            <div className="grid gap-4" role="list" aria-label="Service status list">
               {Object.entries(services).map(([key, service]) => (
                 <div
                   key={key}
@@ -325,23 +338,34 @@ const StartupPage: React.FC = () => {
                     boxShadow:
                       service.status === 'ready' ? '0 0 0 2px rgba(16, 185, 129, 0.5)' : 'none',
                   }}
+                  role="listitem"
+                  aria-label={`${key} service`}
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <h3 className="font-medium capitalize">{key.replace(/([A-Z])/g, ' $1')}</h3>
-                    <div className="flex items-center">
+                    <div className="flex items-center" role="status">
                       {service.status === 'initializing' ? (
                         <>
-                          <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"></div>
+                          <div
+                            className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent"
+                            aria-hidden="true"
+                          ></div>
                           <span className="text-sm text-blue-600">Initializing</span>
                         </>
                       ) : service.status === 'ready' ? (
                         <>
-                          <div className="mr-2 h-4 w-4 animate-pulse rounded-full bg-green-500"></div>
+                          <div
+                            className="mr-2 h-4 w-4 animate-pulse rounded-full bg-green-500"
+                            aria-hidden="true"
+                          ></div>
                           <span className="text-sm font-medium text-green-600">Ready</span>
                         </>
                       ) : (
                         <>
-                          <div className="mr-2 h-4 w-4 rounded-full bg-red-500"></div>
+                          <div
+                            className="mr-2 h-4 w-4 rounded-full bg-red-500"
+                            aria-hidden="true"
+                          ></div>
                           <span className="text-sm text-red-600">Error</span>
                         </>
                       )}
@@ -357,7 +381,11 @@ const StartupPage: React.FC = () => {
               <div className="mt-6">
                 <h3 className="mb-2 font-medium">Test Summary</h3>
                 <div className="rounded-md border p-4">
-                  <div className="flex flex-wrap gap-2">
+                  <div
+                    className="flex flex-wrap gap-2"
+                    role="group"
+                    aria-label="Test results summary"
+                  >
                     <div className="rounded-md bg-blue-50 px-3 py-1">
                       <span className="text-sm text-blue-700">Total: {testsPassed.total}</span>
                     </div>
@@ -373,13 +401,22 @@ const StartupPage: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200">
-                    <div
-                      className="h-full rounded-full bg-green-500"
-                      style={{
-                        width: `${Math.round((testsPassed.passed / testsPassed.total) * 100)}%`,
-                      }}
-                    ></div>
+                  <div
+                    className="mt-2"
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={Math.round((testsPassed.passed / testsPassed.total) * 100)}
+                    aria-label="Test passing percentage"
+                  >
+                    <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                      <div
+                        className="h-full rounded-full bg-green-500"
+                        style={{
+                          width: `${Math.round((testsPassed.passed / testsPassed.total) * 100)}%`,
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -387,7 +424,12 @@ const StartupPage: React.FC = () => {
 
             <div className="mt-6">
               <h3 className="mb-2 font-medium">System Log</h3>
-              <div className="h-48 overflow-y-auto rounded-md bg-gray-900 p-4 font-mono text-sm text-gray-100">
+              <div
+                className="h-48 overflow-y-auto rounded-md bg-gray-900 p-4 font-mono text-sm text-gray-100"
+                role="log"
+                aria-label="System initialization log"
+                aria-live="polite"
+              >
                 {logs.map((log, index) => {
                   const isError = log.includes('[ERROR]');
                   const isWarning = log.includes('[WARN]');
@@ -411,7 +453,10 @@ const StartupPage: React.FC = () => {
                   );
                 })}
                 {!isReady && !fadeOut && (
-                  <div className="inline-block h-4 w-2 animate-pulse bg-gray-100"></div>
+                  <div
+                    className="inline-block h-4 w-2 animate-pulse bg-gray-100"
+                    aria-hidden="true"
+                  ></div>
                 )}
               </div>
             </div>
@@ -424,7 +469,7 @@ const StartupPage: React.FC = () => {
                     : 'Please wait while services are starting up...'}
                 </p>
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500" role="status" aria-live="polite">
                 {Object.values(services).every(service => service.status === 'ready')
                   ? '100% Complete'
                   : `${Math.round(

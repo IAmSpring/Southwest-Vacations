@@ -11,7 +11,11 @@ import AppRoutes from './AppRoutes';
 // Login demo component
 const LoginDemoInfo = () => {
   return (
-    <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+    <div
+      className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50 p-4"
+      role="region"
+      aria-label="Demo account information"
+    >
       <h3 className="mb-2 text-lg font-semibold text-yellow-800">Demo Accounts</h3>
       <div className="space-y-2">
         <div className="rounded border border-yellow-100 bg-white p-3 shadow-sm">
@@ -80,7 +84,7 @@ const App: React.FC = () => {
           <AIAssistantProvider>
             <div className="flex min-h-screen flex-col bg-white">
               <Header />
-              <main className="flex-grow">
+              <main id="main-content" className="flex-grow" tabIndex={-1}>
                 <AppRoutes />
               </main>
               <Footer />

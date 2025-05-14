@@ -10,6 +10,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
   const { unreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -24,6 +25,23 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Handle keyboard accessibility
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!isOpen) return;
+
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
 
   // Get unread notifications only, limited to 5
   const unreadNotifications = notifications
@@ -44,9 +62,12 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className={`relative rounded-full p-1 hover:bg-blue-700 ${className}`}
-        aria-label="Notifications"
+        className={`relative rounded-full p-1 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 ${className}`}
+        aria-label={`Notifications ${unreadCount > 0 ? `(${unreadCount} unread)` : ''}`}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -54,6 +75,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -63,40 +85,55 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+          <span
+            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white"
+            aria-hidden="true"
+          >
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-white p-2 shadow-lg">
+        <div
+          className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-white p-2 shadow-lg"
+          role="dialog"
+          aria-label="Notifications panel"
+        >
           <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-            <h3 className="text-lg font-medium">Notifications</h3>
+            <h3 className="text-lg font-medium" id="notification-heading">
+              Notifications
+            </h3>
             <div className="flex gap-2">
               <button
                 onClick={handleMarkAllAsRead}
-                className="text-xs text-blue-600 hover:text-blue-800"
+                className="text-xs text-blue-600 hover:text-blue-800 focus:underline focus:outline-none"
+                aria-label="Mark all notifications as read"
               >
                 Mark all as read
               </button>
             </div>
           </div>
 
-          <div className="max-h-80 overflow-y-auto">
+          <div
+            className="max-h-80 overflow-y-auto"
+            aria-labelledby="notification-heading"
+            role="region"
+          >
             {unreadNotifications.length === 0 ? (
               <div className="py-4 text-center text-sm text-gray-500">No new notifications</div>
             ) : (
-              <ul className="divide-y divide-gray-100">
+              <ul className="divide-y divide-gray-100" role="list">
                 {unreadNotifications.map(notification => (
                   <li key={notification.id} className="py-2">
                     <Link
                       to={notification.actions?.[0]?.url || '/notifications'}
-                      className="block rounded-md p-2 hover:bg-gray-50"
+                      className="block rounded-md p-2 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300"
                       onClick={() => handleNotificationClick(notification.id)}
+                      aria-label={`${notification.title}: ${notification.content}`}
                     >
                       <div className="flex items-start">
-                        <div className="shrink-0">
+                        <div className="shrink-0" aria-hidden="true">
                           {notification.type === 'booking' && (
                             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-500">
                               ✈️
@@ -137,7 +174,10 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
                           </p>
                         </div>
                         {notification.priority === 'high' && (
-                          <span className="ml-2 h-2 w-2 shrink-0 rounded-full bg-red-500"></span>
+                          <span
+                            className="ml-2 h-2 w-2 shrink-0 rounded-full bg-red-500"
+                            aria-label="High priority"
+                          ></span>
                         )}
                       </div>
                     </Link>
@@ -150,8 +190,9 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
           <div className="border-t border-gray-200 pt-2">
             <Link
               to="/notifications"
-              className="block w-full rounded-md bg-gray-100 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-200"
+              className="block w-full rounded-md bg-gray-100 py-2 text-center text-sm font-medium text-gray-700 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
               onClick={() => setIsOpen(false)}
+              aria-label="View all notifications"
             >
               View all notifications
             </Link>

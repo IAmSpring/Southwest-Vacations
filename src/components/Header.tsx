@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import NotificationIcon from './NotificationIcon';
@@ -6,6 +6,9 @@ import NotificationIcon from './NotificationIcon';
 const Header = () => {
   const { isAuthenticated, user } = useAuthContext();
   const isAdmin = user?.isAdmin;
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const menuButtonRef = useRef<HTMLDivElement>(null);
 
   // Generate avatar with user initials or default icon
   const getAvatar = () => {
@@ -21,30 +24,73 @@ const Header = () => {
     return initials;
   };
 
+  // Handle keyboard interactions for dropdown menu
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setMenuOpen(false);
+    } else if (e.key === 'Enter' || e.key === ' ') {
+      setMenuOpen(!menuOpen);
+    }
+  };
+
+  // Click outside to close menu
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        menuRef.current &&
+        menuButtonRef.current &&
+        !menuRef.current.contains(event.target as Node) &&
+        !menuButtonRef.current.contains(event.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuRef, menuButtonRef]);
+
   return (
     <header className="sticky top-0 z-50 bg-gradient-to-r from-blue-600 to-blue-800 text-white shadow-md">
+      {/* Skip to main content link for keyboard users */}
+      <a
+        href="#main-content"
+        className="absolute left-0 -translate-y-full bg-blue-700 p-2 text-white focus:translate-y-0 focus:outline-none focus:ring-2 focus:ring-blue-300"
+      >
+        Skip to main content
+      </a>
+
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          <Link to="/" className="transition-colors hover:text-blue-200">
-            ✈️ Southwest Vacations
+          <Link
+            to="/"
+            className="transition-colors hover:text-blue-200"
+            aria-label="Southwest Vacations Home"
+          >
+            <span aria-hidden="true">✈️</span> Southwest Vacations
           </Link>
         </h1>
-        <nav className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-4" aria-label="Main navigation">
           <Link
             to="/"
             className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+            aria-label="Home page"
           >
             Home
           </Link>
           <Link
             to="/trips"
             className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+            aria-label="Browse available trips"
           >
             Trips
           </Link>
           <Link
             to="/book"
             className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+            aria-label="Book a new trip"
           >
             Book a Trip
           </Link>
@@ -52,12 +98,23 @@ const Header = () => {
           {isAuthenticated ? (
             <>
               <NotificationIcon />
-              <div className="group relative">
+              <div className="relative">
                 <div
+                  ref={menuButtonRef}
                   className="flex cursor-pointer items-center space-x-2"
                   data-testid="user-profile"
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  onKeyDown={handleKeyDown}
+                  tabIndex={0}
+                  role="button"
+                  aria-haspopup="menu"
+                  aria-expanded={menuOpen}
+                  aria-label="User menu"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFBF27] font-bold text-[#304CB2]">
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFBF27] font-bold text-[#304CB2]"
+                    aria-hidden="true"
+                  >
                     {getAvatar()}
                   </div>
                   <span className="hidden text-sm md:inline">{user?.username}</span>
@@ -67,6 +124,7 @@ const Header = () => {
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -77,11 +135,20 @@ const Header = () => {
                   </svg>
                 </div>
 
-                <div className="absolute right-0 z-10 mt-2 hidden w-48 rounded-md bg-white py-1 shadow-lg group-hover:block">
+                <div
+                  ref={menuRef}
+                  className={`absolute right-0 z-10 mt-2 w-48 rounded-md bg-white py-1 shadow-lg ${menuOpen ? 'block' : 'hidden'}`}
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
+                  tabIndex={-1}
+                >
                   <Link
                     to="/profile"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     data-testid="profile-link"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
                   >
                     <div className="flex items-center">
                       <svg
@@ -90,6 +157,7 @@ const Header = () => {
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -106,6 +174,8 @@ const Header = () => {
                     to="/bookings"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     data-testid="dashboard-link"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
                   >
                     <div className="flex items-center">
                       <svg
@@ -114,6 +184,7 @@ const Header = () => {
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -130,6 +201,8 @@ const Header = () => {
                     to="/notifications"
                     className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                     data-testid="notifications-link"
+                    role="menuitem"
+                    onClick={() => setMenuOpen(false)}
                   >
                     <div className="flex items-center">
                       <svg
@@ -138,6 +211,7 @@ const Header = () => {
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -156,6 +230,8 @@ const Header = () => {
                         to="/admin"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         data-testid="admin-link"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
                       >
                         <div className="flex items-center">
                           <svg
@@ -164,6 +240,7 @@ const Header = () => {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            aria-hidden="true"
                           >
                             <path
                               strokeLinecap="round"
@@ -186,6 +263,8 @@ const Header = () => {
                         to="/test-visualization"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         data-testid="test-visualization-link"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
                       >
                         <div className="flex items-center">
                           <svg
@@ -194,6 +273,7 @@ const Header = () => {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            aria-hidden="true"
                           >
                             <path
                               strokeLinecap="round"
@@ -210,6 +290,8 @@ const Header = () => {
                         to="/testing"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         data-testid="testing-dashboard-link"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
                       >
                         <div className="flex items-center">
                           <svg
@@ -218,6 +300,7 @@ const Header = () => {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            aria-hidden="true"
                           >
                             <path
                               strokeLinecap="round"
@@ -234,6 +317,8 @@ const Header = () => {
                         to="/system-health"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         data-testid="system-health-link"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
                       >
                         <div className="flex items-center">
                           <svg
@@ -242,6 +327,7 @@ const Header = () => {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            aria-hidden="true"
                           >
                             <path
                               strokeLinecap="round"
@@ -258,6 +344,8 @@ const Header = () => {
                         to="/aid"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         data-testid="aid-link"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
                       >
                         <div className="flex items-center">
                           <svg
@@ -266,6 +354,7 @@ const Header = () => {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            aria-hidden="true"
                           >
                             <path
                               strokeLinecap="round"
@@ -282,6 +371,8 @@ const Header = () => {
                         to="/support"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         data-testid="support-center-link"
+                        role="menuitem"
+                        onClick={() => setMenuOpen(false)}
                       >
                         <div className="flex items-center">
                           <svg
@@ -290,6 +381,7 @@ const Header = () => {
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
+                            aria-hidden="true"
                           >
                             <path
                               strokeLinecap="round"
@@ -304,7 +396,11 @@ const Header = () => {
                     </>
                   )}
 
-                  <div className="my-1 border-t border-gray-100"></div>
+                  <div
+                    className="my-1 border-t border-gray-100"
+                    role="separator"
+                    aria-orientation="horizontal"
+                  ></div>
 
                   <button
                     className="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100"
@@ -313,6 +409,7 @@ const Header = () => {
                       window.location.reload();
                     }}
                     data-testid="logout-button"
+                    role="menuitem"
                   >
                     <div className="flex items-center">
                       <svg
@@ -321,6 +418,7 @@ const Header = () => {
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
+                        aria-hidden="true"
                       >
                         <path
                           strokeLinecap="round"
@@ -340,6 +438,7 @@ const Header = () => {
               to="/login"
               className="rounded-md bg-blue-700 px-3 py-2 text-sm font-medium shadow-md transition-colors hover:bg-blue-800"
               data-testid="login-button"
+              aria-label="Log in to your account"
             >
               Login
             </Link>
