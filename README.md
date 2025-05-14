@@ -2,6 +2,8 @@
 
 A full-stack vacation booking application built with React, TypeScript, and Express, featuring a persistent database for storing user data, bookings, and favorites.
 
+![Southwest Airlines Vacations](https://github.com/user-attachments/assets/3cf8207c-15c2-4514-ac29-09dca386249e)
+
 ## Features
 
 - Complete vacation booking experience
@@ -12,7 +14,9 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 - Responsive design for all devices
 - AI-powered assistant with personalized trip recommendations
 
-![Southwest Vacations Landing Page](https://github.com/user-attachments/assets/44142e17-0920-404b-a650-858a5bfaae4d)
+# Vacation Bookings
+
+![Bookings](https://github.com/user-attachments/assets/b65d444e-c951-4aa3-bcf1-630f5dd44c12)
 
 ## Deployment
 
@@ -32,6 +36,7 @@ const base = process.env.NODE_ENV === 'production' ? `/${repositoryName}/` : '/'
 Two GitHub Actions workflows manage the deployment process:
 
 1. **Main Deployment Workflow**:
+
    - Triggered on pushes to the main branch
    - Builds the application with production settings
    - Configures GitHub Pages environment
@@ -49,6 +54,7 @@ For security, the workflows use GitHub Secrets to inject environment variables d
 ### Accessing the Deployed Application
 
 The deployed application is available at:
+
 - Production: https://southwest-vacations.github.io/
 - For each successful deployment, the GitHub Actions job will provide a link to the deployed version in the workflow summary.
 
@@ -69,6 +75,10 @@ The deployed application is available at:
 - JWT for authentication
 - TypeScript for type safety
 - OpenAI API integration for AI assistant
+
+# Analytics
+
+![Analytics](https://github.com/user-attachments/assets/efc7fd45-6870-4a43-adf7-939d77df9032)
 
 ## Getting Started
 
@@ -431,4 +441,6 @@ Backed by `seedData.json`.
 }
 ```
 
----
+# Full GitHub System Documentation (Easy Expandability)
+
+---![Automatic GitHub Documentation ](https://github.com/user-attachments/assets/ce6d35a0-11ec-4a0a-94c1-28cd23212701)
