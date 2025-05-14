@@ -12,10 +12,10 @@ jobs:
     
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
       
@@ -26,12 +26,12 @@ jobs:
         id: check
         run: |
           UPDATES=$(ncu --format json)
-          echo "::set-output name=has_updates::$(echo $UPDATES | jq 'length > 0')"
-          echo "::set-output name=updates::$(echo $UPDATES | jq -c .)"
+          echo "HAS_UPDATES=$(echo $UPDATES | jq 'length > 0')" >> $GITHUB_OUTPUT
+          echo "UPDATES=$(echo $UPDATES | jq -c .)" >> $GITHUB_OUTPUT
       
       - name: Create Pull Request
-        if: steps.check.outputs.has_updates == 'true'
-        uses: peter-evans/create-pull-request@v4
+        if: steps.check.outputs.HAS_UPDATES == 'true'
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update dependencies"
@@ -41,7 +41,7 @@ jobs:
             
             Dependency updates:
             ```json
-            ${{ steps.check.outputs.updates }}
+            ${{ steps.check.outputs.UPDATES }}
             ```
             
             This PR was created automatically by the Dependency Updates workflow.
