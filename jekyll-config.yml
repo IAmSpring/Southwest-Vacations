@@ -1,0 +1,40 @@
+title: Southwest Vacations
+description: Internal booking system for Southwest Vacations
+baseurl: /Southwest-Vacations
+
+# GitHub Pages settings
+lsi: false
+safe: true
+incremental: false
+highlighter: rouge
+markdown: kramdown
+gist:
+  noscript: false
+
+# Theme settings
+theme: jekyll-theme-cayman
+
+# Include files and directories
+include:
+  - dist/
+  - index.html
+  - public/
+  - README.md
+  - _config.yml
+  
+# Exclude development files and directories
+exclude:
+  - node_modules/
+  - src/
+  - mock-backend/
+  - cypress/
+  - tests/
+  - .github/
+  - data/
+  - scripts/
+  - "*.js"
+  - "*.ts"
+  - "*.json"
+  - "*.lock"
+  - "*.config.js"
+  - "*.config.ts" 
