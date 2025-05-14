@@ -138,18 +138,25 @@ The application includes a dedicated test screenshots viewer that allows you to:
 1. **View test screenshots in an organized way** - Screenshots are organized by test suite in an accordion interface
 2. **See test details** - Each screenshot includes information about the test name and when it was captured
 3. **View full-size screenshots** - Click on any thumbnail to open a full-size view of the screenshot
+4. **Filter by test framework** - Filter screenshots by specific test frameworks (Cypress, Playwright)
+5. **Mark screenshots as important or reviewed** - Use the buttons on each screenshot to mark them for follow-up
+6. **Persistence across sessions** - Important and reviewed marks are saved in localStorage and persist across page reloads
 
 To access the test screenshots viewer:
 
 1. Log in as an admin user
 2. Click on your profile in the top-right corner
 3. Select "Test Screenshots" from the dropdown menu
-4. Use the accordion interface to browse through test screenshots by test suite
+4. Use the framework tabs and accordion interface to browse through test screenshots
 
-The screenshots viewer currently supports:
+The screenshots viewer supports:
 
 - Cypress end-to-end test screenshots
-- Planned support for Playwright and other test framework screenshots
+- Playwright test screenshots and artifacts
+- Visual indicators for important test failures (yellow star icon)
+- Reviewed status tracking (green checkmark icon)
+- Framework-specific counts and filtering
+- Improved error handling for missing screenshots with auto-retry
 
 ## Recent Improvements
 
@@ -161,3 +168,6 @@ The screenshots viewer currently supports:
 - Enhanced error handling and reporting in test scripts
 - Added proper seeding of test users and trip data
 - Created a visual test screenshots viewer with accordion interface
+- Added features to mark screenshots as important or reviewed
+- Implemented smart error handling for missing screenshot images
+- Added persistent storage of screenshot review status

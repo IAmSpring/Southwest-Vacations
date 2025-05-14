@@ -17,6 +17,40 @@ const TestScreenshotsViewer: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeFramework, setActiveFramework] = useState<'all' | 'cypress' | 'playwright'>('all');
+  const [importantScreenshots, setImportantScreenshots] = useState<Record<string, boolean>>({});
+  const [reviewedScreenshots, setReviewedScreenshots] = useState<Record<string, boolean>>({});
+  const [retryCount, setRetryCount] = useState<Record<string, number>>({});
+
+  // Load saved marked screenshots from localStorage
+  useEffect(() => {
+    const savedImportant = localStorage.getItem('swv_important_screenshots');
+    const savedReviewed = localStorage.getItem('swv_reviewed_screenshots');
+
+    if (savedImportant) {
+      try {
+        setImportantScreenshots(JSON.parse(savedImportant));
+      } catch (err) {
+        console.error('Error parsing saved important screenshots:', err);
+      }
+    }
+
+    if (savedReviewed) {
+      try {
+        setReviewedScreenshots(JSON.parse(savedReviewed));
+      } catch (err) {
+        console.error('Error parsing saved reviewed screenshots:', err);
+      }
+    }
+  }, []);
+
+  // Save marked screenshots to localStorage when they change
+  useEffect(() => {
+    localStorage.setItem('swv_important_screenshots', JSON.stringify(importantScreenshots));
+  }, [importantScreenshots]);
+
+  useEffect(() => {
+    localStorage.setItem('swv_reviewed_screenshots', JSON.stringify(reviewedScreenshots));
+  }, [reviewedScreenshots]);
 
   useEffect(() => {
     const fetchScreenshots = async () => {
@@ -54,6 +88,46 @@ const TestScreenshotsViewer: React.FC = () => {
     setSelectedImage(null);
   };
 
+  const markAsImportant = (imageId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setImportantScreenshots(prev => ({
+      ...prev,
+      [imageId]: !prev[imageId],
+    }));
+  };
+
+  const markAsReviewed = (imageId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setReviewedScreenshots(prev => ({
+      ...prev,
+      [imageId]: !prev[imageId],
+    }));
+  };
+
+  const handleImageError = (
+    imageId: string,
+    path: string,
+    event: React.SyntheticEvent<HTMLImageElement>
+  ) => {
+    const currentRetries = retryCount[imageId] || 0;
+
+    if (currentRetries < 2) {
+      // Try loading the image again up to 2 times
+      setRetryCount(prev => ({
+        ...prev,
+        [imageId]: currentRetries + 1,
+      }));
+
+      // Add a cache-busting param to force reload
+      const cacheBustUrl = `${path}?retry=${currentRetries + 1}`;
+      (event.target as HTMLImageElement).src = cacheBustUrl;
+    } else {
+      // If still failing after retries, use placeholder
+      (event.target as HTMLImageElement).src =
+        'https://via.placeholder.com/640x360?text=Screenshot+Not+Found';
+    }
+  };
+
   const getFrameworkFromTestSuite = (testSuite: string): 'cypress' | 'playwright' | 'other' => {
     if (testSuite.startsWith('cypress-')) return 'cypress';
     if (testSuite.startsWith('playwright-')) return 'playwright';
@@ -81,6 +155,26 @@ const TestScreenshotsViewer: React.FC = () => {
         return 'bg-blue-50';
     }
   };
+
+  // Count screenshots by framework
+  const getFrameworkCounts = () => {
+    const counts = {
+      cypress: 0,
+      playwright: 0,
+      other: 0,
+      total: 0,
+    };
+
+    Object.entries(screenshots).forEach(([testSuite, images]) => {
+      const framework = getFrameworkFromTestSuite(testSuite);
+      counts[framework] += images.length;
+      counts.total += images.length;
+    });
+
+    return counts;
+  };
+
+  const screenshotCounts = getFrameworkCounts();
 
   // Filter screenshots based on active framework
   const filteredScreenshots = Object.entries(screenshots).filter(([testSuite]) => {
@@ -121,7 +215,8 @@ const TestScreenshotsViewer: React.FC = () => {
                   : 'text-gray-500 hover:border-b-2 hover:border-gray-300 hover:text-gray-700'
               }`}
             >
-              All Frameworks
+              All Frameworks{' '}
+              <span className="ml-1 text-xs font-bold">({screenshotCounts.total})</span>
             </button>
             <button
               onClick={() => setActiveFramework('cypress')}
@@ -131,7 +226,7 @@ const TestScreenshotsViewer: React.FC = () => {
                   : 'text-gray-500 hover:border-b-2 hover:border-gray-300 hover:text-gray-700'
               }`}
             >
-              Cypress
+              Cypress <span className="ml-1 text-xs font-bold">({screenshotCounts.cypress})</span>
             </button>
             <button
               onClick={() => setActiveFramework('playwright')}
@@ -141,7 +236,8 @@ const TestScreenshotsViewer: React.FC = () => {
                   : 'text-gray-500 hover:border-b-2 hover:border-gray-300 hover:text-gray-700'
               }`}
             >
-              Playwright
+              Playwright{' '}
+              <span className="ml-1 text-xs font-bold">({screenshotCounts.playwright})</span>
             </button>
           </nav>
         </div>
@@ -170,10 +266,13 @@ const TestScreenshotsViewer: React.FC = () => {
             const framework = getFrameworkFromTestSuite(testSuite);
             const frameworkColor = getFrameworkColor(framework);
 
+            // Check if this test suite has any important screenshots
+            const hasImportant = testImages.some(image => importantScreenshots[image.id]);
+
             return (
               <div key={testSuite} className="overflow-hidden rounded-lg border border-gray-200">
                 <div
-                  className={`flex cursor-pointer items-center justify-between ${getFrameworkBgColor(framework)} px-4 py-3 hover:bg-opacity-70`}
+                  className={`flex cursor-pointer items-center justify-between ${getFrameworkBgColor(framework)} px-4 py-3 hover:bg-opacity-70 ${hasImportant ? 'border-l-4 border-l-yellow-500' : ''}`}
                   onClick={() => toggleAccordion(testSuite)}
                 >
                   <div>
@@ -214,7 +313,13 @@ const TestScreenshotsViewer: React.FC = () => {
                       {testImages.map(image => (
                         <div
                           key={image.id}
-                          className="cursor-pointer overflow-hidden rounded-lg border border-gray-200 transition-shadow hover:shadow-md"
+                          className={`cursor-pointer overflow-hidden rounded-lg border transition-shadow hover:shadow-md ${
+                            importantScreenshots[image.id]
+                              ? 'border-yellow-400 bg-yellow-50'
+                              : reviewedScreenshots[image.id]
+                                ? 'border-green-400 bg-green-50'
+                                : 'border-gray-200'
+                          }`}
                           onClick={() => openImageViewer(image.path)}
                         >
                           <div className="aspect-h-9 aspect-w-16 bg-gray-100">
@@ -222,12 +327,19 @@ const TestScreenshotsViewer: React.FC = () => {
                               src={image.path}
                               alt={image.testName}
                               className="h-full w-full object-cover"
-                              onError={e => {
-                                // If image fails to load, replace with placeholder
-                                (e.target as HTMLImageElement).src =
-                                  'https://via.placeholder.com/640x360?text=Screenshot+Not+Found';
-                              }}
+                              onError={e => handleImageError(image.id, image.path, e)}
                             />
+                            {importantScreenshots[image.id] && (
+                              <div className="absolute right-0 top-0 m-2 rounded-full bg-yellow-400 p-1">
+                                <svg
+                                  className="h-4 w-4 text-white"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                              </div>
+                            )}
                           </div>
                           <div className="p-3">
                             <div className="flex items-center justify-between">
@@ -237,9 +349,43 @@ const TestScreenshotsViewer: React.FC = () => {
                               </span>
                             </div>
                             <p className="mt-1 truncate text-sm text-gray-500">{image.testName}</p>
-                            <p className="mt-2 text-xs text-gray-400">
-                              {new Date(image.timestamp).toLocaleString()}
-                            </p>
+                            <div className="mt-2 flex items-center justify-between">
+                              <p className="text-xs text-gray-400">
+                                {new Date(image.timestamp).toLocaleString()}
+                              </p>
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={e => markAsImportant(image.id, e)}
+                                  className={`rounded-full p-1 hover:bg-gray-100 ${
+                                    importantScreenshots[image.id]
+                                      ? 'text-yellow-500'
+                                      : 'text-gray-400'
+                                  }`}
+                                  title="Mark as important"
+                                >
+                                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                  </svg>
+                                </button>
+                                <button
+                                  onClick={e => markAsReviewed(image.id, e)}
+                                  className={`rounded-full p-1 hover:bg-gray-100 ${
+                                    reviewedScreenshots[image.id]
+                                      ? 'text-green-500'
+                                      : 'text-gray-400'
+                                  }`}
+                                  title="Mark as reviewed"
+                                >
+                                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                      fillRule="evenodd"
+                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                      clipRule="evenodd"
+                                    />
+                                  </svg>
+                                </button>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       ))}
