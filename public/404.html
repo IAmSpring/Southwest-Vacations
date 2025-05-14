@@ -6,11 +6,8 @@
   <title>Page Not Found - Southwest Vacations</title>
   <script>
     // Redirect to index.html with the path preserved in a query parameter
-    const repositoryName = 'home';
-    const segmentCount = 1; // Modify based on your repository structure
     const location = window.location;
-    const pathSegments = location.pathname.slice(1).split('/').slice(segmentCount);
-    const redirectPath = `${location.origin}/${repositoryName}/#/${pathSegments.join('/')}${location.search}`;
+    const redirectPath = `${location.origin}/#/${location.pathname.slice(1)}${location.search}`;
     window.location.replace(redirectPath);
   </script>
 </head>
@@ -18,7 +15,7 @@
   <h1>Redirecting to the home page...</h1>
   <p>If you are not redirected automatically, please click <a id="redirect-link" href="/">here</a>.</p>
   <script>
-    document.getElementById('redirect-link').href = `/${repositoryName}/`;
+    document.getElementById('redirect-link').href = redirectPath;
   </script>
 </body>
 </html> 

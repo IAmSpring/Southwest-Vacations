@@ -1,11 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Get repository name from environment or use default
-const repositoryName = process.env.REPOSITORY_NAME || 'home';
-const isProduction = process.env.NODE_ENV === 'production';
-// Use a root base path in development mode, only use the repository-based path in production
-const base = isProduction ? `/${repositoryName}/` : '/';
+// Use root path for deployment
+const base = '/';
 
 // https://vitejs.dev/config/
 export default defineConfig({

@@ -243,7 +243,7 @@ const StartupPage: React.FC = () => {
 
   // Redirect when ready
   if (isReady) {
-    return <Navigate to="/home" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // Success checkmark screen

@@ -57,17 +57,16 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Routes>
-      {/* Startup page - only show on first visit or when explicitly accessed */}
-      <Route
-        path="/"
-        element={hasInitialized ? <Navigate to="/home" replace /> : <StartupPage />}
-      />
+      {/* Root path - Show startup visualization on first visit, then home page */}
+      <Route path="/" element={hasInitialized ? <HomePage /> : <StartupPage />} />
+
+      {/* Home path - for backward compatibility */}
+      <Route path="/home" element={<HomePage />} />
 
       {/* System initialization page - can be accessed explicitly */}
       <Route path="/system-init" element={<StartupPage />} />
 
       {/* Main application routes */}
-      <Route path="/home" element={<HomePage />} />
       <Route path="/trip/:id" element={<TripDetailPage />} />
       <Route path="/trips" element={<TripsPage />} />
       <Route path="/book" element={<BookingPage />} />

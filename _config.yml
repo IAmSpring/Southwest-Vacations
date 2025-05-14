@@ -2,7 +2,7 @@ title: Southwest Vacations
 description: Internal booking system for Southwest Airlines Vacations
 domain: iamspring.github.io
 url: https://iamspring.github.io
-baseurl: /home
+baseurl: ""
 
 # GitHub Pages settings
 lsi: false
