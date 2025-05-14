@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
-// Use root path for deployment
-const base = '/';
+// Get repository name for GitHub Pages deployment
+const repositoryName = 'Southwest-Vacations';
+const isProduction = process.env.NODE_ENV === 'production';
+// Use repository-based path in production, root path in development
+const base = isProduction ? `/${repositoryName}/` : '/';
 
 // https://vitejs.dev/config/
 export default defineConfig({
