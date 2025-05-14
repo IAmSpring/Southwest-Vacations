@@ -1,3 +1,5 @@
+import { getBasePath } from './apiConfig';
+
 /**
  * Utility functions for loading markdown content
  */
@@ -26,8 +28,11 @@ export const loadMarkdown = async (path: string): Promise<string> => {
  * @returns Full path to the markdown file
  */
 export const getMarkdownPath = (filename: string): string => {
-  // In development or production, files are in the public directory
-  return `/${filename}`;
+  // Get base path for GitHub Pages or other environments
+  const basePath = getBasePath();
+
+  // Return path with appropriate base path
+  return `${basePath}/${filename}`;
 };
 
 /**
