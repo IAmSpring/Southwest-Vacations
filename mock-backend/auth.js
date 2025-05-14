@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 const JWT_SECRET = process.env.JWT_SECRET || 'southwest-vacations-secret-key';
 
 // Register a new user
-export const registerUser = async (username, email, password) => {
+export const registerUser = async (name, email, password) => {
   await db.read();
   const existingUser = db.data.users.find(user => user.email === email);
 
@@ -20,10 +20,19 @@ export const registerUser = async (username, email, password) => {
 
   const newUser = {
     id: uuidv4(),
-    username: username,
+    name: name,
     email: email,
-    passwordHash: passwordHash,
+    password: password, // Store plain text for demo
+    passwordHash: passwordHash, // Store hash for production use
+    role: 'user',
+    isEmployee: false,
     createdAt: new Date().toISOString(),
+    membershipLevel: 'Bronze',
+    preferences: {
+      notifications: true,
+      newsletter: true,
+      marketing: false
+    }
   };
 
   // Save to database
@@ -39,11 +48,16 @@ export const loginUser = async (email, password) => {
   const user = db.data.users.find(user => user.email === email);
 
   if (!user) {
+    console.log(`Login failed: User not found for email ${email}`);
     return null;
   }
 
-  const isMatch = await bcrypt.compare(password, user.passwordHash);
-  if (!isMatch) {
+  // For demo purposes, we'll check both plaintext and hashed passwords
+  const isPlainTextMatch = user.password === password;
+  const isHashMatch = user.passwordHash ? await bcrypt.compare(password, user.passwordHash) : false;
+
+  if (!isPlainTextMatch && !isHashMatch) {
+    console.log(`Login failed: Password mismatch for ${email}`);
     return null;
   }
 
@@ -54,13 +68,20 @@ export const loginUser = async (email, password) => {
     await db.write();
   }
 
+  // Create token
   const token = jwt.sign(
-    { id: user.id, email: user.email },
+    { id: user.id, email: user.email, role: user.role },
     JWT_SECRET,
     { expiresIn: '7d' }
   );
 
-  return token;
+  // Prepare user data to return (without sensitive fields)
+  const { password: _, passwordHash: __, ...userInfo } = user;
+
+  return {
+    token,
+    user: userInfo
+  };
 };
 
 // Verify JWT token

@@ -182,11 +182,19 @@ const users = {
   users: [
     {
       id: "user1",
-      name: "John Doe",
-      email: "user@example.com",
+      name: "Test User",
+      email: "test@example.com",
       password: "password123", // In a real app, this would be hashed
       role: "user",
-      isEmployee: false
+      isEmployee: false,
+      createdAt: "2023-09-15T08:30:00Z",
+      membershipLevel: "Silver",
+      phoneNumber: "555-123-4567",
+      preferences: {
+        notifications: true,
+        newsletter: true,
+        marketing: false
+      }
     },
     {
       id: "user2",
@@ -194,16 +202,86 @@ const users = {
       email: "sarah@example.com",
       password: "password123", 
       role: "user",
-      isEmployee: false
+      isEmployee: false,
+      createdAt: "2023-08-22T14:45:00Z",
+      membershipLevel: "Gold",
+      phoneNumber: "555-987-6543",
+      preferences: {
+        notifications: true,
+        newsletter: false,
+        marketing: false
+      }
     },
     {
-      id: "emp1",
-      name: "Employee User",
-      email: "employee@southwest.com",
-      password: "password123",
+      id: "user3",
+      name: "Regular Customer",
+      email: "customer@example.com",
+      password: "customer123", 
+      role: "user",
+      isEmployee: false,
+      createdAt: "2023-10-05T09:15:00Z",
+      membershipLevel: "Bronze",
+      phoneNumber: "555-456-7890",
+      preferences: {
+        notifications: true,
+        newsletter: true,
+        marketing: true
+      }
+    },
+    {
+      id: "user4",
+      name: "Premium Member",
+      email: "premium@example.com",
+      password: "premium123", 
+      role: "user",
+      isEmployee: false,
+      createdAt: "2023-07-18T11:22:00Z",
+      membershipLevel: "Platinum",
+      phoneNumber: "555-789-1234",
+      preferences: {
+        notifications: true,
+        newsletter: true,
+        marketing: true
+      }
+    },
+    {
+      id: "admin1",
+      name: "Admin User",
+      email: "admin@southwest.com",
+      password: "admin123",
       role: "admin",
       isEmployee: true,
-      employeeId: "EMP12345"
+      employeeId: "EMP12345",
+      createdAt: "2023-06-01T08:00:00Z",
+      department: "Customer Service",
+      accessLevel: "Full",
+      managerName: "Jennifer Wilson"
+    },
+    {
+      id: "admin2",
+      name: "System Administrator",
+      email: "sysadmin@southwest.com",
+      password: "sysadmin123",
+      role: "admin",
+      isEmployee: true,
+      employeeId: "EMP67890",
+      createdAt: "2023-05-15T10:30:00Z",
+      department: "IT",
+      accessLevel: "System",
+      managerName: "David Rodriguez"
+    },
+    {
+      id: "agent1",
+      name: "Booking Agent",
+      email: "agent@southwest.com",
+      password: "agent123",
+      role: "agent",
+      isEmployee: true,
+      employeeId: "EMP54321",
+      createdAt: "2023-07-10T09:45:00Z",
+      department: "Bookings",
+      accessLevel: "Limited",
+      managerName: "Jennifer Wilson"
     }
   ]
 };

@@ -28,10 +28,12 @@ export const authenticate = (req, res, next) => {
     // Add user to request
     req.user = {
       id: user.id,
-      username: user.username,
+      name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin || false,
-      role: user.role || 'user'
+      isEmployee: user.isEmployee || false,
+      role: user.role || 'user',
+      membershipLevel: user.membershipLevel,
+      employeeId: user.employeeId
     };
     
     next();
@@ -43,8 +45,24 @@ export const authenticate = (req, res, next) => {
 
 // Middleware to check if user is admin
 export const isAdmin = (req, res, next) => {
-  if (!req.user || !req.user.isAdmin) {
+  if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Access denied: Admin privileges required' });
+  }
+  next();
+};
+
+// Middleware to check if user is an employee (admin or agent)
+export const isEmployee = (req, res, next) => {
+  if (!req.user || !req.user.isEmployee) {
+    return res.status(403).json({ error: 'Access denied: Employee privileges required' });
+  }
+  next();
+};
+
+// Middleware to check if user is an agent
+export const isAgent = (req, res, next) => {
+  if (!req.user || req.user.role !== 'agent') {
+    return res.status(403).json({ error: 'Access denied: Agent privileges required' });
   }
   next();
 }; 

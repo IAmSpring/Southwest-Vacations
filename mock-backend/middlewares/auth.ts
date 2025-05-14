@@ -7,6 +7,15 @@ import { trackUserAction } from './activityTracker.js';
 // Secret key for JWT
 export const JWT_SECRET = 'southwest-vacations-secret-key';
 
+// Extend Request to include user property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
+  }
+}
+
 // Middleware to authenticate requests
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -57,11 +66,37 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
 export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
   requireAuth(req, res, () => {
     // Check if the authenticated user is an admin
-    if (!req.user?.isAdmin) {
+    if (!req.user?.role || req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Admin access required' });
     }
     
     // User is an admin, proceed
+    next();
+  });
+};
+
+// Middleware to check if user is an employee (admin or agent)
+export const requireEmployee = (req: Request, res: Response, next: NextFunction) => {
+  requireAuth(req, res, () => {
+    // Check if the authenticated user is an employee
+    if (!req.user?.isEmployee) {
+      return res.status(403).json({ error: 'Employee access required' });
+    }
+    
+    // User is an employee, proceed
+    next();
+  });
+};
+
+// Middleware to check if user is an agent
+export const requireAgent = (req: Request, res: Response, next: NextFunction) => {
+  requireAuth(req, res, () => {
+    // Check if the authenticated user is an agent
+    if (!req.user?.role || req.user.role !== 'agent') {
+      return res.status(403).json({ error: 'Agent access required' });
+    }
+    
+    // User is an agent, proceed
     next();
   });
 }; 

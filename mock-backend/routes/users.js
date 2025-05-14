@@ -7,14 +7,14 @@ const router = express.Router();
 // Register a new user
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
     
     // Validate required fields
-    if (!username || !email || !password) {
+    if (!name || !email || !password) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
     
-    const user = await registerUser(username, email, password);
+    const user = await registerUser(name, email, password);
     if (!user) {
       return res.status(400).json({ error: 'User already exists with this email' });
     }
@@ -22,8 +22,10 @@ router.post('/register', async (req, res) => {
     // Return success without sensitive data
     res.status(201).json({
       id: user.id,
-      username: user.username,
+      name: user.name,
       email: user.email,
+      role: user.role,
+      membershipLevel: user.membershipLevel,
       createdAt: user.createdAt
     });
   } catch (error) {
@@ -42,13 +44,14 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Missing email or password' });
     }
     
-    const token = await loginUser(email, password);
-    if (!token) {
+    console.log(`Login attempt for ${email}`);
+    const result = await loginUser(email, password);
+    if (!result) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
     
-    // Return token
-    res.json({ token: token });
+    // Return token and user info
+    res.json(result);
   } catch (error) {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Server error' });
@@ -68,8 +71,8 @@ router.get('/me', async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
     
-    // Return user without password hash
-    const { passwordHash, ...userProfile } = user;
+    // Return user without password fields
+    const { password, passwordHash, ...userProfile } = user;
     res.json(userProfile);
   } catch (error) {
     console.error('Error fetching user profile:', error);
@@ -84,7 +87,13 @@ router.get('/:userId/bookings', async (req, res) => {
     const currentUserId = extractUserId(req);
     
     // Ensure user is authenticated and requesting their own bookings
-    if (!currentUserId || (currentUserId !== userId && currentUserId !== 'admin')) {
+    // Allow admins and agents to view any user's bookings
+    const currentUser = await getUserById(currentUserId);
+    const isEmployeeOrOwnBookings = 
+      (currentUser && currentUser.isEmployee) || 
+      (currentUserId === userId);
+
+    if (!currentUserId || !isEmployeeOrOwnBookings) {
       return res.status(401).json({ error: 'Unauthorized access' });
     }
     

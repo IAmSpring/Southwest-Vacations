@@ -27,6 +27,7 @@ import TestVisualizationPage from './pages/TestVisualizationPage';
 import StartupPage from './pages/StartupPage';
 import PromotionsPage from './pages/PromotionsPage';
 import AIDPage from './pages/AIDPage';
+import SystemHealthPage from './pages/SystemHealthPage';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -59,6 +60,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/notifications/preferences" element={<NotificationPreferencesPage />} />
       <Route path="/promotions" element={<PromotionsPage />} />
       <Route path="/system-check" element={<SystemCheck />} />
+      <Route path="/system-health" element={<SystemHealthPage />} />
       <Route path="/test-visualization" element={<TestVisualizationPage />} />
       <Route path="/aid" element={<AIDPage />} />
       <Route path="*" element={<NotFoundPage />} />

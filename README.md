@@ -14,6 +14,44 @@ A full-stack vacation booking application built with React, TypeScript, and Expr
 
 ![Southwest Vacations Landing Page](https://github.com/user-attachments/assets/44142e17-0920-404b-a650-858a5bfaae4d)
 
+## Deployment
+
+This application is automatically deployed to GitHub Pages through GitHub Actions workflows. Each commit to the main branch triggers a deployment pipeline that builds and publishes the application.
+
+### GitHub Pages Hosting
+
+The application is hosted on GitHub Pages at the repository's designated URL. The Vite configuration in `vite.config.ts` is set up to handle proper base paths for GitHub Pages hosting:
+
+```javascript
+const repositoryName = 'Southwest-Vacations';
+const base = process.env.NODE_ENV === 'production' ? `/${repositoryName}/` : '/';
+```
+
+### Continuous Deployment
+
+Two GitHub Actions workflows manage the deployment process:
+
+1. **Main Deployment Workflow**:
+   - Triggered on pushes to the main branch
+   - Builds the application with production settings
+   - Configures GitHub Pages environment
+   - Uploads build artifacts
+   - Deploys to GitHub Pages
+
+2. **Manual Deployment**:
+   - Can be triggered manually via `workflow_dispatch`
+   - Useful for deploying specific versions or when automatic deployment is paused
+
+### Environment Handling
+
+For security, the workflows use GitHub Secrets to inject environment variables during the build process. This keeps sensitive information like API keys secure while allowing the application to access necessary services.
+
+### Accessing the Deployed Application
+
+The deployed application is available at:
+- Production: https://southwest-vacations.github.io/
+- For each successful deployment, the GitHub Actions job will provide a link to the deployed version in the workflow summary.
+
 ## Tech Stack
 
 ### Frontend

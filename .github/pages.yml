@@ -1,0 +1,9 @@
+build:
+  preset: jekyll
+  source: .
+  destination: ./_site
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write 

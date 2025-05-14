@@ -59,29 +59,26 @@ console.log('Loading database...');
 async function initializeUsers() {
   try {
     // Check if users already exist
-    await db.read();
-    const users = db.data.users;
-    const testUser = users.find(user => user.email === 'test@example.com');
-    const adminUser = users.find(user => user.email === 'admin@southwest.com');
+    const data = db.get('users').value();
+    const testUser = data.find(user => user.email === 'test@example.com');
+    const adminUser = data.find(user => user.email === 'admin@example.com');
 
     // Only generate if users don't exist
     if (!testUser || !adminUser) {
       console.log('Generating seed users...');
-      const seedUsers = await generateSeedUsers();
+      const users = await generateSeedUsers();
 
       // Add users to database if they don't exist
-      seedUsers.forEach(user => {
+      users.forEach(user => {
         if (user.email === 'test@example.com' && !testUser) {
-          db.data.users.push(user);
+          db.get('users').push(user).write();
           console.log(`✅ Test user created: ${user.email}`);
         }
-        if (user.email === 'admin@southwest.com' && !adminUser) {
-          db.data.users.push(user);
+        if (user.email === 'admin@example.com' && !adminUser) {
+          db.get('users').push(user).write();
           console.log(`✅ Admin user created: ${user.email}`);
         }
       });
-      
-      await db.write();
     } else {
       console.log('Test users already exist in the database');
     }
@@ -97,8 +94,7 @@ await initializeUsers();
 async function initializePromotions() {
   try {
     // Check if promotions already exist
-    await db.read();
-    const existingPromotions = db.data.promotions;
+    const existingPromotions = db.get('promotions').value();
 
     if (!existingPromotions || existingPromotions.length === 0) {
       console.log('Generating seed promotions...');
@@ -109,7 +105,7 @@ async function initializePromotions() {
           id: uuidv4(),
           code: 'SUMMER2023',
           description: 'Summer Special: Get 15% off on all beach destinations',
-          discountType: 'percentage',
+          discountType: 'percentage' as 'percentage' | 'fixed',
           discountValue: 15,
           startDate: '2023-06-01',
           endDate: '2023-08-31',
@@ -122,7 +118,7 @@ async function initializePromotions() {
           id: uuidv4(),
           code: 'FALL50',
           description: '$50 off fall bookings to mountain destinations',
-          discountType: 'fixed',
+          discountType: 'fixed' as 'percentage' | 'fixed',
           discountValue: 50,
           startDate: '2023-09-01',
           endDate: '2023-11-30',
@@ -136,7 +132,7 @@ async function initializePromotions() {
           id: uuidv4(),
           code: 'FAMILY25',
           description: '25% discount for family packages with children',
-          discountType: 'percentage',
+          discountType: 'percentage' as 'percentage' | 'fixed',
           discountValue: 25,
           startDate: '2023-05-01',
           endDate: '2023-12-31',
@@ -149,10 +145,8 @@ async function initializePromotions() {
 
       // Add to database
       promotions.forEach(promo => {
-        db.data.promotions.push(promo);
+        db.get('promotions').push(promo).write();
       });
-      
-      await db.write();
 
       console.log(`✅ Added ${promotions.length} initial promotions`);
     } else {

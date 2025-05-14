@@ -26,10 +26,41 @@ const LoginPage: React.FC = () => {
 
               <LoginForm onSuccess={() => (window.location.href = '/')} />
 
-              <div className="mt-6 border-t border-gray-200 pt-6 text-center text-sm text-gray-500">
-                <p>For testing, use:</p>
-                <p className="font-medium">Regular User: test@example.com / Password123</p>
-                <p className="font-medium">Admin User: admin@example.com / Admin123</p>
+              <div className="mt-6 border-t border-gray-200 pt-6">
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">Demo Accounts</h3>
+                <div className="space-y-4">
+                  <div className="bg-blue-50 p-3 rounded border border-blue-100">
+                    <h4 className="font-medium text-blue-800">Test User</h4>
+                    <div className="text-sm mt-1">
+                      <p>Email: <span className="font-mono bg-white px-1 rounded">test@example.com</span></p>
+                      <p>Password: <span className="font-mono bg-white px-1 rounded">password123</span></p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-purple-50 p-3 rounded border border-purple-100">
+                    <h4 className="font-medium text-purple-800">Premium User</h4>
+                    <div className="text-sm mt-1">
+                      <p>Email: <span className="font-mono bg-white px-1 rounded">premium@example.com</span></p>
+                      <p>Password: <span className="font-mono bg-white px-1 rounded">premium123</span></p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-red-50 p-3 rounded border border-red-100">
+                    <h4 className="font-medium text-red-800">Admin User</h4>
+                    <div className="text-sm mt-1">
+                      <p>Email: <span className="font-mono bg-white px-1 rounded">admin@southwest.com</span></p>
+                      <p>Password: <span className="font-mono bg-white px-1 rounded">admin123</span></p>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-green-50 p-3 rounded border border-green-100">
+                    <h4 className="font-medium text-green-800">Booking Agent</h4>
+                    <div className="text-sm mt-1">
+                      <p>Email: <span className="font-mono bg-white px-1 rounded">agent@southwest.com</span></p>
+                      <p>Password: <span className="font-mono bg-white px-1 rounded">agent123</span></p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
