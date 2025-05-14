@@ -1,0 +1,50 @@
+name: Dependency Updates
+
+on:
+  schedule:
+    - cron: '0 8 * * 1' # Run every Monday at 8:00 UTC
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  dependabot:
+    name: Check and Update Dependencies
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install npm-check-updates
+        run: npm install -g npm-check-updates
+      
+      - name: Check Dependencies
+        id: check
+        run: |
+          UPDATES=$(ncu --format json)
+          echo "::set-output name=has_updates::$(echo $UPDATES | jq 'length > 0')"
+          echo "::set-output name=updates::$(echo $UPDATES | jq -c .)"
+      
+      - name: Create Pull Request
+        if: steps.check.outputs.has_updates == 'true'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update dependencies"
+          title: "chore: update dependencies"
+          body: |
+            This PR updates dependencies to their latest versions.
+            
+            Dependency updates:
+            ```json
+            ${{ steps.check.outputs.updates }}
+            ```
+            
+            This PR was created automatically by the Dependency Updates workflow.
+          branch: dependencies/update
+          base: main
+          labels: dependencies 

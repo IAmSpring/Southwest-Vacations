@@ -1,0 +1,41 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    # Look for package.json and package-lock.json files in the root directory
+    directory: "/"
+    # Check for updates once a week on Monday
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Assign issues to GitHub team
+    assignees:
+      - "IAmSpring"
+    # Create pull requests for version updates
+    open-pull-requests-limit: 10
+    # Add labels to pull requests
+    labels:
+      - "dependencies"
+      - "automation"
+    # Define version updating strategy
+    versioning-strategy: auto
+    # Set security updates to true
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "production"
+    # Add a commit message
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    # Limit to 5 PRs for actions updates
+    open-pull-requests-limit: 5
+    labels:
+      - "github-actions"
+      - "dependencies" 

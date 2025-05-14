@@ -1,30 +1,36 @@
 title: Southwest Vacations
-description: Internal booking system for Southwest Vacations
-theme: jekyll-theme-cayman
-
-# GitHub Pages settings
+description: Internal booking system for Southwest Airlines Vacations
 domain: iamspring.github.io
 url: https://iamspring.github.io
 baseurl: /Southwest-Vacations
 
-# Output settings
+# GitHub Pages settings
+lsi: false
+safe: true
+source: ./
 markdown: kramdown
-highlighter: rouge
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
 
-# Exclude files from processing
+# Theme settings
+remote_theme: pages-themes/cayman@v0.2.0
+plugins:
+  - jekyll-remote-theme
+
+# Files to be included 
+include:
+  - dist/
+  - index.html
+  - README.md
+
+# Excludes
 exclude:
   - node_modules/
-  - package.json
-  - package-lock.json
-  - README.md
-  - CONTRIBUTING.md
-  - LICENSE
-  - Gemfile
-  - Gemfile.lock
-  - src/
-  - webpack.config.js
   - .github/
-  - coverage/
   - cypress/
   - tests/
-  - mock-backend/ 
+  - mock-backend/
+  - data/
+  - scripts/ 
