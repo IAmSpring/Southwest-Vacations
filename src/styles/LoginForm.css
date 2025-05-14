@@ -10,34 +10,72 @@
 .login-form h2 {
   margin-top: 0;
   color: #304050;
+  font-size: 1.5rem;
 }
 
 .error-message {
-  background-color: #fff0f0;
-  color: #e74c3c;
-  padding: 10px;
+  background-color: #ffebee;
+  color: #d32f2f; /* Improved contrast - darker red */
+  padding: 12px;
   border-radius: 4px;
   margin-bottom: 15px;
-  border: 1px solid #e74c3c;
+  border: 1px solid #d32f2f;
+  font-weight: 500;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
-.login-form label {
+.form-label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-weight: 500;
+  color: #333; /* Improved contrast from the default text color */
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 
 .login-form input,
 .login-form select {
   width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #ddd;
+  padding: 12px;
+  border: 1px solid #bbb;
   border-radius: 4px;
   font-size: 16px;
+  background-color: #ffffff;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.login-form input:focus,
+.login-form select:focus {
+  outline: none;
+  border-color: #0054a6;
+  box-shadow: 0 0 0 3px rgba(0, 84, 166, 0.25);
+}
+
+.input-error {
+  border-color: #d32f2f !important;
+  background-color: #fff9f9;
+}
+
+.field-error {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  margin-top: 4px;
+  display: block;
 }
 
 .submit-button {
@@ -50,15 +88,23 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+  min-height: 44px; /* Ensures adequate touch target size */
 }
 
 .submit-button:hover {
   background-color: #003b73;
 }
 
+.submit-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 84, 166, 0.5);
+}
+
 .submit-button:disabled {
-  background-color: #9cb3c9;
+  background-color: #7599b3; /* Improved contrast from previous color */
   cursor: not-allowed;
 }
 
@@ -77,6 +123,7 @@
 .quick-login-buttons {
   display: flex;
   gap: 10px;
+  flex-wrap: wrap; /* Better mobile experience */
 }
 
 .quick-login-button {
@@ -89,14 +136,69 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  transition: background-color 0.3s;
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+  min-width: 110px; /* Ensures adequate touch target size */
+  min-height: 44px; /* Ensures adequate touch target size */
 }
 
 .quick-login-button:hover {
   background-color: #003b73;
 }
 
+.quick-login-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 84, 166, 0.5);
+}
+
 .quick-login-button:disabled {
-  background-color: #9cb3c9;
+  background-color: #7599b3; /* Improved contrast from previous color */
   cursor: not-allowed;
+}
+
+/* High-contrast focus styles for keyboard users */
+*:focus-visible {
+  outline: 2px solid #0054a6;
+  outline-offset: 2px;
+}
+
+/* Additional accessibility improvements for dark mode users */
+@media (prefers-color-scheme: dark) {
+  .login-form {
+    background-color: #1a1a1a;
+    border-color: #444;
+  }
+
+  .login-form h2,
+  .form-label,
+  .quick-login-title {
+    color: #ffffff;
+  }
+
+  .login-form p {
+    color: #dddddd;
+  }
+
+  .login-form input,
+  .login-form select {
+    background-color: #333;
+    border-color: #555;
+    color: white;
+  }
+
+  .error-message {
+    background-color: rgba(211, 47, 47, 0.2);
+    color: #ff6b6b;
+    border-color: #ff6b6b;
+  }
+
+  .field-error {
+    color: #ff6b6b;
+  }
+
+  .input-error {
+    border-color: #ff6b6b !important;
+    background-color: rgba(211, 47, 47, 0.1);
+  }
 }
