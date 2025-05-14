@@ -506,6 +506,28 @@ After each push to the main branch:
 
 ---
 
+## 📡 Webhooks Integration
+
+This application includes a webhook system for real-time notifications about booking data changes. When booking data is modified, the system automatically broadcasts these changes to configured external services.
+
+### Key Features
+
+- **Automatic Broadcasting**: Changes to booking data are automatically detected and broadcasted
+- **Secure Communication**: Webhooks are authenticated with HMAC signatures
+- **Configurable Endpoints**: Support for multiple recipient endpoints
+- **Detailed Payloads**: Complete information about the changes is included in the payload
+
+### Use Cases
+
+- Integration with external reservation systems
+- Real-time analytics and reporting
+- Customer notification services
+- Partner travel agency synchronization
+
+For detailed information about the webhook system, see the [Webhook Documentation](./WEBHOOK_DOCUMENTATION.md).
+
+---
+
 # Full GitHub System Documentation (Easy Expandability)
 
 ---![Automatic GitHub Documentation ](https://github.com/user-attachments/assets/ce6d35a0-11ec-4a0a-94c1-28cd23212701)

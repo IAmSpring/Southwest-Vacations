@@ -1,0 +1,62 @@
+name: Booking Data Webhook Broadcast
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - 'data/bookings.json'
+      - 'mock-backend/data/bookings.json'
+      - 'mock-backend/seedData.json'
+  workflow_dispatch:
+
+jobs:
+  notify-webhook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # To get the before and after state
+
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          
+      - name: Get Changed Files
+        id: changed-files
+        uses: tj-actions/changed-files@v41
+        with:
+          files: |
+            data/bookings.json
+            mock-backend/data/bookings.json
+            mock-backend/seedData.json
+
+      - name: Prepare Webhook Payload
+        if: steps.changed-files.outputs.any_changed == 'true'
+        id: prepare-payload
+        run: |
+          echo "Preparing webhook payload for booking data changes"
+          # Get the contents of the changed booking files
+          BOOKING_DATA=$(cat ${{ steps.changed-files.outputs.all_changed_files }} | jq -c .)
+          # Create a payload with repository and changed data info
+          PAYLOAD=$(jq -n \
+            --arg repo "$GITHUB_REPOSITORY" \
+            --arg sha "$GITHUB_SHA" \
+            --arg data "$BOOKING_DATA" \
+            '{repository: $repo, commit_sha: $sha, changed_booking_data: $data, timestamp: now | tostring}')
+          echo "WEBHOOK_PAYLOAD=$PAYLOAD" >> $GITHUB_ENV
+
+      - name: Send Webhook
+        if: steps.changed-files.outputs.any_changed == 'true'
+        uses: distributhor/workflow-webhook@v3
+        with:
+          webhook_url: ${{ secrets.BOOKING_WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          data: ${{ env.WEBHOOK_PAYLOAD }}
+          
+      - name: Log Webhook Sent
+        if: steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          echo "Webhook sent to notify of booking data changes"
+          echo "Files changed: ${{ steps.changed-files.outputs.all_changed_files }}" 
