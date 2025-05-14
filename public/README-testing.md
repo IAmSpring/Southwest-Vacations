@@ -149,7 +149,8 @@ To access the test screenshots viewer:
 The screenshots viewer currently supports:
 
 - Cypress end-to-end test screenshots
-- Planned support for Playwright and other test framework screenshots
+- Playwright test screenshots and artifacts
+- (More frameworks can be added in the future)
 
 ## Recent Improvements
 
