@@ -386,20 +386,156 @@
 
 /* Highlight for elements that the AI is interacting with */
 .ai-highlight {
-  box-shadow: 0 0 0 2px rgba(48, 76, 178, 0.5);
+  outline: 3px solid rgba(59, 130, 246, 0.6) !important;
+  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.3) !important;
   position: relative;
   z-index: 100;
-  animation: pulse 2s infinite;
+  transition:
+    outline 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(48, 76, 178, 0.7);
+/* Animation for message bubble appearing */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  70% {
-    box-shadow: 0 0 0 10px rgba(48, 76, 178, 0);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  100% {
-    box-shadow: 0 0 0 0 rgba(48, 76, 178, 0);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
   }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Apply animation to the quick input and message bubbles */
+.mb-3.max-w-\[300px\] {
+  animation: slideIn 0.2s ease-out forwards;
+}
+
+.mb-3.flex.w-\[300px\] {
+  animation: slideIn 0.2s ease-out forwards;
+}
+
+/* Style for line clamping (truncating text) */
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* High contrast mode support */
+@media (forced-colors: active) {
+  .ai-highlight {
+    outline: 3px solid CanvasText !important;
+    box-shadow: none !important;
+  }
+
+  button[aria-expanded='false'] {
+    border: 1px solid ButtonText;
+  }
+
+  input:focus,
+  textarea:focus,
+  button:focus {
+    outline: 2px solid Highlight !important;
+    outline-offset: 2px !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .bg-white {
+    background-color: #1f2937 !important;
+  }
+
+  .text-gray-700 {
+    color: #e5e7eb !important;
+  }
+
+  .text-gray-600 {
+    color: #d1d5db !important;
+  }
+
+  .border-gray-300 {
+    border-color: #4b5563 !important;
+  }
+
+  .bg-gray-100 {
+    background-color: #374151 !important;
+  }
+
+  .text-gray-800 {
+    color: #f3f4f6 !important;
+  }
+
+  .text-gray-500 {
+    color: #9ca3af !important;
+  }
+
+  .bg-gray-50 {
+    background-color: #111827 !important;
+  }
+
+  /* Ensure proper contrast for text on colored backgrounds */
+  .bg-blue-600 {
+    background-color: #2563eb !important;
+  }
+
+  .text-blue-600 {
+    color: #60a5fa !important;
+  }
+
+  .hover\:bg-gray-200:hover {
+    background-color: #4b5563 !important;
+  }
+
+  .hover\:bg-gray-300:hover {
+    background-color: #6b7280 !important;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion) {
+  .mb-3.max-w-\[300px\],
+  .mb-3.flex.w-\[300px\] {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
+  .animate-spin {
+    animation-duration: 1.5s;
+  }
+
+  * {
+    transition-duration: 0.1s !important;
+  }
+}
+
+/* Accessibility improvements for keyboard focus */
+.focus\:ring-2:focus {
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }

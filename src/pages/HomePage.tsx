@@ -10,6 +10,7 @@ import Loading, {
 import ErrorMessage from '../components/ErrorMessage';
 import SearchBar from '../components/SearchBar';
 import { Trip } from '../sharedTypes';
+import Dashboard from '../components/Dashboard';
 
 // Load animations after component mount to prevent initial render flicker
 const AnimatedHeroBackground = () => {
@@ -430,64 +431,13 @@ const HomePage: React.FC = () => {
           </div>
         </div>
 
-        {/* Internal Dashboard Header */}
-        <div className="mb-10 overflow-hidden rounded-lg bg-gradient-to-r from-blue-700 to-blue-900 shadow-lg">
-          <div className="p-6 md:p-8">
-            <div className="flex flex-col items-center justify-between md:flex-row">
-              <div className="mb-6 md:mb-0">
-                <h1 className="mb-2 text-2xl font-bold text-white md:text-3xl">
-                  Southwest Vacations Booking System
-                </h1>
-                <p className="max-w-2xl text-blue-100">
-                  Corporate portal for Southwest Airlines employees to manage vacation packages,
-                  process bookings, and access travel resources for customers.
-                </p>
-              </div>
-              <div className="flex space-x-4">
-                {isLoading ? (
-                  <>
-                    <DashboardStatsSkeleton />
-                    <DashboardStatsSkeleton />
-                    <DashboardStatsSkeleton />
-                  </>
-                ) : (
-                  <>
-                    <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
-                      <div className="text-2xl font-bold text-white">386</div>
-                      <div className="text-xs text-blue-100">Active Bookings</div>
-                    </div>
-                    <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
-                      <div className="text-2xl font-bold text-white">124</div>
-                      <div className="text-xs text-blue-100">Today's Bookings</div>
-                    </div>
-                    <div className="rounded-lg bg-white bg-opacity-10 p-4 text-center backdrop-blur-lg backdrop-filter">
-                      <div className="text-2xl font-bold text-white">43</div>
-                      <div className="text-xs text-blue-100">New Destinations</div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="flex items-center justify-between bg-gradient-to-r from-blue-800 to-blue-900 px-6 py-3">
-            <div className="text-sm text-blue-100">
-              <span className="font-medium">Current System Status:</span>
-              <span className="ml-2 inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                Operational
-              </span>
-            </div>
-            <div className="flex items-center text-sm text-blue-100">
-              <svg className="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Last updated: Today at 9:41 AM
-            </div>
-          </div>
+        {/* Dashboard with accordion */}
+        <div className="mb-10">
+          {isLoading ? (
+            <div className="animate-pulse rounded-lg bg-gray-200 p-24"></div>
+          ) : (
+            <Dashboard />
+          )}
         </div>
 
         {/* Demo Mode Toggle */}

@@ -6,10 +6,21 @@ const AIAssistant: React.FC = () => {
   const { activeThread, isExpanded, isLoading, error, createThread, sendMessage, toggleExpanded } =
     useAIAssistant();
   const [inputValue, setInputValue] = useState('');
+  const [quickInputValue, setQuickInputValue] = useState('');
+  const [showQuickInput, setShowQuickInput] = useState(false);
+  const [showLatestMessage, setShowLatestMessage] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const quickInputRef = useRef<HTMLInputElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const assistantRef = useRef<HTMLDivElement>(null);
+  const bubbleRef = useRef<HTMLDivElement>(null);
   const [lastFocusedElement, setLastFocusedElement] = useState<HTMLElement | null>(null);
+
+  // Get latest message for the bubble
+  const latestMessage = activeThread?.messages
+    ?.filter((m: Message) => m.role !== 'system')
+    ?.slice(-1)[0];
 
   // Remember last focused element before opening the assistant
   useEffect(() => {
@@ -30,15 +41,29 @@ const AIAssistant: React.FC = () => {
   useEffect(() => {
     if (isExpanded && inputRef.current) {
       inputRef.current.focus();
+    } else if (showQuickInput && quickInputRef.current) {
+      quickInputRef.current.focus();
     }
-  }, [isExpanded]);
+  }, [isExpanded, showQuickInput]);
 
   // Scroll to bottom when messages change
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [activeThread?.messages]);
+
+    // Show latest message in bubble when minimized
+    if (!isExpanded && activeThread?.messages?.length > 0) {
+      setShowLatestMessage(true);
+
+      // Auto-hide message after 5 seconds
+      const timer = setTimeout(() => {
+        setShowLatestMessage(false);
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [activeThread?.messages, isExpanded]);
 
   // Create a new thread if none exists
   useEffect(() => {
@@ -48,19 +73,53 @@ const AIAssistant: React.FC = () => {
     }
   }, [activeThread, createThread, isLoading]);
 
-  // Handle escape key to close the assistant
+  // Handle escape key to close the assistant and trap focus inside
   useEffect(() => {
-    const handleEscapeKey = (event: KeyboardEvent) => {
-      if (isExpanded && event.key === 'Escape') {
-        toggleExpanded();
+    if (!isExpanded && !showQuickInput) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Close on escape
+      if (event.key === 'Escape') {
+        if (showQuickInput) {
+          setShowQuickInput(false);
+        } else {
+          toggleExpanded();
+        }
+        return;
+      }
+
+      // Trap focus inside modal with Tab
+      if (event.key === 'Tab') {
+        const container = isExpanded ? assistantRef.current : bubbleRef.current;
+        if (!container) return;
+
+        const focusableElements = container.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
+
+        // If shift+tab pressed on first element, move to last
+        if (event.shiftKey && document.activeElement === firstElement) {
+          event.preventDefault();
+          lastElement.focus();
+        }
+        // If tab pressed on last element, move to first
+        else if (!event.shiftKey && document.activeElement === lastElement) {
+          event.preventDefault();
+          firstElement.focus();
+        }
       }
     };
 
-    document.addEventListener('keydown', handleEscapeKey);
+    document.addEventListener('keydown', handleKeyDown);
     return () => {
-      document.removeEventListener('keydown', handleEscapeKey);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isExpanded, toggleExpanded]);
+  }, [isExpanded, toggleExpanded, showQuickInput]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,6 +140,24 @@ const AIAssistant: React.FC = () => {
     }
   };
 
+  const handleQuickSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (quickInputValue.trim() === '' || isLoading) return;
+
+    // Store the message before resetting input
+    const message = quickInputValue;
+
+    // Reset input immediately for better UX
+    setQuickInputValue('');
+    setShowQuickInput(false);
+
+    try {
+      await sendMessage(message);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -88,25 +165,136 @@ const AIAssistant: React.FC = () => {
     }
   };
 
+  const handleQuickInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleQuickSubmit(e);
+    }
+  };
+
+  const toggleQuickInput = () => {
+    setShowQuickInput(prev => !prev);
+    setShowLatestMessage(false);
+  };
+
   // If the chat is collapsed, show the bubble button
   if (!isExpanded) {
     return (
-      <button
-        onClick={toggleExpanded}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        aria-label="Open AI Assistant"
-        aria-expanded="false"
-        aria-haspopup="dialog"
-      >
-        <span className="text-2xl" aria-hidden="true">
-          💬
-        </span>
-      </button>
+      <div ref={bubbleRef} className="fixed bottom-6 right-6 z-50">
+        {/* Latest message bubble */}
+        {showLatestMessage && latestMessage && (
+          <div
+            className="mb-3 max-w-[300px] rounded-lg bg-white p-3 shadow-lg"
+            role="status"
+            aria-live="polite"
+          >
+            <p className="text-sm font-medium text-gray-700">
+              {latestMessage.role === 'user' ? 'You' : 'AI Assistant'}:
+            </p>
+            <p className="mt-1 line-clamp-3 text-sm text-gray-600">
+              {latestMessage.role === 'user'
+                ? latestMessage.content
+                : (() => {
+                    try {
+                      const parsed = JSON.parse(latestMessage.content);
+                      return parsed.message || latestMessage.content;
+                    } catch (e) {
+                      return latestMessage.content;
+                    }
+                  })()}
+            </p>
+          </div>
+        )}
+
+        {/* Quick input field */}
+        {showQuickInput && (
+          <div className="mb-3 flex w-[300px] flex-row items-center gap-2">
+            <form onSubmit={handleQuickSubmit} className="relative flex-1">
+              <input
+                ref={quickInputRef}
+                type="text"
+                value={quickInputValue}
+                onChange={e => setQuickInputValue(e.target.value)}
+                onKeyDown={handleQuickInputKeyDown}
+                placeholder="Type a quick message..."
+                className="w-full rounded-full border border-gray-300 py-2 pl-4 pr-10 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Quick message to AI Assistant"
+              />
+              <button
+                type="submit"
+                disabled={isLoading || quickInputValue.trim() === ''}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-gray-400"
+                aria-label="Send quick message"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                  />
+                </svg>
+              </button>
+            </form>
+            <button
+              onClick={() => setShowQuickInput(false)}
+              className="rounded-full bg-gray-200 p-1 text-gray-500 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-label="Close quick input"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {/* Main chat bubble button with notification indicator */}
+        <div className="flex gap-2">
+          {!showQuickInput && (
+            <button
+              onClick={toggleQuickInput}
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-gray-100 text-gray-600 shadow-lg transition-all hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              aria-label="Type a quick message"
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
+            </button>
+          )}
+          <button
+            onClick={toggleExpanded}
+            className="relative flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            aria-label="Open AI Assistant"
+            aria-expanded="false"
+            aria-haspopup="dialog"
+          >
+            <span className="text-2xl" aria-hidden="true">
+              💬
+            </span>
+            {activeThread?.messages?.filter(m => m.role !== 'system').length > 0 && (
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                {activeThread.messages.filter(m => m.role !== 'system').length}
+              </span>
+            )}
+          </button>
+        </div>
+      </div>
     );
   }
 
   return (
     <div
+      ref={assistantRef}
       className="fixed bottom-6 right-6 z-50 flex h-[500px] w-96 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl"
       role="dialog"
       aria-labelledby="ai-assistant-title"
@@ -144,6 +332,7 @@ const AIAssistant: React.FC = () => {
       <div
         className="flex-1 overflow-y-auto bg-gray-50 p-4"
         aria-live="polite"
+        aria-atomic="false"
         aria-relevant="additions"
         role="log"
       >
@@ -158,14 +347,18 @@ const AIAssistant: React.FC = () => {
               .map((message: Message) => (
                 <MessageBubble key={message.id} message={message} />
               ))}
-            <div ref={messagesEndRef} tabIndex={-1} />
+            <div ref={messagesEndRef} tabIndex={-1} aria-hidden="true" />
           </>
         )}
       </div>
 
       {/* Error message */}
       {error && (
-        <div className="border-t border-red-200 bg-red-50 p-2 text-sm text-red-600" role="alert">
+        <div
+          className="border-t border-red-200 bg-red-50 p-2 text-sm text-red-600"
+          role="alert"
+          aria-live="assertive"
+        >
           {error}
         </div>
       )}
@@ -187,6 +380,7 @@ const AIAssistant: React.FC = () => {
             rows={1}
             disabled={isLoading}
             aria-disabled={isLoading}
+            aria-describedby="assistant-input-hint"
           />
           <button
             type="submit"
@@ -233,7 +427,7 @@ const AIAssistant: React.FC = () => {
             )}
           </button>
         </div>
-        <div className="mt-2 text-xs text-gray-500">
+        <div className="mt-2 text-xs text-gray-500" id="assistant-input-hint">
           <p>Press Enter to send, Shift+Enter for new line, Escape to close</p>
         </div>
       </form>
@@ -271,6 +465,13 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
     sendMessage(suggestion).catch(console.error);
   };
 
+  const handleSuggestionKeyDown = (e: React.KeyboardEvent, suggestion: string) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      sendMessage(suggestion).catch(console.error);
+    }
+  };
+
   return (
     <div
       className={`mb-4 flex ${isUser ? 'justify-end' : 'justify-start'}`}
@@ -294,6 +495,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 key={index}
                 className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onClick={() => handleSuggestionClick(suggestion)}
+                onKeyDown={e => handleSuggestionKeyDown(e, suggestion)}
                 aria-label={`Suggest: ${suggestion}`}
               >
                 {suggestion}
@@ -379,9 +581,18 @@ const executeBrowserAction = (action: BrowserControlAction) => {
           element.classList.add('ai-highlight');
           element.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-          // Remove highlight after 3 seconds
+          // Add accessible announcement for screen readers
+          const announcement = document.createElement('div');
+          announcement.setAttribute('role', 'status');
+          announcement.setAttribute('aria-live', 'polite');
+          announcement.classList.add('sr-only');
+          announcement.textContent = `Highlighting ${action.description || 'element'}`;
+          document.body.appendChild(announcement);
+
+          // Remove highlight and announcement after 3 seconds
           setTimeout(() => {
             element.classList.remove('ai-highlight');
+            document.body.removeChild(announcement);
           }, 3000);
         }
       }
@@ -419,7 +630,7 @@ const parseMessage = (content: string) => {
 };
 
 // Update the renderMessages function to include information about browser control actions
-const renderMessages = () => {
+const renderMessages = (activeThread: any, handleSuggestionClick: (suggestion: string) => void) => {
   if (!activeThread || !activeThread.messages) return null;
 
   return activeThread.messages.map((msg: any) => {
@@ -446,12 +657,13 @@ const renderMessages = () => {
                 </div>
               )}
               {messageContent.suggestions && messageContent.suggestions.length > 0 && (
-                <div className="suggestion-chips">
+                <div className="suggestion-chips" role="group" aria-label="Suggested responses">
                   {messageContent.suggestions.map((suggestion: string, i: number) => (
                     <button
                       key={i}
                       className="suggestion-chip"
                       onClick={() => handleSuggestionClick(suggestion)}
+                      aria-label={`Suggest: ${suggestion}`}
                     >
                       {suggestion}
                     </button>
@@ -461,7 +673,9 @@ const renderMessages = () => {
             </>
           )}
         </div>
-        <div className="message-timestamp">{new Date(msg.createdAt).toLocaleTimeString()}</div>
+        <div className="message-timestamp" aria-hidden="true">
+          {new Date(msg.createdAt).toLocaleTimeString()}
+        </div>
       </div>
     );
   });
