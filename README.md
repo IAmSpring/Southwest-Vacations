@@ -58,7 +58,7 @@ The deployed application is available at:
 - Production: [https://iamspring.github.io/Southwest-Vacations/](https://iamspring.github.io/Southwest-Vacations/)
 - For each successful deployment, the GitHub Actions job will provide a link to the deployed version in the workflow summary.
 
-![Demo](https://github.com/user-attachments/assets/a4da78af-1d09-4cfa-89ad-bb12ae2bb235)
+![Learning Modules](https://github.com/user-attachments/assets/a4da78af-1d09-4cfa-89ad-bb12ae2bb235)
 
 ## Tech Stack
 
@@ -364,8 +364,6 @@ Added a comprehensive `clean-startup.sh` script that:
 - Can be run with `npm run clean-start`
 
 ---
-
-![Learning Modules](https://github.com/user-attachments/assets/13ad95ee-3a70-48a8-9ffc-010455fb8b83)
 
 ## 🔧 Tech Stack Overview
 
