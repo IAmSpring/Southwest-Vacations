@@ -1,0 +1,14 @@
+{
+  "name": "Southwest Vacations API (GitHub Pages Static Version)",
+  "version": "1.0.0",
+  "description": "This is a static version of the API for demonstration purposes",
+  "basePath": "/Southwest-Vacations/",
+  "endpoints": [
+    "/Southwest-Vacations/mock-data/flights.json",
+    "/Southwest-Vacations/mock-data/hotels.json",
+    "/Southwest-Vacations/mock-data/vehicles.json",
+    "/Southwest-Vacations/mock-data/trips.json",
+    "/Southwest-Vacations/mock-data/seedData.json"
+  ],
+  "note": "This is a static mock API. In a real environment, these would be dynamic endpoints."
+}

@@ -1,0 +1,222 @@
+[
+  {
+    "id": "hotel-001",
+    "name": "Maui Ocean Resort & Spa",
+    "location": "Wailea, Maui",
+    "rating": 4.8,
+    "price": 399.99,
+    "pricePerNight": 399.99,
+    "description": "Luxurious beachfront resort with stunning ocean views, multiple pools, and a full-service spa.",
+    "amenities": [
+      "Beachfront",
+      "Pool",
+      "Spa",
+      "Restaurant",
+      "Room service",
+      "Fitness center",
+      "Free Wi-Fi"
+    ],
+    "images": ["/images/hotels/maui-resort-1.jpg", "/images/hotels/maui-resort-2.jpg"],
+    "roomTypes": ["Standard", "Ocean View", "Suite", "Villa"],
+    "availabilityDates": ["2025-08-01", "2025-08-15", "2025-09-01", "2025-09-20"],
+    "tripId": "trip1"
+  },
+  {
+    "id": "hotel-002",
+    "name": "Le Grand Paris Hotel",
+    "location": "8th Arrondissement, Paris",
+    "rating": 4.7,
+    "price": 450.0,
+    "pricePerNight": 450.0,
+    "description": "Classic Parisian luxury hotel with Eiffel Tower views, elegant rooms, and world-class dining.",
+    "amenities": [
+      "City view",
+      "Restaurant",
+      "Bar/Lounge",
+      "Room service",
+      "Concierge",
+      "Free Wi-Fi",
+      "Airport shuttle"
+    ],
+    "images": ["/images/hotels/paris-hotel-1.jpg", "/images/hotels/paris-hotel-2.jpg"],
+    "roomTypes": ["Classic", "Deluxe", "Junior Suite", "Eiffel Tower Suite"],
+    "availabilityDates": ["2025-07-10", "2025-08-20", "2025-09-10", "2025-10-05"],
+    "tripId": "trip2"
+  },
+  {
+    "id": "hotel-003",
+    "name": "Tokyo Skyline Hotel",
+    "location": "Shinjuku, Tokyo",
+    "rating": 4.6,
+    "price": 350.0,
+    "pricePerNight": 350.0,
+    "description": "Modern hotel in the heart of Tokyo with panoramic city views, tech-forward amenities, and excellent dining options.",
+    "amenities": [
+      "City view",
+      "Multiple restaurants",
+      "Bar",
+      "Hot spring bath",
+      "Fitness center",
+      "Free Wi-Fi",
+      "Business center"
+    ],
+    "images": ["/images/hotels/tokyo-hotel-1.jpg", "/images/hotels/tokyo-hotel-2.jpg"],
+    "roomTypes": ["Standard", "Deluxe", "Executive", "Suite"],
+    "availabilityDates": ["2025-08-05", "2025-09-01", "2025-10-01", "2025-11-15"],
+    "tripId": "trip3"
+  },
+  {
+    "id": "hotel-004",
+    "name": "Roma Antica Hotel",
+    "location": "Historic Center, Rome",
+    "rating": 4.5,
+    "price": 320.0,
+    "pricePerNight": 320.0,
+    "description": "Historic hotel in central Rome, walking distance to major attractions with authentic Italian charm.",
+    "amenities": [
+      "Historic building",
+      "Rooftop terrace",
+      "Restaurant",
+      "Bar",
+      "Free breakfast",
+      "Free Wi-Fi",
+      "Airport transfer"
+    ],
+    "images": ["/images/hotels/rome-hotel-1.jpg", "/images/hotels/rome-hotel-2.jpg"],
+    "roomTypes": ["Classic", "Superior", "Deluxe", "Suite"],
+    "availabilityDates": ["2025-09-05", "2025-09-25", "2025-10-15"],
+    "tripId": "trip4"
+  },
+  {
+    "id": "hotel-005",
+    "name": "Cancun Paradise Resort",
+    "location": "Hotel Zone, Cancun",
+    "rating": 4.7,
+    "price": 289.0,
+    "pricePerNight": 289.0,
+    "description": "All-inclusive beachfront resort with multiple pools, water activities, and vibrant entertainment.",
+    "amenities": [
+      "All-inclusive",
+      "Beachfront",
+      "Multiple pools",
+      "Several restaurants",
+      "Swim-up bar",
+      "Water sports",
+      "Entertainment"
+    ],
+    "images": ["/images/hotels/cancun-resort-1.jpg", "/images/hotels/cancun-resort-2.jpg"],
+    "roomTypes": ["Standard", "Ocean View", "Swim-Up", "Suite"],
+    "availabilityDates": ["2025-07-20", "2025-08-10", "2025-11-01", "2025-12-10"],
+    "tripId": "trip5"
+  },
+  {
+    "id": "hotel-006",
+    "name": "Banff Mountain Lodge",
+    "location": "Banff National Park, Canada",
+    "rating": 4.6,
+    "price": 275.0,
+    "pricePerNight": 275.0,
+    "description": "Rustic-luxe mountain lodge with spectacular views, hot springs, and easy access to outdoor activities.",
+    "amenities": [
+      "Mountain view",
+      "Hot springs",
+      "Restaurant",
+      "Bar",
+      "Ski storage",
+      "Hiking trails",
+      "Free Wi-Fi"
+    ],
+    "images": ["/images/hotels/banff-lodge-1.jpg", "/images/hotels/banff-lodge-2.jpg"],
+    "roomTypes": ["Standard", "Mountain View", "Deluxe", "Suite"],
+    "availabilityDates": ["2025-06-15", "2025-07-01", "2025-12-05", "2026-01-10"],
+    "tripId": "trip6"
+  },
+  {
+    "id": "hotel-007",
+    "name": "Sydney Harbour View Hotel",
+    "location": "The Rocks, Sydney",
+    "rating": 4.8,
+    "price": 420.0,
+    "pricePerNight": 420.0,
+    "description": "Premium hotel with stunning views of Sydney Harbour, Opera House, and Harbour Bridge.",
+    "amenities": [
+      "Harbour view",
+      "Rooftop pool",
+      "Restaurant",
+      "Bar",
+      "Spa",
+      "Fitness center",
+      "Free Wi-Fi"
+    ],
+    "images": ["/images/hotels/sydney-hotel-1.jpg", "/images/hotels/sydney-hotel-2.jpg"],
+    "roomTypes": ["City View", "Harbour View", "Deluxe", "Suite"],
+    "availabilityDates": ["2025-10-20", "2025-11-10", "2026-02-05"],
+    "tripId": "trip7"
+  },
+  {
+    "id": "hotel-008",
+    "name": "Kyoto Traditional Ryokan",
+    "location": "Gion District, Kyoto",
+    "rating": 4.9,
+    "price": 380.0,
+    "pricePerNight": 380.0,
+    "description": "Authentic Japanese ryokan experience with tatami rooms, onsen baths, and traditional kaiseki dining.",
+    "amenities": [
+      "Traditional rooms",
+      "Onsen baths",
+      "Kaiseki dining",
+      "Garden views",
+      "Tea ceremony",
+      "Kimono rental",
+      "Free Wi-Fi"
+    ],
+    "images": ["/images/hotels/kyoto-ryokan-1.jpg", "/images/hotels/kyoto-ryokan-2.jpg"],
+    "roomTypes": ["Standard", "Garden View", "Deluxe", "Suite"],
+    "availabilityDates": ["2025-09-15", "2025-10-10", "2026-03-20"],
+    "tripId": "trip8"
+  },
+  {
+    "id": "hotel-009",
+    "name": "Manhattan Skyline Hotel",
+    "location": "Midtown, New York City",
+    "rating": 4.5,
+    "price": 350.0,
+    "pricePerNight": 350.0,
+    "description": "Contemporary hotel in the heart of Manhattan with easy access to major attractions and Broadway shows.",
+    "amenities": [
+      "City view",
+      "Restaurant",
+      "Bar",
+      "Fitness center",
+      "Business center",
+      "Free Wi-Fi",
+      "Concierge"
+    ],
+    "images": ["/images/hotels/nyc-hotel-1.jpg", "/images/hotels/nyc-hotel-2.jpg"],
+    "roomTypes": ["Standard", "Deluxe", "Junior Suite", "Executive Suite"],
+    "availabilityDates": ["2025-08-01", "2025-09-10", "2025-11-20", "2025-12-15"],
+    "tripId": "trip9"
+  },
+  {
+    "id": "hotel-010",
+    "name": "Santorini Cliffside Villas",
+    "location": "Oia, Santorini",
+    "rating": 4.9,
+    "price": 550.0,
+    "pricePerNight": 550.0,
+    "description": "Stunning white-washed villas perched on the caldera cliff with private pools and breathtaking sunset views.",
+    "amenities": [
+      "Sea view",
+      "Private pools",
+      "Restaurant",
+      "Bar",
+      "Spa services",
+      "Airport transfers",
+      "Free Wi-Fi"
+    ],
+    "images": ["/images/hotels/santorini-villa-1.jpg", "/images/hotels/santorini-villa-2.jpg"],
+    "roomTypes": ["Studio", "One Bedroom", "Two Bedroom", "Presidential"],
+    "availabilityDates": ["2025-07-01", "2025-08-01", "2025-09-05"],
+    "tripId": "trip10"
+  }
+]

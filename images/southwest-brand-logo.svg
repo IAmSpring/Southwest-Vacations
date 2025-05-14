@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="200" viewBox="0 0 800 200">
+  <rect width="800" height="200" fill="#304CB2" rx="10" ry="10"/>
+  <path d="M630,50 L650,150 L670,130 L690,150 L710,130 L730,150 L750,50 Z" fill="#FFBF27"/>
+  <circle cx="600" cy="100" r="50" fill="#E31837"/>
+  <path d="M120,70 Q160,40 200,70 Q240,100 280,70 Q320,40 360,70 Q400,100 440,70 Q480,40 520,70 L520,130 Q480,100 440,130 Q400,160 360,130 Q320,100 280,130 Q240,160 200,130 Q160,100 120,130 Z" fill="#FFBF27"/>
+  <text x="260" y="110" font-family="Arial, sans-serif" font-weight="bold" font-size="30" fill="white">SOUTHWEST</text>
+  <text x="400" y="145" font-family="Arial, sans-serif" font-weight="bold" font-size="20" fill="white" text-anchor="middle">VACATIONS</text>
+</svg> 

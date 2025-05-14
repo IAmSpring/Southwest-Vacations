@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Documentation - Southwest Vacations</title>
+    <meta name="description" content="API Documentation for Southwest Vacations" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  </head>
+  <body class="bg-gray-50">
+    <div class="container mx-auto px-4 py-8">
+      <header class="text-center mb-12">
+        <h1 class="text-3xl font-bold text-blue-800 mb-4">Southwest Vacations API</h1>
+        <p class="text-gray-600">Complete API documentation for the Southwest Vacations platform</p>
+        <div class="mt-4">
+          <a href="/" class="text-blue-600 hover:underline">Back to Home</a>
+        </div>
+      </header>
+      
+      <main class="max-w-4xl mx-auto">
+        <section class="mb-12 bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">API Endpoints</h2>
+          
+          <div class="space-y-8">
+            <!-- Trips Section -->
+            <div>
+              <h3 class="text-xl font-semibold text-blue-700 mb-2">Trips</h3>
+              <div class="space-y-4">
+                <div class="border-l-4 border-blue-500 pl-4">
+                  <p class="font-medium">GET /api/trips</p>
+                  <p class="text-gray-600 text-sm">Get all available trips</p>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                  <p class="font-medium">GET /api/trips/:tripId</p>
+                  <p class="text-gray-600 text-sm">Get details for a specific trip</p>
+                </div>
+                <div class="border-l-4 border-blue-500 pl-4">
+                  <p class="font-medium">GET /api/trips/search</p>
+                  <p class="text-gray-600 text-sm">Search trips with filters</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- User Management Section -->
+            <div>
+              <h3 class="text-xl font-semibold text-green-700 mb-2">User Management</h3>
+              <div class="space-y-4">
+                <div class="border-l-4 border-green-500 pl-4">
+                  <p class="font-medium">POST /api/users/register</p>
+                  <p class="text-gray-600 text-sm">Register a new user</p>
+                </div>
+                <div class="border-l-4 border-green-500 pl-4">
+                  <p class="font-medium">POST /api/users/login</p>
+                  <p class="text-gray-600 text-sm">Login and get authentication token</p>
+                </div>
+                <div class="border-l-4 border-green-500 pl-4">
+                  <p class="font-medium">GET /api/users/me</p>
+                  <p class="text-gray-600 text-sm">Get current user profile</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Bookings Section -->
+            <div>
+              <h3 class="text-xl font-semibold text-purple-700 mb-2">Bookings</h3>
+              <div class="space-y-4">
+                <div class="border-l-4 border-purple-500 pl-4">
+                  <p class="font-medium">POST /api/bookings</p>
+                  <p class="text-gray-600 text-sm">Create a new booking</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                  <p class="font-medium">GET /api/bookings/user</p>
+                  <p class="text-gray-600 text-sm">Get user's bookings</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                  <p class="font-medium">GET /api/bookings/:bookingId</p>
+                  <p class="text-gray-600 text-sm">Get booking details</p>
+                </div>
+                <div class="border-l-4 border-purple-500 pl-4">
+                  <p class="font-medium">PATCH /api/bookings/:bookingId/cancel</p>
+                  <p class="text-gray-600 text-sm">Cancel a booking</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Favorites Section -->
+            <div>
+              <h3 class="text-xl font-semibold text-red-700 mb-2">Favorites</h3>
+              <div class="space-y-4">
+                <div class="border-l-4 border-red-500 pl-4">
+                  <p class="font-medium">POST /api/favorites</p>
+                  <p class="text-gray-600 text-sm">Add a trip to favorites</p>
+                </div>
+                <div class="border-l-4 border-red-500 pl-4">
+                  <p class="font-medium">GET /api/favorites</p>
+                  <p class="text-gray-600 text-sm">Get user's favorites</p>
+                </div>
+                <div class="border-l-4 border-red-500 pl-4">
+                  <p class="font-medium">DELETE /api/favorites/:favoriteId</p>
+                  <p class="text-gray-600 text-sm">Remove from favorites</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Analytics Section -->
+            <div>
+              <h3 class="text-xl font-semibold text-yellow-700 mb-2">Analytics</h3>
+              <div class="space-y-4">
+                <div class="border-l-4 border-yellow-500 pl-4">
+                  <p class="font-medium">GET /api/analytics/dashboard</p>
+                  <p class="text-gray-600 text-sm">Get analytics dashboard data</p>
+                </div>
+                <div class="border-l-4 border-yellow-500 pl-4">
+                  <p class="font-medium">GET /api/analytics/reports</p>
+                  <p class="text-gray-600 text-sm">Generate analytics reports</p>
+                </div>
+                <div class="border-l-4 border-yellow-500 pl-4">
+                  <p class="font-medium">GET /api/analytics/performance</p>
+                  <p class="text-gray-600 text-sm">Get system performance metrics</p>
+                </div>
+                <div class="border-l-4 border-yellow-500 pl-4">
+                  <p class="font-medium">GET /api/analytics/user-activity</p>
+                  <p class="text-gray-600 text-sm">View user activity logs</p>
+                </div>
+              </div>
+            </div>
+            
+            <!-- AI Section -->
+            <div>
+              <h3 class="text-xl font-semibold text-indigo-700 mb-2">AI Assistant</h3>
+              <div class="space-y-4">
+                <div class="border-l-4 border-indigo-500 pl-4">
+                  <p class="font-medium">POST /api/ai/threads</p>
+                  <p class="text-gray-600 text-sm">Create a new conversation thread</p>
+                </div>
+                <div class="border-l-4 border-indigo-500 pl-4">
+                  <p class="font-medium">POST /api/ai/threads/:threadId/messages</p>
+                  <p class="text-gray-600 text-sm">Send a message to the assistant</p>
+                </div>
+                <div class="border-l-4 border-indigo-500 pl-4">
+                  <p class="font-medium">GET /api/ai/threads/:threadId</p>
+                  <p class="text-gray-600 text-sm">Get thread messages</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <section class="mb-12 bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">Authentication</h2>
+          <p class="text-gray-700 mb-4">Most endpoints require authentication using JWT tokens. To authenticate:</p>
+          <ol class="list-decimal pl-6 text-gray-700 space-y-2">
+            <li>Login using POST /api/users/login to get a token</li>
+            <li>Include the token in the Authorization header as a Bearer token</li>
+            <li>Example: <code class="bg-gray-100 px-2 py-1 rounded">Authorization: Bearer &lt;your_token&gt;</code></li>
+          </ol>
+        </section>
+        
+        <section class="mb-12 bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-2xl font-bold text-gray-800 mb-4">System Health Monitoring</h2>
+          <p class="text-gray-700 mb-4">The system provides health monitoring endpoints:</p>
+          <ul class="list-disc pl-6 text-gray-700 space-y-2">
+            <li><code class="bg-gray-100 px-2 py-1 rounded">GET /health</code> - Basic health check</li>
+            <li><code class="bg-gray-100 px-2 py-1 rounded">GET /api/admin/health/details</code> - Detailed system health (requires admin)</li>
+            <li><code class="bg-gray-100 px-2 py-1 rounded">GET /api/admin/logs</code> - System logs (requires admin)</li>
+          </ul>
+        </section>
+      </main>
+      
+      <footer class="mt-12 pt-8 border-t border-gray-200 text-center text-gray-600">
+        <p>© 2023 Southwest Vacations API</p>
+        <div class="mt-2">
+          <a href="https://github.com/IAmSpring/Southwest-Vacations" class="text-blue-600 hover:underline">
+            GitHub Repository
+          </a>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html> 
