@@ -55,7 +55,7 @@ For security, the workflows use GitHub Secrets to inject environment variables d
 
 The deployed application is available at:
 
-- Production: https://southwest-vacations.github.io/
+- Production: [https://iamspring.github.io/Southwest-Vacations/](https://iamspring.github.io/Southwest-Vacations/)
 - For each successful deployment, the GitHub Actions job will provide a link to the deployed version in the workflow summary.
 
 ## Tech Stack
