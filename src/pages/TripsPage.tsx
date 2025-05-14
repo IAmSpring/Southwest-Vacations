@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { Tab } from '@headlessui/react';
+import { allCountries } from '../data/worldLocations';
 
 // Define trip types
 interface TripPackage {
@@ -324,7 +325,7 @@ const TripsPage: React.FC = () => {
     // Apply airline filter
     let airlineMatch = true;
     if (airlineFilter.length > 0) {
-      airlineMatch = trip.flight && airlineFilter.includes(trip.flight.airline);
+      airlineMatch = Boolean(trip.flight && airlineFilter.includes(trip.flight.airline));
     }
 
     // Apply price range filter
@@ -459,66 +460,108 @@ const TripsPage: React.FC = () => {
         {/* Country Filter Pills */}
         <div className="mb-3">
           <h3 className="mb-2 text-sm font-medium text-gray-700">Countries</h3>
-          <div className="flex flex-wrap gap-2">
-            {countries.map(country => (
-              <button
-                key={country}
-                onClick={() => setCountryFilter(countryFilter === country ? null : country)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  countryFilter === country
-                    ? 'bg-[#0054a6] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {country}
-              </button>
-            ))}
+          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1">
+            {allCountries.map(country => {
+              // Count trips for this country
+              const countryTrips = trips.filter(
+                trip =>
+                  trip.country === country.name ||
+                  trip.country.includes(country.name) ||
+                  country.name.includes(trip.country)
+              );
+              const count = countryTrips.length;
+
+              // Only show countries that have trips or are the selected country
+              if (count === 0 && countryFilter !== country.name) return null;
+
+              return (
+                <button
+                  key={country.code}
+                  onClick={() =>
+                    setCountryFilter(countryFilter === country.name ? null : country.name)
+                  }
+                  className={`flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    countryFilter === country.name
+                      ? 'bg-[#0054a6] text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  <span className="mr-1">{country.emoji}</span>
+                  {country.name}
+                  <span className="ml-1 rounded-full bg-gray-100 px-1.5 text-xs text-gray-800">
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* City Filter Pills */}
         <div className="mb-3">
           <h3 className="mb-2 text-sm font-medium text-gray-700">Cities</h3>
-          <div className="flex flex-wrap gap-2">
-            {cities.map(city => (
-              <button
-                key={city}
-                onClick={() => setCityFilter(cityFilter === city ? null : city)}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  cityFilter === city
-                    ? 'bg-[#0054a6] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {city}
-              </button>
-            ))}
+          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1">
+            {cities.map(city => {
+              // Count trips for this city
+              const cityTrips = trips.filter(
+                trip => trip.city === city || trip.city.includes(city) || city.includes(trip.city)
+              );
+              const count = cityTrips.length;
+
+              return (
+                <button
+                  key={city}
+                  onClick={() => setCityFilter(cityFilter === city ? null : city)}
+                  className={`flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    cityFilter === city
+                      ? 'bg-[#0054a6] text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {city}
+                  <span className="ml-1 rounded-full bg-gray-100 px-1.5 text-xs text-gray-800">
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
         {/* Airline Filter Pills */}
         <div>
           <h3 className="mb-2 text-sm font-medium text-gray-700">Airlines</h3>
-          <div className="flex flex-wrap gap-2">
-            {airlines.map(airline => (
-              <button
-                key={airline}
-                onClick={() => {
-                  if (airlineFilter.includes(airline)) {
-                    setAirlineFilter(airlineFilter.filter(a => a !== airline));
-                  } else {
-                    setAirlineFilter([...airlineFilter, airline]);
-                  }
-                }}
-                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                  airlineFilter.includes(airline)
-                    ? 'bg-[#0054a6] text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {airline}
-              </button>
-            ))}
+          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1">
+            {airlines.map(airline => {
+              // Count trips for this airline
+              const airlineTrips = trips.filter(
+                trip => trip.flight && trip.flight.airline === airline
+              );
+              const count = airlineTrips.length;
+
+              return (
+                <button
+                  key={airline}
+                  onClick={() => {
+                    if (airlineFilter.includes(airline)) {
+                      setAirlineFilter(airlineFilter.filter(a => a !== airline));
+                    } else {
+                      setAirlineFilter([...airlineFilter, airline]);
+                    }
+                  }}
+                  className={`flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                    airlineFilter.includes(airline)
+                      ? 'bg-[#0054a6] text-white'
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  {airline}
+                  <span className="ml-1 rounded-full bg-gray-100 px-1.5 text-xs text-gray-800">
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
