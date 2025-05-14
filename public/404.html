@@ -8,7 +8,16 @@
     // Redirect to index.html with the path preserved in a query parameter
     const repositoryName = 'Southwest-Vacations';
     const location = window.location;
-    const redirectPath = `${location.origin}/${repositoryName}/#/${location.pathname.slice(1)}${location.search}`;
+    
+    // Handle paths to make sure they redirect within the repository context
+    let pathname = location.pathname;
+    if (pathname.startsWith(`/${repositoryName}/`)) {
+      pathname = pathname.substring(repositoryName.length + 2); // +2 for the slashes
+    } else if (pathname === '/404.html') {
+      pathname = '';
+    }
+    
+    const redirectPath = `${location.origin}/${repositoryName}/#/${pathname}${location.search}`;
     window.location.replace(redirectPath);
   </script>
 </head>

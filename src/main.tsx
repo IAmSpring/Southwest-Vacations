@@ -15,7 +15,7 @@ const basePath = process.env.NODE_ENV === 'production' ? `/${repositoryName}` : 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={basePath}>
         <App />
       </BrowserRouter>
     </QueryClientProvider>
