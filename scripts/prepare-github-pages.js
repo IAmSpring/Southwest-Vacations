@@ -4,13 +4,18 @@
  * to enable the static demo to work with mock data
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 console.log('Preparing project for GitHub Pages deployment...');
 
+// Get current file directory with ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 // Paths
-const rootDir = process.cwd();
+const rootDir = path.resolve(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
 const mockBackendDir = path.join(rootDir, 'mock-backend');
 const mockBackendDataDir = path.join(mockBackendDir, 'data');
