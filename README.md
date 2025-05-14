@@ -58,6 +58,8 @@ The deployed application is available at:
 - Production: [https://iamspring.github.io/Southwest-Vacations/](https://iamspring.github.io/Southwest-Vacations/)
 - For each successful deployment, the GitHub Actions job will provide a link to the deployed version in the workflow summary.
 
+![Demo](https://github.com/user-attachments/assets/a4da78af-1d09-4cfa-89ad-bb12ae2bb235)
+
 ## Tech Stack
 
 ### Frontend
