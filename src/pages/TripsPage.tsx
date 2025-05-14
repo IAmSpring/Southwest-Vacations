@@ -355,11 +355,15 @@ const TripsPage: React.FC = () => {
       {/* Filter tabs */}
       <div className="mb-8">
         <Tab.Group>
-          <Tab.List className="flex space-x-1 rounded-xl bg-gray-100 p-1">
+          <Tab.List
+            className="flex flex-wrap space-x-1 rounded-xl bg-gray-100 p-1"
+            role="tablist"
+            aria-label="Filter vacation packages by category"
+          >
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 sm:w-auto',
                   'ring-white ring-opacity-60 ring-offset-2 focus:outline-none focus:ring-2',
                   selected
                     ? 'bg-[#0054a6] text-white shadow'
@@ -367,13 +371,14 @@ const TripsPage: React.FC = () => {
                 )
               }
               onClick={() => filterTrips('all')}
+              aria-label="Show all vacation packages"
             >
               All Packages
             </Tab>
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 sm:w-auto',
                   'ring-white ring-opacity-60 ring-offset-2 focus:outline-none focus:ring-2',
                   selected
                     ? 'bg-[#0054a6] text-white shadow'
@@ -381,13 +386,14 @@ const TripsPage: React.FC = () => {
                 )
               }
               onClick={() => filterTrips('favorites')}
+              aria-label="Show my favorite vacation packages"
             >
               My Favorites
             </Tab>
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 sm:w-auto',
                   'ring-white ring-opacity-60 ring-offset-2 focus:outline-none focus:ring-2',
                   selected
                     ? 'bg-[#0054a6] text-white shadow'
@@ -395,13 +401,14 @@ const TripsPage: React.FC = () => {
                 )
               }
               onClick={() => filterTrips('beach')}
+              aria-label="Show beach vacation packages"
             >
               Beach Vacations
             </Tab>
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 sm:w-auto',
                   'ring-white ring-opacity-60 ring-offset-2 focus:outline-none focus:ring-2',
                   selected
                     ? 'bg-[#0054a6] text-white shadow'
@@ -409,13 +416,14 @@ const TripsPage: React.FC = () => {
                 )
               }
               onClick={() => filterTrips('city')}
+              aria-label="Show city vacation packages"
             >
               City Breaks
             </Tab>
             <Tab
               className={({ selected }) =>
                 classNames(
-                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
+                  'w-full rounded-lg py-2.5 text-sm font-medium leading-5 sm:w-auto',
                   'ring-white ring-opacity-60 ring-offset-2 focus:outline-none focus:ring-2',
                   selected
                     ? 'bg-[#0054a6] text-white shadow'
@@ -423,6 +431,7 @@ const TripsPage: React.FC = () => {
                 )
               }
               onClick={() => filterTrips('mountain')}
+              aria-label="Show mountain vacation packages"
             >
               Mountain Escapes
             </Tab>
@@ -431,36 +440,63 @@ const TripsPage: React.FC = () => {
       </div>
 
       {/* Additional filters */}
-      <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <div
+        className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4"
+        role="region"
+        aria-label="Filter vacation options"
+      >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Refine Your Search</h2>
-          <button onClick={resetFilters} className="text-sm text-[#0054a6] hover:underline">
+          <h2 className="text-lg font-semibold" id="filter-heading">
+            Refine Your Search
+          </h2>
+          <button
+            onClick={resetFilters}
+            className="rounded px-2 py-1 text-sm text-[#0054a6] hover:underline focus:outline-none focus:ring-2 focus:ring-[#0054a6]"
+            aria-label="Reset all filters"
+          >
             Reset Filters
           </button>
         </div>
 
         {/* Price Range Slider */}
         <div className="mb-4">
-          <h3 className="mb-2 text-sm font-medium text-gray-700">Price Range</h3>
+          <label htmlFor="price-range" className="mb-2 block text-sm font-medium text-gray-700">
+            Price Range: ${priceRange.min} - ${priceRange.max}
+          </label>
           <div className="flex items-center space-x-4">
-            <span className="text-sm text-gray-500">${priceRange.min}</span>
+            <span className="text-sm text-gray-500" aria-hidden="true">
+              ${priceRange.min}
+            </span>
             <input
               type="range"
+              id="price-range"
               min="0"
               max="5000"
               step="100"
               value={priceRange.max}
               onChange={e => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
               className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-[#0054a6]/30"
+              aria-valuemin={0}
+              aria-valuemax={5000}
+              aria-valuenow={priceRange.max}
+              aria-labelledby="filter-heading"
             />
-            <span className="text-sm text-gray-500">${priceRange.max}</span>
+            <span className="text-sm text-gray-500" aria-hidden="true">
+              ${priceRange.max}
+            </span>
           </div>
         </div>
 
         {/* Country Filter Pills */}
         <div className="mb-3">
-          <h3 className="mb-2 text-sm font-medium text-gray-700">Countries</h3>
-          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1">
+          <h3 className="mb-2 text-sm font-medium text-gray-700" id="country-filter-heading">
+            Countries
+          </h3>
+          <div
+            className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1"
+            role="group"
+            aria-labelledby="country-filter-heading"
+          >
             {allCountries.map(country => {
               // Count trips for this country
               const countryTrips = trips.filter(
@@ -480,13 +516,17 @@ const TripsPage: React.FC = () => {
                   onClick={() =>
                     setCountryFilter(countryFilter === country.name ? null : country.name)
                   }
-                  className={`flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`flex min-h-[36px] min-w-[44px] items-center rounded-full px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#0054a6] ${
                     countryFilter === country.name
                       ? 'bg-[#0054a6] text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
+                  aria-pressed={countryFilter === country.name}
+                  aria-label={`Filter by ${country.name} (${count} trips)`}
                 >
-                  <span className="mr-1">{country.emoji}</span>
+                  <span className="mr-1" aria-hidden="true">
+                    {country.emoji}
+                  </span>
                   {country.name}
                   <span className="ml-1 rounded-full bg-gray-100 px-1.5 text-xs text-gray-800">
                     {count}
@@ -499,8 +539,14 @@ const TripsPage: React.FC = () => {
 
         {/* City Filter Pills */}
         <div className="mb-3">
-          <h3 className="mb-2 text-sm font-medium text-gray-700">Cities</h3>
-          <div className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1">
+          <h3 className="mb-2 text-sm font-medium text-gray-700" id="city-filter-heading">
+            Cities
+          </h3>
+          <div
+            className="flex max-h-48 flex-wrap gap-2 overflow-y-auto p-1"
+            role="group"
+            aria-labelledby="city-filter-heading"
+          >
             {cities.map(city => {
               // Count trips for this city
               const cityTrips = trips.filter(
@@ -512,11 +558,13 @@ const TripsPage: React.FC = () => {
                 <button
                   key={city}
                   onClick={() => setCityFilter(cityFilter === city ? null : city)}
-                  className={`flex items-center rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`flex min-h-[36px] min-w-[44px] items-center rounded-full px-3 py-1 text-xs font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#0054a6] ${
                     cityFilter === city
                       ? 'bg-[#0054a6] text-white'
                       : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                   }`}
+                  aria-pressed={cityFilter === city}
+                  aria-label={`Filter by ${city} (${count} trips)`}
                 >
                   {city}
                   <span className="ml-1 rounded-full bg-gray-100 px-1.5 text-xs text-gray-800">
@@ -568,7 +616,7 @@ const TripsPage: React.FC = () => {
 
       {/* Active Filters Display */}
       {(countryFilter || cityFilter || airlineFilter.length > 0 || priceRange.max < 5000) && (
-        <div className="mb-6">
+        <div className="mb-6" aria-live="polite">
           <h3 className="mb-2 text-sm font-medium text-gray-700">Active Filters:</h3>
           <div className="flex flex-wrap gap-2">
             {countryFilter && (
@@ -576,7 +624,8 @@ const TripsPage: React.FC = () => {
                 Country: {countryFilter}
                 <button
                   onClick={() => setCountryFilter(null)}
-                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                  className="ml-1 rounded-full p-1 text-[#0054a6] hover:text-[#003b73] focus:outline-none focus:ring-2 focus:ring-[#0054a6]"
+                  aria-label={`Remove country filter: ${countryFilter}`}
                 >
                   ✕
                 </button>
@@ -587,7 +636,8 @@ const TripsPage: React.FC = () => {
                 City: {cityFilter}
                 <button
                   onClick={() => setCityFilter(null)}
-                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                  className="ml-1 rounded-full p-1 text-[#0054a6] hover:text-[#003b73] focus:outline-none focus:ring-2 focus:ring-[#0054a6]"
+                  aria-label={`Remove city filter: ${cityFilter}`}
                 >
                   ✕
                 </button>
@@ -598,7 +648,8 @@ const TripsPage: React.FC = () => {
                 Airlines: {airlineFilter.join(', ')}
                 <button
                   onClick={() => setAirlineFilter([])}
-                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                  className="ml-1 rounded-full p-1 text-[#0054a6] hover:text-[#003b73] focus:outline-none focus:ring-2 focus:ring-[#0054a6]"
+                  aria-label="Remove all airline filters"
                 >
                   ✕
                 </button>
@@ -609,7 +660,8 @@ const TripsPage: React.FC = () => {
                 Max Price: ${priceRange.max}
                 <button
                   onClick={() => setPriceRange({ ...priceRange, max: 5000 })}
-                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                  className="ml-1 rounded-full p-1 text-[#0054a6] hover:text-[#003b73] focus:outline-none focus:ring-2 focus:ring-[#0054a6]"
+                  aria-label="Remove max price filter"
                 >
                   ✕
                 </button>
@@ -620,137 +672,123 @@ const TripsPage: React.FC = () => {
       )}
 
       {/* Trip Cards */}
-      {filteredTrips.length > 0 ? (
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {filteredTrips.map(trip => (
-            <div
-              key={trip.id}
-              className="overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-[1.02]"
-            >
-              <div className="relative">
-                <img
-                  src={trip.imageUrl || 'https://via.placeholder.com/400x250'}
-                  alt={trip.destination}
-                  className="h-48 w-full object-cover"
-                />
-                <button
-                  onClick={() => toggleFavorite(trip.id)}
-                  className="absolute right-3 top-3 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className={`h-6 w-6 ${
-                      trip.isFavorite ? 'fill-red-500 text-red-500' : 'fill-none text-gray-600'
-                    }`}
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    />
-                  </svg>
-                </button>
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                  <Link to={`/trip/${trip.id}`}>
-                    <h3 className="text-xl font-bold text-white hover:underline">
-                      {trip.destination}
-                    </h3>
-                  </Link>
-                </div>
-              </div>
-
-              <div className="p-5">
-                <Link to={`/trip/${trip.id}`}>
-                  <h2 className="mb-2 text-2xl font-bold hover:text-[#0054a6] hover:underline">
-                    {trip.name}
-                  </h2>
-                </Link>
-                <p className="mb-4 text-gray-600">{trip.description}</p>
-
-                <div className="mb-4 flex items-center justify-between">
-                  <div>
-                    <span className="text-sm text-gray-500">Starting from</span>
-                    <p className="text-xl font-bold text-[#0054a6]">${trip.price}</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-sm text-gray-500">Duration</span>
-                    <p className="font-semibold">{trip.duration} days</p>
-                  </div>
-                </div>
-
-                <div className="mb-4 flex flex-wrap gap-2">
-                  {trip.flight && (
-                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                      {trip.flight.airline}
-                    </span>
-                  )}
-                  {trip.hotel && (
-                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-                      Hotel Included
-                    </span>
-                  )}
-                  {trip.car && (
-                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800">
-                      Car Rental
-                    </span>
-                  )}
-                  {trip.isCustomizable && (
-                    <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800">
-                      Customizable
-                    </span>
-                  )}
-                </div>
-
-                <div className="mt-6 flex gap-2">
+      <div role="region" aria-label="Vacation packages search results">
+        {filteredTrips.length > 0 ? (
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {filteredTrips.map(trip => (
+              <article
+                key={trip.id}
+                className="overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-[1.02]"
+              >
+                <div className="relative">
+                  <img
+                    src={trip.imageUrl || 'https://via.placeholder.com/400x250'}
+                    alt={`View of ${trip.destination}`}
+                    className="h-48 w-full object-cover"
+                  />
                   <button
-                    onClick={() => bookTrip(trip)}
-                    className="flex-1 rounded-md bg-[#0054a6] px-4 py-2 text-white transition-colors hover:bg-[#003b73]"
+                    onClick={() => toggleFavorite(trip.id)}
+                    className="absolute right-3 top-3 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-[#0054a6]"
+                    aria-label={
+                      trip.isFavorite
+                        ? `Remove ${trip.name} from favorites`
+                        : `Add ${trip.name} to favorites`
+                    }
+                    aria-pressed={trip.isFavorite}
                   >
-                    Book Now
-                  </button>
-                  {trip.isCustomizable && (
-                    <button
-                      onClick={() => startCustomization(trip)}
-                      className="rounded-md border border-[#0054a6] bg-white px-4 py-2 text-[#0054a6] transition-colors hover:bg-[#0054a6] hover:text-white"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className={`h-6 w-6 ${
+                        trip.isFavorite ? 'fill-red-500 text-red-500' : 'fill-none text-gray-600'
+                      }`}
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
                     >
-                      Customize
-                    </button>
-                  )}
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                      />
+                    </svg>
+                  </button>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <svg
-            className="mx-auto mb-4 h-16 w-16 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1}
-              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-            />
-          </svg>
-          <h3 className="mb-2 text-lg font-medium">No trips found</h3>
-          <p className="mb-4 text-gray-500">
-            Try adjusting your filters to find trips that match your preferences.
-          </p>
-          <button
-            onClick={resetFilters}
-            className="rounded-md bg-[#0054a6] px-4 py-2 text-white hover:bg-[#003b73]"
-          >
-            Reset All Filters
-          </button>
-        </div>
-      )}
+
+                <div className="p-5">
+                  <Link to={`/trip/${trip.id}`}>
+                    <h2 className="mb-2 text-2xl font-bold hover:text-[#0054a6] hover:underline">
+                      {trip.name}
+                    </h2>
+                  </Link>
+                  <p className="mb-4 text-gray-600">{trip.description}</p>
+
+                  <div className="mb-4 flex items-center justify-between">
+                    <div>
+                      <span className="text-sm text-gray-500">Starting from</span>
+                      <p className="text-xl font-bold text-[#0054a6]">${trip.price}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-sm text-gray-500">Duration</span>
+                      <p className="font-semibold">{trip.duration} days</p>
+                    </div>
+                  </div>
+
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {trip.flight && (
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                        {trip.flight.airline}
+                      </span>
+                    )}
+                    {trip.hotel && (
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+                        Hotel Included
+                      </span>
+                    )}
+                    {trip.car && (
+                      <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800">
+                        Car Rental
+                      </span>
+                    )}
+                    {trip.isCustomizable && (
+                      <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800">
+                        Customizable
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="mt-6 flex gap-2">
+                    <button
+                      onClick={() => bookTrip(trip)}
+                      className="flex-1 rounded-md bg-[#0054a6] px-4 py-2 text-white transition-colors hover:bg-[#003b73]"
+                    >
+                      Book Now
+                    </button>
+                    {trip.isCustomizable && (
+                      <button
+                        onClick={() => startCustomization(trip)}
+                        className="rounded-md border border-[#0054a6] bg-white px-4 py-2 text-[#0054a6] transition-colors hover:bg-[#0054a6] hover:text-white"
+                      >
+                        Customize
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
+            <p className="text-lg text-gray-600">No trips found matching your filters.</p>
+            <button
+              onClick={resetFilters}
+              className="mt-4 rounded-md bg-[#0054a6] px-4 py-2 text-white hover:bg-[#003b73] focus:outline-none focus:ring-2 focus:ring-[#0054a6] focus:ring-offset-2"
+            >
+              Reset Filters
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Customization Modal */}
       {isCustomizing && selectedTrip && (

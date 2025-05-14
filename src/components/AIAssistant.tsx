@@ -8,6 +8,23 @@ const AIAssistant: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const [lastFocusedElement, setLastFocusedElement] = useState<HTMLElement | null>(null);
+
+  // Remember last focused element before opening the assistant
+  useEffect(() => {
+    if (isExpanded) {
+      const activeElement = document.activeElement as HTMLElement;
+      if (activeElement && activeElement !== document.body) {
+        setLastFocusedElement(activeElement);
+      }
+    } else if (lastFocusedElement) {
+      // Restore focus when closing
+      setTimeout(() => {
+        lastFocusedElement.focus();
+      }, 0);
+    }
+  }, [isExpanded, lastFocusedElement]);
 
   // Auto-focus the input when expanded
   useEffect(() => {
@@ -30,6 +47,20 @@ const AIAssistant: React.FC = () => {
       createThread().catch(console.error);
     }
   }, [activeThread, createThread, isLoading]);
+
+  // Handle escape key to close the assistant
+  useEffect(() => {
+    const handleEscapeKey = (event: KeyboardEvent) => {
+      if (isExpanded && event.key === 'Escape') {
+        toggleExpanded();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isExpanded, toggleExpanded]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,23 +95,41 @@ const AIAssistant: React.FC = () => {
         onClick={toggleExpanded}
         className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="Open AI Assistant"
+        aria-expanded="false"
+        aria-haspopup="dialog"
       >
-        <span className="text-2xl">💬</span>
+        <span className="text-2xl" aria-hidden="true">
+          💬
+        </span>
       </button>
     );
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex h-[500px] w-96 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
+    <div
+      className="fixed bottom-6 right-6 z-50 flex h-[500px] w-96 flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl"
+      role="dialog"
+      aria-labelledby="ai-assistant-title"
+      aria-modal="true"
+    >
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-200 bg-blue-600 p-4 text-white">
-        <h3 className="font-medium">AI Assistant</h3>
+        <h3 className="font-medium" id="ai-assistant-title">
+          AI Assistant
+        </h3>
         <button
+          ref={closeButtonRef}
           onClick={toggleExpanded}
-          className="text-white hover:text-gray-200 focus:outline-none"
+          className="text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
           aria-label="Close AI Assistant"
         >
-          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -92,7 +141,12 @@ const AIAssistant: React.FC = () => {
       </div>
 
       {/* Messages container */}
-      <div className="flex-1 overflow-y-auto bg-gray-50 p-4">
+      <div
+        className="flex-1 overflow-y-auto bg-gray-50 p-4"
+        aria-live="polite"
+        aria-relevant="additions"
+        role="log"
+      >
         {!activeThread?.messages?.length ? (
           <div className="flex h-full items-center justify-center text-gray-500">
             <p>Ask me anything about Southwest Vacations!</p>
@@ -104,20 +158,26 @@ const AIAssistant: React.FC = () => {
               .map((message: Message) => (
                 <MessageBubble key={message.id} message={message} />
               ))}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} tabIndex={-1} />
           </>
         )}
       </div>
 
       {/* Error message */}
       {error && (
-        <div className="border-t border-red-200 bg-red-50 p-2 text-sm text-red-600">{error}</div>
+        <div className="border-t border-red-200 bg-red-50 p-2 text-sm text-red-600" role="alert">
+          {error}
+        </div>
       )}
 
       {/* Input area */}
       <form onSubmit={handleSubmit} className="border-t border-gray-200 bg-white p-4">
         <div className="relative">
+          <label htmlFor="ai-assistant-input" className="sr-only">
+            Type your message
+          </label>
           <textarea
+            id="ai-assistant-input"
             ref={inputRef}
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
@@ -126,14 +186,21 @@ const AIAssistant: React.FC = () => {
             className="w-full resize-none rounded-md border border-gray-300 p-2 pr-10 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             rows={1}
             disabled={isLoading}
+            aria-disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || inputValue.trim() === ''}
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 focus:outline-none disabled:text-gray-400 disabled:hover:text-gray-400"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:text-gray-400 disabled:hover:text-gray-400"
+            aria-label="Send message"
           >
             {isLoading ? (
-              <svg className="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <svg
+                className="h-5 w-5 animate-spin"
+                fill="none"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <circle
                   className="opacity-25"
                   cx="12"
@@ -149,7 +216,13 @@ const AIAssistant: React.FC = () => {
                 ></path>
               </svg>
             ) : (
-              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -159,6 +232,9 @@ const AIAssistant: React.FC = () => {
               </svg>
             )}
           </button>
+        </div>
+        <div className="mt-2 text-xs text-gray-500">
+          <p>Press Enter to send, Shift+Enter for new line, Escape to close</p>
         </div>
       </form>
     </div>
@@ -196,7 +272,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   };
 
   return (
-    <div className={`mb-4 flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+    <div
+      className={`mb-4 flex ${isUser ? 'justify-end' : 'justify-start'}`}
+      role={isUser ? 'none' : 'region'}
+      aria-label={isUser ? undefined : 'AI Assistant response'}
+    >
       <div
         className={`flex max-w-[80%] flex-col rounded-lg px-4 py-2 ${
           isUser
@@ -208,12 +288,13 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
 
         {/* Display suggestions if available */}
         {!isUser && suggestions.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Suggested responses">
             {suggestions.map((suggestion, index) => (
               <button
                 key={index}
-                className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200"
+                className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-800 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onClick={() => handleSuggestionClick(suggestion)}
+                aria-label={`Suggest: ${suggestion}`}
               >
                 {suggestion}
               </button>
@@ -224,6 +305,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         <div
           className={`mt-1 text-xs ${isUser ? 'text-blue-200' : 'text-gray-500'}`}
           title={new Date(message.createdAt).toLocaleString()}
+          aria-hidden="true"
         >
           {new Date(message.createdAt).toLocaleTimeString([], {
             hour: '2-digit',
