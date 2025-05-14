@@ -363,6 +363,8 @@ Added a comprehensive `clean-startup.sh` script that:
 
 ---
 
+![Learning Modules](https://github.com/user-attachments/assets/13ad95ee-3a70-48a8-9ffc-010455fb8b83)
+
 ## 🔧 Tech Stack Overview
 
 | Layer    | Tech                                            |
