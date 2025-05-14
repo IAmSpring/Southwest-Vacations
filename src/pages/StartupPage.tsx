@@ -82,6 +82,31 @@ const StartupPage: React.FC = () => {
       await simulateServiceStartup('backend', 'Starting Express server', 500);
       await simulateServiceStartup('backend', 'Connecting to database', 700);
       await simulateServiceStartup('backend', 'Initializing API routes', 600);
+
+      // Perform actual health check to server
+      try {
+        addLog('INFO', 'Performing health check to backend server...');
+        const healthResponse = await fetch('/health');
+
+        if (healthResponse.ok) {
+          const healthData = await healthResponse.json();
+          addLog(
+            'SUCCESS',
+            `Backend health check successful! API version ${healthData.apiVersion}, server time: ${healthData.timestamp}`
+          );
+        } else {
+          addLog(
+            'WARN',
+            `Backend health check failed with status: ${healthResponse.status} - proceeding with startup anyway`
+          );
+        }
+      } catch (error: any) {
+        addLog(
+          'WARN',
+          `Backend health check failed: ${error.message} - proceeding with startup anyway`
+        );
+      }
+
       await simulateServiceStartup('backend', 'Loading seed data', 800);
       setServices(prev => ({
         ...prev,

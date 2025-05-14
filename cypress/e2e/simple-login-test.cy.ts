@@ -17,7 +17,7 @@ describe('Southwest Vacations Login', () => {
     cy.url().should('include', '/login');
 
     // Fill in the login form
-    cy.get('#email').type('test@example.com');
+    cy.get('#email').type('test@southwestvacations.com');
     cy.get('#password').type('Password123');
 
     // Submit the form

@@ -12,7 +12,7 @@ export const generateSeedUsers = async () => {
     {
       id: uuidv4(),
       name: 'Test User',
-      email: 'test@example.com',
+      email: 'test@southwestvacations.com',
       password: 'password123', // Plain text for demo purposes
       passwordHash: testPasswordHash,
       createdAt: new Date().toISOString(),
@@ -31,7 +31,7 @@ export const generateSeedUsers = async () => {
     {
       id: uuidv4(),
       name: 'Manager Account',
-      email: 'manager@example.com',
+      email: 'manager@southwestvacations.com',
       password: 'password123', // Plain text for demo purposes
       passwordHash: managerPasswordHash,
       createdAt: new Date().toISOString(),
@@ -50,7 +50,7 @@ export const generateSeedUsers = async () => {
     {
       id: uuidv4(),
       name: 'Admin User',
-      email: 'admin@example.com',
+      email: 'admin@southwestvacations.com',
       password: 'admin123', // Plain text for demo purposes
       passwordHash: adminPasswordHash,
       createdAt: new Date().toISOString(),
@@ -69,7 +69,7 @@ export const generateSeedUsers = async () => {
     {
       id: uuidv4(),
       name: 'Premium User',
-      email: 'premium@example.com',
+      email: 'premium@southwestvacations.com',
       password: 'premium123', // Plain text for demo purposes
       passwordHash: premiumPasswordHash,
       createdAt: new Date().toISOString(),

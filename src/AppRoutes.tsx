@@ -29,6 +29,7 @@ import PromotionsPage from './pages/PromotionsPage';
 import AIDPage from './pages/AIDPage';
 import SystemHealthPage from './pages/SystemHealthPage';
 import TripsPage from './pages/TripsPage';
+import TestingDashboardPage from './pages/TestingDashboardPage';
 
 const LOCAL_STORAGE_KEY = 'swv_app_initialized';
 
@@ -92,6 +93,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/system-check" element={<SystemCheck />} />
       <Route path="/system-health" element={<SystemHealthPage />} />
       <Route path="/test-visualization" element={<TestVisualizationPage />} />
+      <Route path="/testing" element={<TestingDashboardPage />} />
       <Route path="/aid" element={<AIDPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

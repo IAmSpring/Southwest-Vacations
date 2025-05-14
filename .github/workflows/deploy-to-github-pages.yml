@@ -1,0 +1,44 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: github-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for GitHub Pages
+        run: |
+          npm run build
+          cp dist/index.html dist/404.html
+        env:
+          VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
+          VITE_USE_HASH_ROUTER: ${{ vars.VITE_USE_HASH_ROUTER }}
+          VITE_MOCK_AUTH: ${{ vars.VITE_MOCK_AUTH }}
+          VITE_ENABLE_SERVICE_WORKER: ${{ vars.VITE_ENABLE_SERVICE_WORKER }}
+          VITE_ASSET_PREFIX: ${{ vars.VITE_ASSET_PREFIX }}
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist
+          branch: gh-pages 

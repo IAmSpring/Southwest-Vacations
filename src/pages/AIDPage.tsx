@@ -62,7 +62,7 @@ const AIDPage: React.FC = () => {
         ) : (
           <div className="w-full px-2 py-4 sm:px-0">
             <Tab.Group selectedIndex={selectedIndex} onChange={setSelectedIndex}>
-              <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+              <Tab.List className="flex space-x-1 rounded-xl bg-gray-100 p-1">
                 {Object.keys(markdownFileMap).map(category => (
                   <Tab
                     key={category}
@@ -72,7 +72,7 @@ const AIDPage: React.FC = () => {
                         'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                         selected
                           ? 'bg-[#0054a6] text-white shadow'
-                          : 'text-blue-100 hover:bg-[#0054a6]/70 hover:text-white'
+                          : 'bg-blue-50 text-blue-700 hover:bg-[#0054a6]/70 hover:text-white'
                       )
                     }
                   >

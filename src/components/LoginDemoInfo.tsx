@@ -9,7 +9,7 @@ const LoginDemoInfo: React.FC = () => {
           <h4 className="font-medium text-gray-800">Test User</h4>
           <div className="mt-1 text-sm text-gray-600">
             <p>
-              Email: <span className="bg-gray-100 px-1 font-mono">test@example.com</span>
+              Email: <span className="bg-gray-100 px-1 font-mono">test@southwestvacations.com</span>
             </p>
             <p>
               Password: <span className="bg-gray-100 px-1 font-mono">password123</span>
@@ -22,7 +22,8 @@ const LoginDemoInfo: React.FC = () => {
           <h4 className="font-medium text-gray-800">Premium User</h4>
           <div className="mt-1 text-sm text-gray-600">
             <p>
-              Email: <span className="bg-gray-100 px-1 font-mono">premium@example.com</span>
+              Email:{' '}
+              <span className="bg-gray-100 px-1 font-mono">premium@southwestvacations.com</span>
             </p>
             <p>
               Password: <span className="bg-gray-100 px-1 font-mono">premium123</span>

@@ -248,10 +248,19 @@ try {
 // Add Admin AI router for admin/ai/* routes
 try {
   const adminAiRouter = await import('./routes/admin-ai.js').then(m => m.default);
-  app.use('/api/admin', adminAiRouter);
+  app.use('/api/admin/ai', adminAiRouter);
   console.log('✅ Loaded Admin AI router');
 } catch (e: any) {
   console.warn('⚠️ Admin AI router not available:', e.message);
+}
+
+// Add test screenshots router
+try {
+  const testScreenshotsRouter = await import('./routes/testScreenshots.js').then(m => m.default);
+  app.use('', testScreenshotsRouter); // Using '' as base path since the router includes full paths
+  console.log('✅ Loaded test screenshots router');
+} catch (e: any) {
+  console.warn('⚠️ Test screenshots router not available:', e.message);
 }
 
 // Comment out other routes until they're converted to ES modules

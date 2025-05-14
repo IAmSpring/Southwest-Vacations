@@ -90,8 +90,8 @@ function initializeUsers() {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 4, , 5]);
-                    testUser_1 = db_js_1.default.get('users').find({ email: 'test@example.com' }).value();
-                    adminUser_1 = db_js_1.default.get('users').find({ email: 'admin@example.com' }).value();
+                    testUser_1 = db_js_1.default.get('users').find({ email: 'test@southwestvacations.com' }).value();
+                    adminUser_1 = db_js_1.default.get('users').find({ email: 'admin@southwestvacations.com' }).value();
                     if (!(!testUser_1 || !adminUser_1)) return [3 /*break*/, 2];
                     console.log('Generating seed users...');
                     return [4 /*yield*/, (0, seedData_js_1.generateSeedUsers)()];
@@ -99,11 +99,11 @@ function initializeUsers() {
                     users = _a.sent();
                     // Add users to database if they don't exist
                     users.forEach(function (user) {
-                        if (user.email === 'test@example.com' && !testUser_1) {
+                        if (user.email === 'test@southwestvacations.com' && !testUser_1) {
                             db_js_1.default.get('users').push(user).write();
                             console.log("\u2705 Test user created: ".concat(user.email));
                         }
-                        if (user.email === 'admin@example.com' && !adminUser_1) {
+                        if (user.email === 'admin@southwestvacations.com' && !adminUser_1) {
                             db_js_1.default.get('users').push(user).write();
                             console.log("\u2705 Admin user created: ".concat(user.email));
                         }

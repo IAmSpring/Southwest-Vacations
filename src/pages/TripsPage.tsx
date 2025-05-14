@@ -17,6 +17,8 @@ interface TripPackage {
   car?: CarRentalDetails;
   isCustomizable: boolean;
   isFavorite: boolean;
+  country: string;
+  city: string;
 }
 
 interface FlightDetails {
@@ -54,6 +56,8 @@ const mockTrips: TripPackage[] = [
     id: '1',
     name: 'Luxurious Beach Getaway',
     destination: 'Cancun, Mexico',
+    country: 'Mexico',
+    city: 'Cancun',
     description: 'Enjoy a week of sun and relaxation at a premium resort with direct beach access.',
     price: 1299,
     duration: 7,
@@ -91,13 +95,15 @@ const mockTrips: TripPackage[] = [
     id: '2',
     name: 'Historic City Tour',
     destination: 'Rome, Italy',
+    country: 'Italy',
+    city: 'Rome',
     description:
       'Discover the ancient wonders of Rome with guided tours and luxury accommodations.',
     price: 1899,
     duration: 10,
     imageUrl: '/images/destinations/rome.jpg',
     flight: {
-      airline: 'Southwest Airlines',
+      airline: 'American Airlines',
       departureDate: '2023-09-10T08:30:00',
       returnDate: '2023-09-20T12:45:00',
       departureAirport: 'JFK',
@@ -129,6 +135,8 @@ const mockTrips: TripPackage[] = [
     id: '3',
     name: 'Mountain Retreat',
     destination: 'Denver, Colorado',
+    country: 'USA',
+    city: 'Denver',
     description:
       'Experience the majestic Rocky Mountains with hiking, skiing, and cozy cabin stays.',
     price: 1499,
@@ -163,6 +171,78 @@ const mockTrips: TripPackage[] = [
     isCustomizable: true,
     isFavorite: false,
   },
+  {
+    id: '4',
+    name: 'Tropical Paradise',
+    destination: 'Maui, Hawaii',
+    country: 'USA',
+    city: 'Maui',
+    description:
+      'Relax on pristine beaches and explore the lush landscapes of this Hawaiian island paradise.',
+    price: 2299,
+    duration: 8,
+    imageUrl: '/images/destinations/maui.jpg',
+    flight: {
+      airline: 'Delta Airlines',
+      departureDate: '2023-11-12T06:30:00',
+      returnDate: '2023-11-20T14:15:00',
+      departureAirport: 'SFO',
+      arrivalAirport: 'OGG',
+      price: 750,
+      flightClass: 'economy',
+    },
+    hotel: {
+      name: 'Grand Wailea Resort',
+      rating: 4.9,
+      checkIn: '2023-11-12',
+      checkOut: '2023-11-20',
+      roomType: 'Ocean View Suite',
+      price: 1350,
+      amenities: ['Free WiFi', 'Pool', 'Spa', 'Beach Access', 'Restaurant'],
+    },
+    car: {
+      company: 'Budget',
+      model: 'Jeep Wrangler',
+      pickupDate: '2023-11-12',
+      returnDate: '2023-11-20',
+      price: 199,
+      category: 'SUV',
+    },
+    isCustomizable: true,
+    isFavorite: false,
+  },
+  {
+    id: '5',
+    name: 'Caribbean Cruise',
+    destination: 'Caribbean Islands',
+    country: 'Multiple',
+    city: 'Multiple',
+    description:
+      'Set sail through the crystal-clear waters of the Caribbean, visiting multiple exotic islands.',
+    price: 1799,
+    duration: 7,
+    imageUrl: '/images/destinations/caribbean.jpg',
+    flight: {
+      airline: 'United Airlines',
+      departureDate: '2023-12-04T08:45:00',
+      returnDate: '2023-12-11T16:30:00',
+      departureAirport: 'MIA',
+      arrivalAirport: 'MIA',
+      price: 450,
+      flightClass: 'economy',
+    },
+    hotel: {
+      name: 'Royal Caribbean Cruise Line',
+      rating: 4.6,
+      checkIn: '2023-12-04',
+      checkOut: '2023-12-11',
+      roomType: 'Balcony Cabin',
+      price: 1299,
+      amenities: ['All-Inclusive', 'Pool', 'Entertainment', 'Multiple Restaurants', 'Spa'],
+    },
+    isCustomizable: false,
+    isFavorite: false,
+  },
 ];
 
 // Helper function for tab panel classNames
@@ -178,6 +258,15 @@ const TripsPage: React.FC = () => {
   const [isCustomizing, setIsCustomizing] = useState(false);
   const [passengers, setPassengers] = useState(1);
   const [activeFilter, setActiveFilter] = useState('all');
+  const [countryFilter, setCountryFilter] = useState<string | null>(null);
+  const [cityFilter, setCityFilter] = useState<string | null>(null);
+  const [airlineFilter, setAirlineFilter] = useState<string[]>([]);
+  const [priceRange, setPriceRange] = useState({ min: 0, max: 5000 });
+
+  // Extract unique countries, cities, and airlines for filter options
+  const countries = [...new Set(trips.map(trip => trip.country))];
+  const cities = [...new Set(trips.map(trip => trip.city))];
+  const airlines = [...new Set(trips.flatMap(trip => (trip.flight ? [trip.flight.airline] : [])))];
 
   // Toggle favorite status
   const toggleFavorite = (tripId: string) => {
@@ -206,13 +295,57 @@ const TripsPage: React.FC = () => {
     setActiveFilter(filter);
   };
 
-  // Apply filters
-  const filteredTrips =
-    activeFilter === 'all'
-      ? trips
-      : activeFilter === 'favorites'
-        ? trips.filter(trip => trip.isFavorite)
-        : trips.filter(trip => trip.destination.toLowerCase().includes(activeFilter.toLowerCase()));
+  // Apply all filters
+  const applyFilters = (trip: TripPackage) => {
+    // Apply category filter
+    let categoryMatch = true;
+    if (activeFilter !== 'all' && activeFilter !== 'favorites') {
+      categoryMatch = trip.destination.toLowerCase().includes(activeFilter.toLowerCase());
+    }
+
+    // Apply favorites filter
+    let favoriteMatch = true;
+    if (activeFilter === 'favorites') {
+      favoriteMatch = trip.isFavorite;
+    }
+
+    // Apply country filter
+    let countryMatch = true;
+    if (countryFilter) {
+      countryMatch = trip.country === countryFilter;
+    }
+
+    // Apply city filter
+    let cityMatch = true;
+    if (cityFilter) {
+      cityMatch = trip.city === cityFilter;
+    }
+
+    // Apply airline filter
+    let airlineMatch = true;
+    if (airlineFilter.length > 0) {
+      airlineMatch = trip.flight && airlineFilter.includes(trip.flight.airline);
+    }
+
+    // Apply price range filter
+    const priceMatch = trip.price >= priceRange.min && trip.price <= priceRange.max;
+
+    return (
+      categoryMatch && favoriteMatch && countryMatch && cityMatch && airlineMatch && priceMatch
+    );
+  };
+
+  // Reset all filters
+  const resetFilters = () => {
+    setActiveFilter('all');
+    setCountryFilter(null);
+    setCityFilter(null);
+    setAirlineFilter([]);
+    setPriceRange({ min: 0, max: 5000 });
+  };
+
+  // Get filtered trips
+  const filteredTrips = trips.filter(applyFilters);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -296,102 +429,277 @@ const TripsPage: React.FC = () => {
         </Tab.Group>
       </div>
 
-      {/* Trip Cards */}
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {filteredTrips.map(trip => (
-          <div
-            key={trip.id}
-            className="overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-[1.02]"
-          >
-            <div className="relative">
-              <img
-                src={trip.imageUrl || 'https://via.placeholder.com/400x250'}
-                alt={trip.destination}
-                className="h-48 w-full object-cover"
-              />
-              <button
-                onClick={() => toggleFavorite(trip.id)}
-                className="absolute right-3 top-3 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-6 w-6 ${
-                    trip.isFavorite ? 'fill-red-500 text-red-500' : 'fill-none text-gray-600'
-                  }`}
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-              </button>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                <h3 className="text-xl font-bold text-white">{trip.destination}</h3>
-              </div>
-            </div>
+      {/* Additional filters */}
+      <div className="mb-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Refine Your Search</h2>
+          <button onClick={resetFilters} className="text-sm text-[#0054a6] hover:underline">
+            Reset Filters
+          </button>
+        </div>
 
-            <div className="p-5">
-              <h2 className="mb-2 text-2xl font-bold">{trip.name}</h2>
-              <p className="mb-4 text-gray-600">{trip.description}</p>
-
-              <div className="mb-4 flex items-center justify-between">
-                <div>
-                  <span className="text-sm text-gray-500">Starting from</span>
-                  <p className="text-xl font-bold text-[#0054a6]">${trip.price}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-sm text-gray-500">Duration</span>
-                  <p className="font-semibold">{trip.duration} days</p>
-                </div>
-              </div>
-
-              <div className="mb-4 flex flex-wrap gap-2">
-                {trip.flight && (
-                  <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
-                    Flight Included
-                  </span>
-                )}
-                {trip.hotel && (
-                  <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-                    Hotel Included
-                  </span>
-                )}
-                {trip.car && (
-                  <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800">
-                    Car Rental Included
-                  </span>
-                )}
-                {trip.isCustomizable && (
-                  <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800">
-                    Customizable
-                  </span>
-                )}
-              </div>
-
-              <div className="mt-6 flex gap-2">
-                <button
-                  onClick={() => bookTrip(trip)}
-                  className="flex-1 rounded-md bg-[#0054a6] px-4 py-2 text-white transition-colors hover:bg-[#003b73]"
-                >
-                  Book Now
-                </button>
-                {trip.isCustomizable && (
-                  <button
-                    onClick={() => startCustomization(trip)}
-                    className="rounded-md border border-[#0054a6] bg-white px-4 py-2 text-[#0054a6] transition-colors hover:bg-[#0054a6] hover:text-white"
-                  >
-                    Customize
-                  </button>
-                )}
-              </div>
-            </div>
+        {/* Price Range Slider */}
+        <div className="mb-4">
+          <h3 className="mb-2 text-sm font-medium text-gray-700">Price Range</h3>
+          <div className="flex items-center space-x-4">
+            <span className="text-sm text-gray-500">${priceRange.min}</span>
+            <input
+              type="range"
+              min="0"
+              max="5000"
+              step="100"
+              value={priceRange.max}
+              onChange={e => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
+              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-[#0054a6]/30"
+            />
+            <span className="text-sm text-gray-500">${priceRange.max}</span>
           </div>
-        ))}
+        </div>
+
+        {/* Country Filter Pills */}
+        <div className="mb-3">
+          <h3 className="mb-2 text-sm font-medium text-gray-700">Countries</h3>
+          <div className="flex flex-wrap gap-2">
+            {countries.map(country => (
+              <button
+                key={country}
+                onClick={() => setCountryFilter(countryFilter === country ? null : country)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  countryFilter === country
+                    ? 'bg-[#0054a6] text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {country}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* City Filter Pills */}
+        <div className="mb-3">
+          <h3 className="mb-2 text-sm font-medium text-gray-700">Cities</h3>
+          <div className="flex flex-wrap gap-2">
+            {cities.map(city => (
+              <button
+                key={city}
+                onClick={() => setCityFilter(cityFilter === city ? null : city)}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  cityFilter === city
+                    ? 'bg-[#0054a6] text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {city}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Airline Filter Pills */}
+        <div>
+          <h3 className="mb-2 text-sm font-medium text-gray-700">Airlines</h3>
+          <div className="flex flex-wrap gap-2">
+            {airlines.map(airline => (
+              <button
+                key={airline}
+                onClick={() => {
+                  if (airlineFilter.includes(airline)) {
+                    setAirlineFilter(airlineFilter.filter(a => a !== airline));
+                  } else {
+                    setAirlineFilter([...airlineFilter, airline]);
+                  }
+                }}
+                className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  airlineFilter.includes(airline)
+                    ? 'bg-[#0054a6] text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                {airline}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Active Filters Display */}
+      {(countryFilter || cityFilter || airlineFilter.length > 0 || priceRange.max < 5000) && (
+        <div className="mb-6">
+          <h3 className="mb-2 text-sm font-medium text-gray-700">Active Filters:</h3>
+          <div className="flex flex-wrap gap-2">
+            {countryFilter && (
+              <div className="flex items-center rounded-full bg-[#0054a6]/10 px-3 py-1 text-xs font-medium text-[#0054a6]">
+                Country: {countryFilter}
+                <button
+                  onClick={() => setCountryFilter(null)}
+                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {cityFilter && (
+              <div className="flex items-center rounded-full bg-[#0054a6]/10 px-3 py-1 text-xs font-medium text-[#0054a6]">
+                City: {cityFilter}
+                <button
+                  onClick={() => setCityFilter(null)}
+                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {airlineFilter.length > 0 && (
+              <div className="flex items-center rounded-full bg-[#0054a6]/10 px-3 py-1 text-xs font-medium text-[#0054a6]">
+                Airlines: {airlineFilter.join(', ')}
+                <button
+                  onClick={() => setAirlineFilter([])}
+                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+            {priceRange.max < 5000 && (
+              <div className="flex items-center rounded-full bg-[#0054a6]/10 px-3 py-1 text-xs font-medium text-[#0054a6]">
+                Max Price: ${priceRange.max}
+                <button
+                  onClick={() => setPriceRange({ ...priceRange, max: 5000 })}
+                  className="ml-1 rounded-full text-[#0054a6] hover:text-[#003b73]"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Trip Cards */}
+      {filteredTrips.length > 0 ? (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {filteredTrips.map(trip => (
+            <div
+              key={trip.id}
+              className="overflow-hidden rounded-lg bg-white shadow-lg transition-transform hover:scale-[1.02]"
+            >
+              <div className="relative">
+                <img
+                  src={trip.imageUrl || 'https://via.placeholder.com/400x250'}
+                  alt={trip.destination}
+                  className="h-48 w-full object-cover"
+                />
+                <button
+                  onClick={() => toggleFavorite(trip.id)}
+                  className="absolute right-3 top-3 rounded-full bg-white p-2 shadow-md transition-colors hover:bg-gray-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className={`h-6 w-6 ${
+                      trip.isFavorite ? 'fill-red-500 text-red-500' : 'fill-none text-gray-600'
+                    }`}
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                    />
+                  </svg>
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
+                  <h3 className="text-xl font-bold text-white">{trip.destination}</h3>
+                </div>
+              </div>
+
+              <div className="p-5">
+                <h2 className="mb-2 text-2xl font-bold">{trip.name}</h2>
+                <p className="mb-4 text-gray-600">{trip.description}</p>
+
+                <div className="mb-4 flex items-center justify-between">
+                  <div>
+                    <span className="text-sm text-gray-500">Starting from</span>
+                    <p className="text-xl font-bold text-[#0054a6]">${trip.price}</p>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-sm text-gray-500">Duration</span>
+                    <p className="font-semibold">{trip.duration} days</p>
+                  </div>
+                </div>
+
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {trip.flight && (
+                    <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-800">
+                      {trip.flight.airline}
+                    </span>
+                  )}
+                  {trip.hotel && (
+                    <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+                      Hotel Included
+                    </span>
+                  )}
+                  {trip.car && (
+                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-medium text-orange-800">
+                      Car Rental
+                    </span>
+                  )}
+                  {trip.isCustomizable && (
+                    <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-medium text-purple-800">
+                      Customizable
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-6 flex gap-2">
+                  <button
+                    onClick={() => bookTrip(trip)}
+                    className="flex-1 rounded-md bg-[#0054a6] px-4 py-2 text-white transition-colors hover:bg-[#003b73]"
+                  >
+                    Book Now
+                  </button>
+                  {trip.isCustomizable && (
+                    <button
+                      onClick={() => startCustomization(trip)}
+                      className="rounded-md border border-[#0054a6] bg-white px-4 py-2 text-[#0054a6] transition-colors hover:bg-[#0054a6] hover:text-white"
+                    >
+                      Customize
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
+          <svg
+            className="mx-auto mb-4 h-16 w-16 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1}
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+            />
+          </svg>
+          <h3 className="mb-2 text-lg font-medium">No trips found</h3>
+          <p className="mb-4 text-gray-500">
+            Try adjusting your filters to find trips that match your preferences.
+          </p>
+          <button
+            onClick={resetFilters}
+            className="rounded-md bg-[#0054a6] px-4 py-2 text-white hover:bg-[#003b73]"
+          >
+            Reset All Filters
+          </button>
+        </div>
+      )}
 
       {/* Customization Modal */}
       {isCustomizing && selectedTrip && (
