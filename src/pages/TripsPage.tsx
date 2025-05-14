@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import { Tab } from '@headlessui/react';
 import { allCountries } from '../data/worldLocations';
@@ -654,12 +654,20 @@ const TripsPage: React.FC = () => {
                   </svg>
                 </button>
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4">
-                  <h3 className="text-xl font-bold text-white">{trip.destination}</h3>
+                  <Link to={`/trip/${trip.id}`}>
+                    <h3 className="text-xl font-bold text-white hover:underline">
+                      {trip.destination}
+                    </h3>
+                  </Link>
                 </div>
               </div>
 
               <div className="p-5">
-                <h2 className="mb-2 text-2xl font-bold">{trip.name}</h2>
+                <Link to={`/trip/${trip.id}`}>
+                  <h2 className="mb-2 text-2xl font-bold hover:text-[#0054a6] hover:underline">
+                    {trip.name}
+                  </h2>
+                </Link>
                 <p className="mb-4 text-gray-600">{trip.description}</p>
 
                 <div className="mb-4 flex items-center justify-between">
