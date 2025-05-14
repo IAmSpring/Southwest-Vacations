@@ -450,10 +450,12 @@ This project is set up for automatic deployment to GitHub Pages using GitHub Act
 ### Continuous Deployment Flow
 
 1. **Code Push Triggers Workflow**:
+
    - Any push to the `main` branch automatically triggers the GitHub Actions workflow
    - The workflow is defined in `.github/workflows/deploy.yml`
 
 2. **Build Process**:
+
    - The workflow checks out the latest code
    - Sets up Node.js 18 with npm caching
    - Installs dependencies via `npm ci`
@@ -461,6 +463,7 @@ This project is set up for automatic deployment to GitHub Pages using GitHub Act
    - This generates optimized static files in the `dist` directory
 
 3. **GitHub Pages Configuration**:
+
    - The workflow configures GitHub Pages settings
    - Uploads the build artifacts from `dist`
    - Deploys the content to the GitHub Pages environment
@@ -476,11 +479,13 @@ This project is set up for automatic deployment to GitHub Pages using GitHub Act
 ### Viewing the Deployed Application
 
 The live application can be accessed at:
-- [https://iamspring.github.io/Southwest-Vacations/](https://iamspring.github.io/Southwest-Vacations/)
+
+- [https://iamspring.github.io/home/](https://iamspring.github.io/home/)
 
 ### Manual Deployment
 
 If needed, you can manually trigger the deployment workflow:
+
 1. Go to the GitHub repository
 2. Navigate to "Actions" tab
 3. Select the "Deploy to GitHub Pages" workflow
@@ -489,10 +494,11 @@ If needed, you can manually trigger the deployment workflow:
 ### Jekyll Configuration
 
 The repository also includes Jekyll configuration via `_config.yml`:
+
 ```yaml
 domain: iamspring.github.io
 url: https://iamspring.github.io
-baseurl: /Southwest-Vacations
+baseurl: /home
 ```
 
 This enables GitHub Pages to properly serve the application with the correct paths and settings.
@@ -500,6 +506,7 @@ This enables GitHub Pages to properly serve the application with the correct pat
 ### Deployment Status
 
 After each push to the main branch:
+
 1. Check the "Actions" tab in the GitHub repository to monitor build status
 2. A successful deployment will show a green checkmark
 3. The deployment URL will be available in the workflow summary
