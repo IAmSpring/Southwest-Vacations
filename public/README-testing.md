@@ -131,6 +131,26 @@ The test backend implements the following API endpoints:
   - `POST /api/favorites` - Add a trip to favorites
   - `GET /api/favorites` - Get user's favorites
 
+## Test Screenshots Viewer
+
+The application includes a dedicated test screenshots viewer that allows you to:
+
+1. **View test screenshots in an organized way** - Screenshots are organized by test suite in an accordion interface
+2. **See test details** - Each screenshot includes information about the test name and when it was captured
+3. **View full-size screenshots** - Click on any thumbnail to open a full-size view of the screenshot
+
+To access the test screenshots viewer:
+
+1. Log in as an admin user
+2. Click on your profile in the top-right corner
+3. Select "Test Screenshots" from the dropdown menu
+4. Use the accordion interface to browse through test screenshots by test suite
+
+The screenshots viewer currently supports:
+
+- Cypress end-to-end test screenshots
+- Planned support for Playwright and other test framework screenshots
+
 ## Recent Improvements
 
 - Fixed backend server startup issues related to export defaults in route files
@@ -140,3 +160,4 @@ The test backend implements the following API endpoints:
 - Implemented reliable login commands for both test frameworks
 - Enhanced error handling and reporting in test scripts
 - Added proper seeding of test users and trip data
+- Created a visual test screenshots viewer with accordion interface
