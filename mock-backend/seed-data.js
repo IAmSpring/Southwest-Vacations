@@ -126,7 +126,7 @@ const bookings = {
           id: "passenger1",
           firstName: "John",
           lastName: "Doe",
-          email: "john@example.com",
+          email: "john@southwestvacations.com",
           phone: "555-123-4567"
         }
       ],
@@ -144,14 +144,14 @@ const bookings = {
           id: "passenger2",
           firstName: "John",
           lastName: "Doe",
-          email: "john@example.com",
+          email: "john@southwestvacations.com",
           phone: "555-123-4567"
         },
         {
           id: "passenger3",
           firstName: "Jane",
           lastName: "Doe",
-          email: "jane@example.com",
+          email: "jane@southwestvacations.com",
           phone: "555-765-4321"
         }
       ],
@@ -169,7 +169,7 @@ const bookings = {
           id: "passenger4",
           firstName: "Sarah",
           lastName: "Johnson",
-          email: "sarah@example.com",
+          email: "sarah@southwestvacations.com",
           phone: "555-987-6543"
         }
       ],
@@ -183,7 +183,7 @@ const users = {
     {
       id: "user1",
       name: "Test User",
-      email: "test@example.com",
+      email: "test@southwestvacations.com",
       password: "password123", // In a real app, this would be hashed
       role: "user",
       isEmployee: false,
@@ -199,7 +199,7 @@ const users = {
     {
       id: "user2",
       name: "Sarah Johnson",
-      email: "sarah@example.com",
+      email: "sarah@southwestvacations.com",
       password: "password123", 
       role: "user",
       isEmployee: false,
@@ -215,7 +215,7 @@ const users = {
     {
       id: "user3",
       name: "Regular Customer",
-      email: "customer@example.com",
+      email: "customer@southwestvacations.com",
       password: "customer123", 
       role: "user",
       isEmployee: false,
@@ -231,7 +231,7 @@ const users = {
     {
       id: "user4",
       name: "Premium Member",
-      email: "premium@example.com",
+      email: "premium@southwestvacations.com",
       password: "premium123", 
       role: "user",
       isEmployee: false,
@@ -247,7 +247,7 @@ const users = {
     {
       id: "admin1",
       name: "Admin User",
-      email: "admin@southwest.com",
+      email: "admin@southwestvacations.com",
       password: "admin123",
       role: "admin",
       isEmployee: true,
@@ -260,7 +260,7 @@ const users = {
     {
       id: "admin2",
       name: "System Administrator",
-      email: "sysadmin@southwest.com",
+      email: "sysadmin@southwestvacations.com",
       password: "sysadmin123",
       role: "admin",
       isEmployee: true,
@@ -273,7 +273,7 @@ const users = {
     {
       id: "agent1",
       name: "Booking Agent",
-      email: "agent@southwest.com",
+      email: "agent@southwestvacations.com",
       password: "agent123",
       role: "agent",
       isEmployee: true,

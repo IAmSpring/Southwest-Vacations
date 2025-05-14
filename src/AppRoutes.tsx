@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import TripDetailPage from './pages/TripDetailPage';
 import BookingPage from './pages/BookingPage';
@@ -28,16 +28,46 @@ import StartupPage from './pages/StartupPage';
 import PromotionsPage from './pages/PromotionsPage';
 import AIDPage from './pages/AIDPage';
 import SystemHealthPage from './pages/SystemHealthPage';
+import TripsPage from './pages/TripsPage';
+
+const LOCAL_STORAGE_KEY = 'swv_app_initialized';
 
 const AppRoutes: React.FC = () => {
+  const [hasInitialized, setHasInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Check localStorage to see if the app has been initialized before
+    const appInitialized = localStorage.getItem(LOCAL_STORAGE_KEY) === 'true';
+    setHasInitialized(appInitialized);
+    setIsLoading(false);
+
+    // Set initialized flag for future visits
+    if (!appInitialized) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, 'true');
+    }
+  }, []);
+
+  // Show loading state while checking initialization
+  if (isLoading) {
+    return null;
+  }
+
   return (
     <Routes>
-      {/* Startup page - initial route */}
-      <Route path="/" element={<StartupPage />} />
+      {/* Startup page - only show on first visit or when explicitly accessed */}
+      <Route
+        path="/"
+        element={hasInitialized ? <Navigate to="/home" replace /> : <StartupPage />}
+      />
+
+      {/* System initialization page - can be accessed explicitly */}
+      <Route path="/system-init" element={<StartupPage />} />
 
       {/* Main application routes */}
       <Route path="/home" element={<HomePage />} />
       <Route path="/trip/:id" element={<TripDetailPage />} />
+      <Route path="/trips" element={<TripsPage />} />
       <Route path="/book" element={<BookingPage />} />
       <Route path="/confirmation" element={<ConfirmationPage />} />
       <Route path="/bookings" element={<BookingsPage />} />

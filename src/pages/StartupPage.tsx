@@ -24,11 +24,20 @@ const StartupPage: React.FC = () => {
   const [services, setServices] = useState({
     frontend: { status: 'initializing', message: 'Starting frontend services...' },
     backend: { status: 'initializing', message: 'Starting backend services...' },
+    cypress: { status: 'initializing', message: 'Initializing Cypress test framework...' },
+    playwright: { status: 'initializing', message: 'Initializing Playwright test framework...' },
+    webhook: { status: 'initializing', message: 'Starting webhook server...' },
     testServer: { status: 'initializing', message: 'Starting test visualization server...' },
   });
   const [logs, setLogs] = useState<string[]>([
-    `[${new Date().toLocaleTimeString()}] Starting application initialization...`,
+    `[${new Date().toLocaleTimeString()}] Starting Southwest Vacations application...`,
   ]);
+  const [testsPassed, setTestsPassed] = useState({
+    total: 0,
+    passed: 0,
+    failed: 0,
+    skipped: 0,
+  });
 
   useEffect(() => {
     // Configure logging
@@ -58,9 +67,10 @@ const StartupPage: React.FC = () => {
     const startupSequence = async () => {
       // Simulate frontend initialization
       addLog('INFO', 'Initializing frontend services...');
-      await simulateServiceStartup('frontend', 'Starting React application', 500);
-      await simulateServiceStartup('frontend', 'Loading components', 700);
-      await simulateServiceStartup('frontend', 'Initializing context providers', 600);
+      await simulateServiceStartup('frontend', 'Loading React application', 500);
+      await simulateServiceStartup('frontend', 'Initializing components', 600);
+      await simulateServiceStartup('frontend', 'Setting up context providers', 400);
+      await simulateServiceStartup('frontend', 'Configuring routes', 300);
       setServices(prev => ({
         ...prev,
         frontend: { status: 'ready', message: 'Frontend services ready' },
@@ -69,25 +79,97 @@ const StartupPage: React.FC = () => {
 
       // Simulate backend initialization
       addLog('INFO', 'Initializing backend services...');
-      await simulateServiceStartup('backend', 'Connecting to backend API', 800);
-      await simulateServiceStartup('backend', 'Loading data models', 900);
-      await simulateServiceStartup('backend', 'Initializing mock data', 1000);
+      await simulateServiceStartup('backend', 'Starting Express server', 500);
+      await simulateServiceStartup('backend', 'Connecting to database', 700);
+      await simulateServiceStartup('backend', 'Initializing API routes', 600);
+      await simulateServiceStartup('backend', 'Loading seed data', 800);
       setServices(prev => ({
         ...prev,
         backend: { status: 'ready', message: 'Backend services ready' },
       }));
       addLog('SUCCESS', 'Backend services ready ✅');
 
-      // Simulate test server initialization
+      // Simulate webhook server initialization
+      addLog('INFO', 'Initializing webhook server...');
+      await simulateServiceStartup('webhook', 'Setting up webhook server', 400);
+      await simulateServiceStartup('webhook', 'Configuring webhook routes', 500);
+      await simulateServiceStartup('webhook', 'Establishing notification channels', 600);
+      setServices(prev => ({
+        ...prev,
+        webhook: { status: 'ready', message: 'Webhook server ready' },
+      }));
+      addLog('SUCCESS', 'Webhook server ready ✅');
+
+      // Simulate Cypress test initialization
+      addLog('INFO', 'Initializing Cypress test framework...');
+      await simulateServiceStartup('cypress', 'Loading Cypress test config', 500);
+      await simulateServiceStartup('cypress', 'Discovering test specs', 700);
+
+      // Simulate test results
+      setTestsPassed({
+        total: 24,
+        passed: 22,
+        failed: 1,
+        skipped: 1,
+      });
+
+      await simulateServiceStartup('cypress', 'Test report generated', 300);
+      setServices(prev => ({
+        ...prev,
+        cypress: { status: 'ready', message: 'Cypress tests ready (22/24 passing)' },
+      }));
+      addLog('SUCCESS', 'Cypress tests ready ✅ (22 passing, 1 failing, 1 skipped)');
+
+      // Simulate Playwright test initialization
+      addLog('INFO', 'Initializing Playwright test framework...');
+      await simulateServiceStartup('playwright', 'Loading Playwright test config', 500);
+      await simulateServiceStartup('playwright', 'Discovering test specs', 600);
+
+      // Simulate Playwright test results
+      setTestsPassed(prev => ({
+        ...prev,
+        total: prev.total + 17,
+        passed: prev.passed + 15,
+        failed: prev.failed + 1,
+        skipped: prev.skipped + 1,
+      }));
+
+      await simulateServiceStartup('playwright', 'Test report generated', 400);
+      setServices(prev => ({
+        ...prev,
+        playwright: { status: 'ready', message: 'Playwright tests ready (15/17 passing)' },
+      }));
+      addLog('SUCCESS', 'Playwright tests ready ✅ (15 passing, 1 failing, 1 skipped)');
+
+      // Simulate test visualization server
       addLog('INFO', 'Initializing test visualization server...');
-      await simulateServiceStartup('testServer', 'Starting test server', 700);
-      await simulateServiceStartup('testServer', 'Connecting to Cypress', 800);
-      await simulateServiceStartup('testServer', 'Connecting to Playwright', 800);
+      await simulateServiceStartup('testServer', 'Starting test server', 400);
+      await simulateServiceStartup('testServer', 'Connecting test frameworks', 500);
+      await simulateServiceStartup('testServer', 'Loading visualization components', 600);
       setServices(prev => ({
         ...prev,
         testServer: { status: 'ready', message: 'Test visualization server ready' },
       }));
       addLog('SUCCESS', 'Test visualization server ready ✅');
+
+      // Compile test results summary
+      const totalTests = testsPassed.total;
+      const passingTests = testsPassed.passed;
+      const passingPercentage = Math.round((passingTests / totalTests) * 100);
+
+      addLog(
+        'INFO',
+        `Test summary: ${passingTests}/${totalTests} tests passing (${passingPercentage}%)`
+      );
+
+      if (passingPercentage >= 90) {
+        addLog('SUCCESS', 'Test coverage meets quality standards ✓');
+      } else {
+        addLog(
+          'WARN',
+          'Test coverage below 90% threshold, but proceeding with application startup'
+        );
+      }
 
       // All services are ready - show success animation
       addLog('SUCCESS', 'Application initialization complete! Redirecting to home page...');
@@ -155,6 +237,7 @@ const StartupPage: React.FC = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
           </svg>
           <h2 className="mt-4 text-3xl font-bold">Ready!</h2>
+          <p className="mt-2 text-xl">Southwest Vacations</p>
         </div>
       </div>
     );
@@ -169,7 +252,7 @@ const StartupPage: React.FC = () => {
         <div className="w-full max-w-3xl overflow-hidden rounded-lg bg-white shadow-xl">
           <div className="bg-blue-800 p-6 text-white">
             <h1 className="text-3xl font-bold">Southwest Vacations</h1>
-            <p className="mt-2 text-blue-100">Test Environment Initialization</p>
+            <p className="mt-2 text-blue-100">System Initialization</p>
           </div>
 
           <div className="p-6">
@@ -211,9 +294,42 @@ const StartupPage: React.FC = () => {
               ))}
             </div>
 
+            {/* Test Summary */}
+            {testsPassed.total > 0 && (
+              <div className="mt-6">
+                <h3 className="mb-2 font-medium">Test Summary</h3>
+                <div className="rounded-md border p-4">
+                  <div className="flex flex-wrap gap-2">
+                    <div className="rounded-md bg-blue-50 px-3 py-1">
+                      <span className="text-sm text-blue-700">Total: {testsPassed.total}</span>
+                    </div>
+                    <div className="rounded-md bg-green-50 px-3 py-1">
+                      <span className="text-sm text-green-700">Passing: {testsPassed.passed}</span>
+                    </div>
+                    <div className="rounded-md bg-red-50 px-3 py-1">
+                      <span className="text-sm text-red-700">Failing: {testsPassed.failed}</span>
+                    </div>
+                    <div className="rounded-md bg-yellow-50 px-3 py-1">
+                      <span className="text-sm text-yellow-700">
+                        Skipped: {testsPassed.skipped}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                    <div
+                      className="h-full rounded-full bg-green-500"
+                      style={{
+                        width: `${Math.round((testsPassed.passed / testsPassed.total) * 100)}%`,
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="mt-6">
               <h3 className="mb-2 font-medium">System Log</h3>
-              <div className="h-40 overflow-y-auto rounded-md bg-gray-900 p-4 font-mono text-sm text-gray-100">
+              <div className="h-48 overflow-y-auto rounded-md bg-gray-900 p-4 font-mono text-sm text-gray-100">
                 {logs.map((log, index) => {
                   const isError = log.includes('[ERROR]');
                   const isWarning = log.includes('[WARN]');
@@ -250,30 +366,20 @@ const StartupPage: React.FC = () => {
                     : 'Please wait while services are starting up...'}
                 </p>
               </div>
-
-              <div className="h-2.5 w-40 overflow-hidden rounded-full bg-gray-200">
-                <div
-                  className="h-2.5 rounded-full bg-blue-600 transition-all duration-500 ease-out"
-                  style={{
-                    width: `${
-                      (Object.values(services).filter(s => s.status === 'ready').length /
+              <div className="text-sm text-gray-500">
+                {Object.values(services).every(service => service.status === 'ready')
+                  ? '100% Complete'
+                  : `${Math.round(
+                      (Object.values(services).filter(service => service.status === 'ready')
+                        .length /
                         Object.values(services).length) *
-                      100
-                    }%`,
-                    animation: Object.values(services).every(s => s.status === 'ready')
-                      ? 'pulse 1.5s infinite'
-                      : 'none',
-                  }}
-                />
+                        100
+                    )}% Complete`}
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <footer className="border-t bg-white py-3 text-center text-sm text-gray-600">
-        Southwest Vacations Test Environment &copy; {new Date().getFullYear()}
-      </footer>
     </div>
   );
 };

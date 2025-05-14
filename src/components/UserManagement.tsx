@@ -9,12 +9,13 @@ const UserManagement: React.FC = () => {
     username: '',
     email: '',
     password: '',
-    role: 'agent', // Default role
+    role: 'user', // Default role
   });
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [successMessage, setSuccessMessage] = useState('');
   const [resetPasswordUser, setResetPasswordUser] = useState<User | null>(null);
   const [deleteUserConfirm, setDeleteUserConfirm] = useState<User | null>(null);
+  const [filterRole, setFilterRole] = useState<string>('all');
 
   useEffect(() => {
     fetchUsers();
@@ -88,9 +89,19 @@ const UserManagement: React.FC = () => {
         username: '',
         email: '',
         password: '',
-        role: 'agent',
+        role: 'user',
       });
     }
+  };
+
+  const handleCreateManagerUser = () => {
+    setFormData(prev => ({ ...prev, role: 'manager' }));
+    setShowCreateModal(true);
+  };
+
+  const handleCreateRegularUser = () => {
+    setFormData(prev => ({ ...prev, role: 'user' }));
+    setShowCreateModal(true);
   };
 
   const handleResetPassword = async (userId: string) => {
@@ -108,6 +119,10 @@ const UserManagement: React.FC = () => {
       setDeleteUserConfirm(null);
     }
   };
+
+  // Apply role filter
+  const filteredUsers =
+    filterRole === 'all' ? users : users.filter(user => user.role === filterRole);
 
   return (
     <div className="space-y-6">
@@ -151,15 +166,64 @@ const UserManagement: React.FC = () => {
         </div>
       )}
 
-      {/* User management controls */}
-      <div className="flex justify-between">
+      {/* User management header with actions */}
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <h2 className="text-xl font-semibold">User Accounts</h2>
-        <button
-          onClick={() => setShowCreateModal(true)}
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          Create New User
-        </button>
+
+        <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
+          <div className="flex items-center">
+            <span className="mr-2 text-sm text-gray-600">Filter:</span>
+            <select
+              value={filterRole}
+              onChange={e => setFilterRole(e.target.value)}
+              className="rounded-md border border-gray-300 px-2 py-1 text-sm shadow-sm"
+            >
+              <option value="all">All Users</option>
+              <option value="user">Regular Users</option>
+              <option value="manager">Managers</option>
+              <option value="admin">Admins</option>
+            </select>
+          </div>
+
+          <div className="flex space-x-2">
+            <button
+              onClick={handleCreateManagerUser}
+              className="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+            >
+              Add Manager
+            </button>
+            <button
+              onClick={handleCreateRegularUser}
+              className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              Add User
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Role descriptions */}
+      <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="rounded border border-blue-100 bg-blue-50 p-3">
+          <h4 className="font-medium text-blue-800">Regular Users</h4>
+          <p className="mt-1 text-sm text-blue-600">
+            Can book trips and manage their own reservations.
+          </p>
+        </div>
+
+        <div className="rounded border border-green-100 bg-green-50 p-3">
+          <h4 className="font-medium text-green-800">Managers</h4>
+          <p className="mt-1 text-sm text-green-600">
+            Can create and manage regular users, oversee multiple bookings.
+          </p>
+        </div>
+
+        <div className="rounded border border-purple-100 bg-purple-50 p-3">
+          <h4 className="font-medium text-purple-800">Administrators</h4>
+          <p className="mt-1 text-sm text-purple-600">
+            Full system access, can manage all users and system settings.
+          </p>
+        </div>
       </div>
 
       {/* User table */}
@@ -168,7 +232,7 @@ const UserManagement: React.FC = () => {
           <div className="flex h-48 items-center justify-center">
             <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-blue-600"></div>
           </div>
-        ) : users.length === 0 ? (
+        ) : filteredUsers.length === 0 ? (
           <div className="p-4 text-center text-gray-500">No users found</div>
         ) : (
           <table className="min-w-full divide-y divide-gray-200">
@@ -195,16 +259,36 @@ const UserManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
-              {users.map(user => (
-                <tr key={user.id}>
+              {filteredUsers.map(user => (
+                <tr
+                  key={user.id}
+                  className={
+                    user.role === 'manager'
+                      ? 'bg-green-50'
+                      : user.role === 'admin'
+                        ? 'bg-purple-50'
+                        : ''
+                  }
+                >
                   <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                     {user.username}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {user.email}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                    {user.role || 'User'}
+                  <td className="whitespace-nowrap px-6 py-4 text-sm">
+                    <span
+                      className={`rounded-full px-2 py-1 text-xs font-semibold 
+                      ${
+                        user.role === 'admin'
+                          ? 'bg-purple-100 text-purple-800'
+                          : user.role === 'manager'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-blue-100 text-blue-800'
+                      }`}
+                    >
+                      {user.role || 'User'}
+                    </span>
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                     {new Date(user.createdAt).toLocaleDateString()}
@@ -238,7 +322,9 @@ const UserManagement: React.FC = () => {
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-medium">Create New User</h3>
+              <h3 className="text-lg font-medium">
+                {formData.role === 'manager' ? 'Create New Manager' : 'Create New User'}
+              </h3>
               <button
                 type="button"
                 onClick={() => setShowCreateModal(false)}
@@ -248,7 +334,7 @@ const UserManagement: React.FC = () => {
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="2"
+                    strokeWidth={2}
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
@@ -257,81 +343,82 @@ const UserManagement: React.FC = () => {
 
             <form onSubmit={handleCreateUser}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Username</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="username">
+                  Username
+                </label>
                 <input
                   type="text"
+                  id="username"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
+                  className={`w-full rounded-md border ${
                     formErrors.username ? 'border-red-500' : 'border-gray-300'
-                  } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm`}
+                  } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none`}
                 />
                 {formErrors.username && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.username}</p>
+                  <p className="mt-1 text-sm text-red-500">{formErrors.username}</p>
                 )}
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="email">
+                  Email
+                </label>
                 <input
                   type="email"
+                  id="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
+                  className={`w-full rounded-md border ${
                     formErrors.email ? 'border-red-500' : 'border-gray-300'
-                  } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm`}
+                  } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none`}
                 />
                 {formErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
+                  <p className="mt-1 text-sm text-red-500">{formErrors.email}</p>
                 )}
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Password</label>
+                <label className="mb-2 block text-sm font-medium text-gray-700" htmlFor="password">
+                  Password
+                </label>
                 <input
                   type="password"
+                  id="password"
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className={`mt-1 block w-full rounded-md border ${
+                  className={`w-full rounded-md border ${
                     formErrors.password ? 'border-red-500' : 'border-gray-300'
-                  } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm`}
+                  } px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none`}
                 />
                 {formErrors.password && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
+                  <p className="mt-1 text-sm text-red-500">{formErrors.password}</p>
                 )}
               </div>
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Role</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="agent">Agent</option>
-                  <option value="supervisor">Supervisor</option>
-                  <option value="admin">Administrator</option>
-                </select>
-              </div>
-
-              <div className="mt-5 flex justify-end space-x-3">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                >
-                  Create User
-                </button>
+              <div className="-mx-6 -mb-6 mt-6 rounded-b-lg bg-gray-50 px-6 py-3">
+                <div className="flex justify-end space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setShowCreateModal(false)}
+                    className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className={`rounded-md ${
+                      formData.role === 'manager'
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-blue-600 hover:bg-blue-700'
+                    } px-4 py-2 text-sm font-medium text-white shadow-sm`}
+                  >
+                    Create {formData.role === 'manager' ? 'Manager' : 'User'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -342,25 +429,46 @@ const UserManagement: React.FC = () => {
       {resetPasswordUser && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="mb-4 text-lg font-medium">Reset Password</h3>
-            <p className="mb-4 text-sm text-gray-500">
-              Are you sure you want to reset the password for user{' '}
-              <span className="font-semibold">{resetPasswordUser.username}</span>? This will send a
-              password reset link to their email.
-            </p>
-            <div className="flex justify-end space-x-3">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-medium">Reset Password</h3>
               <button
+                type="button"
                 onClick={() => setResetPasswordUser(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="text-gray-400 hover:text-gray-500"
               >
-                Cancel
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
               </button>
-              <button
-                onClick={() => handleResetPassword(resetPasswordUser.id)}
-                className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                Reset Password
-              </button>
+            </div>
+
+            <p className="mb-4 text-gray-700">
+              Are you sure you want to reset the password for{' '}
+              <strong>{resetPasswordUser.username}</strong>? A temporary password will be generated.
+            </p>
+
+            <div className="-mx-6 -mb-6 mt-6 rounded-b-lg bg-gray-50 px-6 py-3">
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setResetPasswordUser(null)}
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleResetPassword(resetPasswordUser.id)}
+                  className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700"
+                >
+                  Reset Password
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -370,25 +478,46 @@ const UserManagement: React.FC = () => {
       {deleteUserConfirm && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
           <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 className="mb-4 text-lg font-medium text-red-600">Delete User</h3>
-            <p className="mb-4 text-sm text-gray-500">
-              Are you sure you want to delete the user{' '}
-              <span className="font-semibold">{deleteUserConfirm.username}</span>? This action
-              cannot be undone.
-            </p>
-            <div className="flex justify-end space-x-3">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-medium">Delete User</h3>
               <button
+                type="button"
                 onClick={() => setDeleteUserConfirm(null)}
-                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="text-gray-400 hover:text-gray-500"
               >
-                Cancel
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
               </button>
-              <button
-                onClick={() => handleDeleteUser(deleteUserConfirm.id)}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
-              >
-                Delete User
-              </button>
+            </div>
+
+            <p className="mb-4 text-gray-700">
+              Are you sure you want to delete <strong>{deleteUserConfirm.username}</strong>? This
+              action cannot be undone.
+            </p>
+
+            <div className="-mx-6 -mb-6 mt-6 rounded-b-lg bg-gray-50 px-6 py-3">
+              <div className="flex justify-end space-x-3">
+                <button
+                  type="button"
+                  onClick={() => setDeleteUserConfirm(null)}
+                  className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDeleteUser(deleteUserConfirm.id)}
+                  className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-red-700"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>

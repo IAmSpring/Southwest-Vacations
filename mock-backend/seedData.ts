@@ -5,23 +5,32 @@ import { User } from '../src/sharedTypes.js';
 
 export const generateSeedUsers = async (): Promise<User[]> => {
   // Generate hashed passwords
-  const testPasswordHash = await bcrypt.hash('Password123', 10);
-  const adminPasswordHash = await bcrypt.hash('Admin123', 10);
+  const regularPasswordHash = await bcrypt.hash('password123', 10);
+  const adminPasswordHash = await bcrypt.hash('admin123', 10);
 
   return [
     {
       id: uuidv4(),
       username: 'testuser',
-      email: 'test@example.com',
-      passwordHash: testPasswordHash,
+      email: 'test@southwestvacations.com',
+      passwordHash: regularPasswordHash,
       createdAt: new Date().toISOString(),
       isAdmin: false,
-      role: 'agent',
+      role: 'user',
+    },
+    {
+      id: uuidv4(),
+      username: 'manager',
+      email: 'manager@southwestvacations.com',
+      passwordHash: regularPasswordHash,
+      createdAt: new Date().toISOString(),
+      isAdmin: false,
+      role: 'manager',
     },
     {
       id: uuidv4(),
       username: 'admin',
-      email: 'admin@example.com',
+      email: 'admin@southwestvacations.com',
       passwordHash: adminPasswordHash,
       createdAt: new Date().toISOString(),
       isAdmin: true,

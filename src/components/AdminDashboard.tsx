@@ -108,8 +108,8 @@ const AdminDashboard: React.FC = () => {
             onClick={() => setActiveTab('overview')}
             className={`px-6 py-4 text-sm font-medium ${
               activeTab === 'overview'
-                ? 'border-b-2 border-blue-500 text-blue-600'
-                : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                ? 'rounded-t-lg bg-[#0054a6] text-white'
+                : 'text-gray-500 hover:bg-[#0054a6]/70 hover:text-white'
             }`}
           >
             Overview
@@ -118,8 +118,8 @@ const AdminDashboard: React.FC = () => {
             onClick={() => setActiveTab('users')}
             className={`px-6 py-4 text-sm font-medium ${
               activeTab === 'users'
-                ? 'border-b-2 border-blue-500 text-blue-600'
-                : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                ? 'rounded-t-lg bg-[#0054a6] text-white'
+                : 'text-gray-500 hover:bg-[#0054a6]/70 hover:text-white'
             }`}
           >
             User Management
@@ -128,8 +128,8 @@ const AdminDashboard: React.FC = () => {
             onClick={() => setActiveTab('bookings')}
             className={`px-6 py-4 text-sm font-medium ${
               activeTab === 'bookings'
-                ? 'border-b-2 border-blue-500 text-blue-600'
-                : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                ? 'rounded-t-lg bg-[#0054a6] text-white'
+                : 'text-gray-500 hover:bg-[#0054a6]/70 hover:text-white'
             }`}
           >
             Bookings
@@ -138,8 +138,8 @@ const AdminDashboard: React.FC = () => {
             onClick={() => setActiveTab('analytics')}
             className={`px-6 py-4 text-sm font-medium ${
               activeTab === 'analytics'
-                ? 'border-b-2 border-blue-500 text-blue-600'
-                : 'text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                ? 'rounded-t-lg bg-[#0054a6] text-white'
+                : 'text-gray-500 hover:bg-[#0054a6]/70 hover:text-white'
             }`}
           >
             Analytics

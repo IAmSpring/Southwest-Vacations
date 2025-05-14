@@ -6,7 +6,10 @@
       "imageUrl": "/images/southwest-hawaii.jpg",
       "price": 1499.99,
       "description": "Relax on Maui's beautiful beaches and enjoy the stunning sunsets. Perfect for couples and families. Fly with Southwest's comfortable service.",
-      "datesAvailable": ["2025-08-01", "2025-08-15", "2025-09-01", "2025-09-20"]
+      "datesAvailable": ["2025-08-01", "2025-08-15", "2025-09-01", "2025-09-20"],
+      "availableFlights": ["flight-001"],
+      "availableHotels": ["hotel-001"],
+      "availableVehicles": ["vehicle-001"]
     },
     {
       "id": "trip2",
@@ -14,7 +17,10 @@
       "imageUrl": "/images/southwest-europe.jpg",
       "price": 1999.99,
       "description": "Experience the magic of Paris, from the Eiffel Tower to the Louvre. A city of art, culture, and romance. Southwest makes your journey comfortable.",
-      "datesAvailable": ["2025-07-10", "2025-08-20", "2025-09-10", "2025-10-05"]
+      "datesAvailable": ["2025-07-10", "2025-08-20", "2025-09-10", "2025-10-05"],
+      "availableFlights": ["flight-002"],
+      "availableHotels": ["hotel-002"],
+      "availableVehicles": ["vehicle-002"]
     },
     {
       "id": "trip3",
@@ -22,7 +28,10 @@
       "imageUrl": "/images/southwest-asia.jpg",
       "price": 1799.99,
       "description": "Discover the fusion of tradition and technology in Tokyo. Vibrant nightlife, historic temples, and amazing food. Enjoy Southwest's hospitality en route.",
-      "datesAvailable": ["2025-08-05", "2025-09-01", "2025-10-01", "2025-11-15"]
+      "datesAvailable": ["2025-08-05", "2025-09-01", "2025-10-01", "2025-11-15"],
+      "availableFlights": ["flight-003"],
+      "availableHotels": ["hotel-003"],
+      "availableVehicles": ["vehicle-003"]
     },
     {
       "id": "trip4",
@@ -30,7 +39,10 @@
       "imageUrl": "/images/southwest-italy.jpg",
       "price": 1850.0,
       "description": "Explore ancient ruins like the Colosseum and savor authentic Italian cuisine. History and beauty at every corner. Southwest gets you there with comfort.",
-      "datesAvailable": ["2025-09-05", "2025-09-25", "2025-10-15"]
+      "datesAvailable": ["2025-09-05", "2025-09-25", "2025-10-15"],
+      "availableFlights": ["flight-004"],
+      "availableHotels": ["hotel-004"],
+      "availableVehicles": ["vehicle-004"]
     },
     {
       "id": "trip5",
@@ -38,7 +50,10 @@
       "imageUrl": "/images/southwest-mexico.jpg",
       "price": 1250.0,
       "description": "Enjoy crystal clear waters, white sandy beaches, and vibrant nightlife in Cancun. Ideal for a sunny getaway with Southwest's friendly service.",
-      "datesAvailable": ["2025-07-20", "2025-08-10", "2025-11-01", "2025-12-10"]
+      "datesAvailable": ["2025-07-20", "2025-08-10", "2025-11-01", "2025-12-10"],
+      "availableFlights": ["flight-005"],
+      "availableHotels": ["hotel-005"],
+      "availableVehicles": ["vehicle-005"]
     },
     {
       "id": "trip6",
@@ -46,7 +61,10 @@
       "imageUrl": "/images/southwest-canada.jpg",
       "price": 1600.0,
       "description": "Witness the breathtaking beauty of the Canadian Rockies. Perfect for hiking, skiing, and nature lovers. Southwest makes travel easy and comfortable.",
-      "datesAvailable": ["2025-06-15", "2025-07-01", "2025-12-05", "2026-01-10"]
+      "datesAvailable": ["2025-06-15", "2025-07-01", "2025-12-05", "2026-01-10"],
+      "availableFlights": ["flight-006"],
+      "availableHotels": ["hotel-006"],
+      "availableVehicles": ["vehicle-006"]
     },
     {
       "id": "trip7",
@@ -54,7 +72,10 @@
       "imageUrl": "/images/southwest-australia.jpg",
       "price": 2200.0,
       "description": "Visit the iconic Opera House, surf at Bondi Beach, and explore a vibrant multicultural city. Get there with Southwest's exceptional service.",
-      "datesAvailable": ["2025-10-20", "2025-11-10", "2026-02-05"]
+      "datesAvailable": ["2025-10-20", "2025-11-10", "2026-02-05"],
+      "availableFlights": ["flight-007"],
+      "availableHotels": ["hotel-007"],
+      "availableVehicles": ["vehicle-007"]
     },
     {
       "id": "trip8",
@@ -62,7 +83,10 @@
       "imageUrl": "/images/southwest-japan.jpg",
       "price": 1750.0,
       "description": "Immerse yourself in traditional Japanese culture with beautiful temples, serene gardens, and geisha districts. Enjoy the journey with Southwest.",
-      "datesAvailable": ["2025-09-15", "2025-10-10", "2026-03-20"]
+      "datesAvailable": ["2025-09-15", "2025-10-10", "2026-03-20"],
+      "availableFlights": ["flight-008"],
+      "availableHotels": ["hotel-008"],
+      "availableVehicles": ["vehicle-008"]
     },
     {
       "id": "trip9",
@@ -70,7 +94,10 @@
       "imageUrl": "/images/southwest-nyc.jpg",
       "price": 1300.0,
       "description": "The city that never sleeps! Explore famous landmarks, museums, Broadway shows, and diverse neighborhoods. Southwest makes your trip hassle-free.",
-      "datesAvailable": ["2025-08-01", "2025-09-10", "2025-11-20", "2025-12-15"]
+      "datesAvailable": ["2025-08-01", "2025-09-10", "2025-11-20", "2025-12-15"],
+      "availableFlights": ["flight-009"],
+      "availableHotels": ["hotel-009"],
+      "availableVehicles": ["vehicle-009"]
     },
     {
       "id": "trip10",
@@ -78,7 +105,10 @@
       "imageUrl": "/images/southwest-greece.jpg",
       "price": 2100.0,
       "description": "Famous for its stunning sunsets, white-washed villages, and blue-domed churches overlooking the Aegean Sea. Southwest ensures a comfortable journey.",
-      "datesAvailable": ["2025-07-01", "2025-08-01", "2025-09-05"]
+      "datesAvailable": ["2025-07-01", "2025-08-01", "2025-09-05"],
+      "availableFlights": ["flight-010"],
+      "availableHotels": ["hotel-010"],
+      "availableVehicles": ["vehicle-010"]
     },
     {
       "id": "trip11",
@@ -136,7 +166,41 @@
       "confirmationCode": "SWV12345",
       "confirmedAt": "2023-05-01T10:30:00.000Z",
       "createdAt": "2023-05-01T10:00:00.000Z",
-      "updatedAt": "2023-05-01T10:30:00.000Z"
+      "updatedAt": "2023-05-01T10:30:00.000Z",
+      "selectedFlight": "flight-001",
+      "selectedHotel": "hotel-001",
+      "selectedVehicle": "vehicle-001"
+    }
+  ],
+  "flights": [
+    {
+      "id": "flight-001",
+      "flightNumber": "SWA1234",
+      "origin": "LAX",
+      "destination": "HNL",
+      "departureTime": "08:30",
+      "arrivalTime": "12:45",
+      "aircraft": "Boeing 737-800",
+      "availableSeats": 24,
+      "totalSeats": 175
+    }
+  ],
+  "hotels": [
+    {
+      "id": "hotel-001",
+      "name": "Maui Ocean Resort & Spa",
+      "location": "Wailea, Maui",
+      "rating": 4.8,
+      "pricePerNight": 399.99
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "vehicle-001",
+      "type": "Convertible",
+      "make": "Jeep",
+      "model": "Wrangler",
+      "pricePerDay": 89.99
     }
   ]
 }

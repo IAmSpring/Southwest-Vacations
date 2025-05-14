@@ -27,37 +27,57 @@ const LoginPage: React.FC = () => {
               <LoginForm onSuccess={() => (window.location.href = '/')} />
 
               <div className="mt-6 border-t border-gray-200 pt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-2">Demo Accounts</h3>
+                <h3 className="mb-2 text-lg font-semibold text-gray-800">Demo Accounts</h3>
                 <div className="space-y-4">
-                  <div className="bg-blue-50 p-3 rounded border border-blue-100">
-                    <h4 className="font-medium text-blue-800">Test User</h4>
-                    <div className="text-sm mt-1">
-                      <p>Email: <span className="font-mono bg-white px-1 rounded">test@example.com</span></p>
-                      <p>Password: <span className="font-mono bg-white px-1 rounded">password123</span></p>
+                  <div className="rounded border border-blue-100 bg-blue-50 p-3">
+                    <h4 className="font-medium text-blue-800">Regular User</h4>
+                    <div className="mt-1 text-sm">
+                      <p>
+                        Email:{' '}
+                        <span className="rounded bg-white px-1 font-mono">
+                          test@southwestvacations.com
+                        </span>
+                      </p>
+                      <p>
+                        Password:{' '}
+                        <span className="rounded bg-white px-1 font-mono">password123</span>
+                      </p>
+                      <p className="mt-1 text-blue-700">Access to booking and user features</p>
                     </div>
                   </div>
-                  
-                  <div className="bg-purple-50 p-3 rounded border border-purple-100">
-                    <h4 className="font-medium text-purple-800">Premium User</h4>
-                    <div className="text-sm mt-1">
-                      <p>Email: <span className="font-mono bg-white px-1 rounded">premium@example.com</span></p>
-                      <p>Password: <span className="font-mono bg-white px-1 rounded">premium123</span></p>
+
+                  <div className="rounded border border-green-100 bg-green-50 p-3">
+                    <h4 className="font-medium text-green-800">Manager Account</h4>
+                    <div className="mt-1 text-sm">
+                      <p>
+                        Email:{' '}
+                        <span className="rounded bg-white px-1 font-mono">
+                          manager@southwestvacations.com
+                        </span>
+                      </p>
+                      <p>
+                        Password:{' '}
+                        <span className="rounded bg-white px-1 font-mono">password123</span>
+                      </p>
+                      <p className="mt-1 text-green-700">Can manage multiple users and bookings</p>
                     </div>
                   </div>
-                  
-                  <div className="bg-red-50 p-3 rounded border border-red-100">
-                    <h4 className="font-medium text-red-800">Admin User</h4>
-                    <div className="text-sm mt-1">
-                      <p>Email: <span className="font-mono bg-white px-1 rounded">admin@southwest.com</span></p>
-                      <p>Password: <span className="font-mono bg-white px-1 rounded">admin123</span></p>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-green-50 p-3 rounded border border-green-100">
-                    <h4 className="font-medium text-green-800">Booking Agent</h4>
-                    <div className="text-sm mt-1">
-                      <p>Email: <span className="font-mono bg-white px-1 rounded">agent@southwest.com</span></p>
-                      <p>Password: <span className="font-mono bg-white px-1 rounded">agent123</span></p>
+
+                  <div className="rounded border border-red-100 bg-red-50 p-3">
+                    <h4 className="font-medium text-red-800">System Administrator</h4>
+                    <div className="mt-1 text-sm">
+                      <p>
+                        Email:{' '}
+                        <span className="rounded bg-white px-1 font-mono">
+                          admin@southwestvacations.com
+                        </span>
+                      </p>
+                      <p>
+                        Password: <span className="rounded bg-white px-1 font-mono">admin123</span>
+                      </p>
+                      <p className="mt-1 text-red-700">
+                        Full system access, analytics, and architecture documentation
+                      </p>
                     </div>
                   </div>
                 </div>

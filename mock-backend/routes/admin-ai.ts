@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import db from '../db';
-import { authenticate, isAdmin } from '../middleware/auth';
+import db from '../db.js';
+import { authenticate, isAdmin } from '../middleware/auth.js';
 import dotenv from 'dotenv';
 
 // Load environment variables

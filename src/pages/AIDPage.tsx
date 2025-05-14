@@ -71,8 +71,8 @@ const AIDPage: React.FC = () => {
                         'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                         'ring-white ring-opacity-60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
                         selected
-                          ? 'bg-white text-blue-700 shadow'
-                          : 'text-blue-100 hover:bg-white/[0.12] hover:text-blue-200'
+                          ? 'bg-[#0054a6] text-white shadow'
+                          : 'text-blue-100 hover:bg-[#0054a6]/70 hover:text-white'
                       )
                     }
                   >

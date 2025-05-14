@@ -2,7 +2,7 @@
 
 describe('Multi-Location Trip Creation', () => {
   const TEST_EMPLOYEE = {
-    email: 'employee@southwest.com',
+    email: 'employee@southwestvacations.com',
     password: 'password123',
     name: 'Employee User',
     employeeId: 'EMP12345',

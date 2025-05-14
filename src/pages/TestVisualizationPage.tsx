@@ -43,20 +43,20 @@ const TestVisualizationPage: React.FC = () => {
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex">
             <button
-              className={`border-b-2 px-6 py-4 text-sm font-medium ${
+              className={`px-6 py-4 text-sm font-medium ${
                 activeTab === 'visualization'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'rounded-t-lg bg-[#0054a6] text-white'
+                  : 'text-gray-500 hover:bg-[#0054a6]/70 hover:text-white'
               }`}
               onClick={() => setActiveTab('visualization')}
             >
               Visualization
             </button>
             <button
-              className={`border-b-2 px-6 py-4 text-sm font-medium ${
+              className={`px-6 py-4 text-sm font-medium ${
                 activeTab === 'commands'
-                  ? 'border-blue-500 text-blue-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  ? 'rounded-t-lg bg-[#0054a6] text-white'
+                  : 'text-gray-500 hover:bg-[#0054a6]/70 hover:text-white'
               }`}
               onClick={() => setActiveTab('commands')}
             >

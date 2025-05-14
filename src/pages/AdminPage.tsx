@@ -168,8 +168,8 @@ const AdminPage: React.FC = () => {
                   'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                   'ring-white ring-opacity-60 ring-offset-2 ring-offset-[#304CB2] focus:outline-none focus:ring-2',
                   selected
-                    ? 'bg-white text-[#304CB2] shadow'
-                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-[#304CB2]'
+                    ? 'bg-[#0054a6] text-white shadow'
+                    : 'text-gray-600 hover:bg-[#0054a6]/70 hover:text-white'
                 )
               }
             >
@@ -181,8 +181,8 @@ const AdminPage: React.FC = () => {
                   'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                   'ring-white ring-opacity-60 ring-offset-2 ring-offset-[#304CB2] focus:outline-none focus:ring-2',
                   selected
-                    ? 'bg-white text-[#304CB2] shadow'
-                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-[#304CB2]'
+                    ? 'bg-[#0054a6] text-white shadow'
+                    : 'text-gray-600 hover:bg-[#0054a6]/70 hover:text-white'
                 )
               }
             >
@@ -194,8 +194,8 @@ const AdminPage: React.FC = () => {
                   'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
                   'ring-white ring-opacity-60 ring-offset-2 ring-offset-[#304CB2] focus:outline-none focus:ring-2',
                   selected
-                    ? 'bg-white text-[#304CB2] shadow'
-                    : 'text-gray-600 hover:bg-white/[0.12] hover:text-[#304CB2]'
+                    ? 'bg-[#0054a6] text-white shadow'
+                    : 'text-gray-600 hover:bg-[#0054a6]/70 hover:text-white'
                 )
               }
             >

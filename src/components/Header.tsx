@@ -37,6 +37,12 @@ const Header = () => {
             Home
           </Link>
           <Link
+            to="/trips"
+            className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
+          >
+            Trips
+          </Link>
+          <Link
             to="/book"
             className="rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-blue-700"
           >

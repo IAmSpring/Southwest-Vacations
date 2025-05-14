@@ -9,6 +9,13 @@ import * as seedDataModule from './seedData.js';
 const { generateSeedUsers } = seedDataModule;
 import db from './db.js';
 import { v4 as uuidv4 } from 'uuid';
+// Use dynamic import for auth.js to avoid TypeScript error
+// import authRoutes from './routes/auth.js';
+import tripsRoutes from './routes/trips.js';
+import bookingsRoutes from './routes/bookings.js';
+import usersRoutes from './routes/users.js';
+import trainingRoutes from './routes/training.js';
+import inventoryRoutes from './routes/inventory.js';
 
 // Get current file directory in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -61,8 +68,8 @@ async function initializeUsers() {
     // Check if users already exist
     await db.read();
     const users = db.data.users;
-    const testUser = users.find(user => user.email === 'test@example.com');
-    const adminUser = users.find(user => user.email === 'admin@southwest.com');
+    const testUser = users.find(user => user.email === 'test@southwestvacations.com');
+    const adminUser = users.find(user => user.email === 'admin@southwestvacations.com');
 
     // Only generate if users don't exist
     if (!testUser || !adminUser) {
@@ -71,16 +78,16 @@ async function initializeUsers() {
 
       // Add users to database if they don't exist
       seedUsers.forEach(user => {
-        if (user.email === 'test@example.com' && !testUser) {
+        if (user.email === 'test@southwestvacations.com' && !testUser) {
           db.data.users.push(user);
           console.log(`✅ Test user created: ${user.email}`);
         }
-        if (user.email === 'admin@southwest.com' && !adminUser) {
+        if (user.email === 'admin@southwestvacations.com' && !adminUser) {
           db.data.users.push(user);
           console.log(`✅ Admin user created: ${user.email}`);
         }
       });
-      
+
       await db.write();
     } else {
       console.log('Test users already exist in the database');
@@ -151,7 +158,7 @@ async function initializePromotions() {
       promotions.forEach(promo => {
         db.data.promotions.push(promo);
       });
-      
+
       await db.write();
 
       console.log(`✅ Added ${promotions.length} initial promotions`);
@@ -193,6 +200,24 @@ import usersRouter from './routes/users.js';
 // Only include routes that have been converted to ES modules
 app.use('/api/trips', tripsRouter);
 app.use('/api/users', usersRouter);
+
+// Try to import promotions routes
+try {
+  const promotionsRouter = await import('./routes/promotions.js').then(m => m.default);
+  app.use('/api/promotions', promotionsRouter);
+  console.log('✅ Loaded promotions router');
+} catch (e: any) {
+  console.warn('⚠️ Promotions router not available:', e.message);
+}
+
+// Dynamically import auth router
+try {
+  const authRouter = await import('./routes/auth.js').then(m => m.default);
+  app.use('/api/auth', authRouter);
+  console.log('✅ Loaded auth router');
+} catch (e: any) {
+  console.warn('⚠️ Auth router not available:', e.message);
+}
 
 // Try to import other routes if they exist
 try {
@@ -268,7 +293,11 @@ app.get('/health', (req: Request, res: Response) => {
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Southwest Vacations Internal Booking System API' });
+  res.json({
+    message: 'Southwest Vacations API',
+    version: '1.0.0',
+    endpoints: ['/auth', '/trips', '/bookings', '/users', '/training', '/inventory'],
+  });
 });
 
 // Start server

@@ -21,23 +21,27 @@ Welcome to the Southwest Vacations booking system! This application allows you t
 For testing purposes, you can use the following demo accounts:
 
 ### Regular User
+
 - **Email**: test@example.com
 - **Password**: password123
 
 ### Premium User
+
 - **Email**: premium@example.com
 - **Password**: premium123
 
 ### Admin User
-- **Email**: admin@southwest.com
+
+- **Email**: admin@southwestvacations.com
 - **Password**: admin123
 
 ### Booking Agent
-- **Email**: agent@southwest.com
+
+- **Email**: agent@southwestvacations.com
 - **Password**: agent123
 
 ## Development
 
 This project was built using React, TypeScript, and Express. It includes a mock backend server for development and testing purposes.
 
-[View on GitHub](https://github.com/IAmSpring/Southwest-Vacations) 
+[View on GitHub](https://github.com/IAmSpring/Southwest-Vacations)

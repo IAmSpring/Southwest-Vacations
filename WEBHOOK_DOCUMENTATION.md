@@ -1,90 +1,102 @@
-# Southwest Vacations Webhook System
+# Webhook Documentation for Southwest Vacations
 
-This document explains how the webhook system works for broadcasting booking data changes from the Southwest Vacations booking application.
+This document provides information about the webhook system used for deployment notifications and other integrations.
 
 ## Overview
 
-The webhook system automatically notifies external services whenever booking data changes in the application. This enables real-time synchronization with other systems such as:
+The webhook system enables automated notifications when the Southwest Vacations application is deployed to GitHub Pages. It also supports other event-driven integrations with external services.
 
-- External booking systems
-- Analytics platforms
-- Customer notification services
-- Partner travel agencies
-- Internal reporting tools
+## Webhook Server
 
-## How It Works
+The application includes a simple webhook server that can receive and process events from GitHub's webhook system. When deployments are successful, the server can trigger notifications and update deployment status.
 
-1. **Trigger**: When booking data files are modified and pushed to the main branch, a GitHub Actions workflow is triggered.
-2. **Detection**: The workflow detects changes specifically to booking-related data files.
-3. **Payload Creation**: A JSON payload is created containing information about the changes.
-4. **Broadcast**: The payload is sent via HTTP POST to configured webhook endpoints.
+### Setup
+
+1. Start the webhook server:
+
+   ```bash
+   npm run webhook
+   ```
+
+2. For development with auto-restart:
+   ```bash
+   npm run webhook:dev
+   ```
+
+## GitHub Webhook Configuration
+
+To configure GitHub to send webhook notifications:
+
+1. Go to your repository settings on GitHub
+2. Select "Webhooks" from the left sidebar
+3. Click "Add webhook"
+4. Configure the webhook:
+   - Payload URL: Enter your webhook server URL (e.g., `https://your-server.com/webhook`)
+   - Content type: Select `application/json`
+   - Secret: Create a secure secret and save it
+   - Events: Select "Workflow runs" and "Deployments"
+   - Active: Check this box to enable the webhook
 
 ## Webhook Payload
 
-The webhook sends a JSON payload with the following structure:
+The webhook server processes the following types of events:
+
+- `workflow_run`: Triggered when a GitHub Actions workflow completes
+- `deployment_status`: Triggered when a deployment status changes
+
+For successful deployments, the server generates a standardized payload:
 
 ```json
 {
-  "repository": "owner/repo-name",
-  "commit_sha": "abc123...",
-  "changed_booking_data": {
-    // The actual changed booking data
-  },
-  "timestamp": "2023-05-15T12:34:56Z"
+  "event": "deployment_success",
+  "status": "success",
+  "repository": "username/repository-name",
+  "ref": "main",
+  "commitSha": "abc123..."
 }
 ```
 
-## Setting Up Webhook Recipients
+## Integration with GitHub Pages
 
-To receive webhook notifications:
+When a GitHub Pages deployment succeeds:
 
-1. Create an endpoint that can receive HTTP POST requests
-2. Add the webhook URL to the repository secrets:
-   - Go to Repository Settings → Secrets and Variables → Actions
-   - Add a new secret named `BOOKING_WEBHOOK_URL` with your endpoint URL
-   - Add another secret named `WEBHOOK_SECRET` for secure webhook verification
+1. GitHub sends a webhook notification to the webhook server
+2. The server verifies the signature using the shared secret
+3. For successful deployments, it logs the event and updates the deployment status
+4. Notifications are sent to configured services (if enabled)
 
-## Verifying Webhook Authenticity
+## Configuration
 
-The webhook includes a signature in the `X-Hub-Signature-256` header. To verify the webhook:
+Configure the webhook system by setting environment variables:
 
-1. Compute HMAC-SHA256 of the request body using your secret key
-2. Compare it with the signature in the header
+| Variable         | Description                                      | Default               |
+| ---------------- | ------------------------------------------------ | --------------------- |
+| `PORT`           | Port for the webhook server                      | 3000                  |
+| `WEBHOOK_SECRET` | Secret for GitHub webhook signature verification | "your-webhook-secret" |
 
-Example in Node.js:
+## Webhook Handlers
 
-```javascript
-const crypto = require('crypto');
+You can extend the webhook functionality by modifying the following files:
 
-function verifyWebhook(body, signature, secret) {
-  const hmac = crypto.createHmac('sha256', secret);
-  const digest = 'sha256=' + hmac.update(body).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(signature));
-}
-```
+- `webhook-server.js`: Main webhook server
+- `scripts/webhook-handler.js`: Contains the logic for processing webhooks
 
 ## Testing Webhooks
 
-You can manually trigger a webhook broadcast:
+To test the webhook system locally:
 
-1. Go to the Actions tab in the GitHub repository
-2. Select "Booking Data Webhook Broadcast" workflow
-3. Click "Run workflow"
-4. Select the branch and click "Run workflow"
+1. Start the webhook server:
 
-## Webhook Development Guidelines
+   ```bash
+   npm run webhook:dev
+   ```
 
-When developing systems that consume these webhooks:
+2. Use a tool like ngrok to expose your local server:
 
-1. Implement proper error handling and retries
-2. Verify the webhook signature for security
-3. Process events idempotently (handle duplicate events gracefully)
-4. Acknowledge receipt quickly, then process asynchronously
-5. Implement rate limiting to handle potential high volumes
+   ```bash
+   ngrok http 3000
+   ```
 
-## Technical Details
+3. Configure GitHub to use the ngrok URL as the webhook payload URL
 
-- Webhooks are implemented using GitHub Actions
-- The workflow file is located at `.github/workflows/webhook-broadcast.yml`
-- Webhooks are only triggered on changes to booking data files
-- The system uses the `distributhor/workflow-webhook` action to send webhooks 
+4. Make a test commit to trigger the webhook
