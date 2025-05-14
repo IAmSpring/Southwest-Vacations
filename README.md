@@ -481,8 +481,7 @@ This project is set up for automatic deployment to GitHub Pages using GitHub Act
 ### Viewing the Deployed Application
 
 The live application can be accessed at:
-
-- [https://iamspring.github.io/home/](https://iamspring.github.io/home/)
+- [https://iamspring.github.io/Southwest-Vacations/](https://iamspring.github.io/Southwest-Vacations/)
 
 ### Manual Deployment
 
