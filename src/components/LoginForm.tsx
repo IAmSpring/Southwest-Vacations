@@ -1,6 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../context/AuthContext';
 import '../styles/LoginForm.css';
+
+// Declare environment variable types for Vite
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_MOCK_AUTH?: string;
+    };
+  }
+  
+  interface Window {
+    __adminContext?: {
+      setIsAdmin: (value: boolean) => void;
+      setAdminToken: (token: string | null) => void;
+    };
+  }
+}
 
 type LoginFormProps = {
   onSuccess?: () => void;
@@ -68,15 +84,113 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
       setEmail(loginEmail);
       setPassword(loginPassword);
 
-      const success = await login(loginEmail, loginPassword);
-      if (success) {
+      // Simulate form submission
+      setFormSubmitted(true);
+      setIsLoading(true);
+
+      // For GitHub Pages or any non-local environment
+      if (isGitHubPages()) {
+        console.log(`Using mock authentication for quick login as ${type}`);
+        
+        // Create mock user based on type
+        const mockUser = {
+          id: type === 'admin' ? 'admin-123' : type === 'manager' ? 'manager-123' : 'user-123',
+          email: loginEmail,
+          name: type === 'admin' ? 'Admin User' : type === 'manager' ? 'Manager User' : 'Test User',
+          role: type,
+          profileImage: '/images/profile-placeholder.png',
+          token: 'mock-jwt-token',
+          isAdmin: type === 'admin',
+          isManager: type === 'manager',
+        };
+
+        // Log the user in
+        await login(mockUser);
+        
+        // Set the admin context state if it's an admin login
+        if (type === 'admin' && typeof window !== 'undefined') {
+          // If AdminContext is available, update it
+          try {
+            const adminContext = window.__adminContext;
+            if (adminContext && adminContext.setIsAdmin && adminContext.setAdminToken) {
+              adminContext.setIsAdmin(true);
+              adminContext.setAdminToken(mockUser.token);
+            }
+          } catch (e) {
+            console.error('Could not set admin context:', e);
+          }
+        }
+        
         if (onSuccess) onSuccess();
-      } else {
-        setError('Quick login failed. Invalid credentials.');
+        
+        // Redirect based on user role
+        const redirectPath = determineRedirectPath(type);
+        if (redirectPath && redirectPath !== window.location.pathname) {
+          window.location.href = redirectPath;
+        }
+        
+        setIsLoading(false);
+        return;
+      }
+
+      console.log('Using backend authentication for quick login');
+      
+      // For local development with backend
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Login failed with response:', errorText);
+        throw new Error('Login failed');
+      }
+
+      const userData = await response.json();
+      console.log('Login successful, received data:', userData);
+      await login(userData);
+      
+      // Set the admin context state if it's an admin login
+      if (type === 'admin' && typeof window !== 'undefined') {
+        try {
+          const adminContext = window.__adminContext;
+          if (adminContext && adminContext.setIsAdmin && adminContext.setAdminToken) {
+            adminContext.setIsAdmin(true);
+            adminContext.setAdminToken(userData.token);
+          }
+        } catch (e) {
+          console.error('Could not set admin context:', e);
+        }
+      }
+      
+      if (onSuccess) onSuccess();
+      
+      // Redirect based on user role
+      const redirectPath = determineRedirectPath(type);
+      if (redirectPath && window.location.pathname !== redirectPath) {
+        window.location.href = redirectPath;
       }
     } catch (err) {
       setError('Login failed. Please try again.');
       console.error('Login error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Helper function to determine where to redirect after login based on user role
+  const determineRedirectPath = (userType: string): string => {
+    switch (userType) {
+      case 'admin':
+        return '/admin';
+      case 'manager':
+        return '/bookings/manage';
+      default:
+        return '/';
     }
   };
 

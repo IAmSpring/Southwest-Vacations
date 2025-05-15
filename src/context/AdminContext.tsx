@@ -65,6 +65,23 @@ export const AdminProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   // Admin-specific assistant ID
   const adminAssistantId = 'asst_hoKSs6GmjhQWSsvZPVvc3Qqv';
 
+  // Expose admin context to window object for access from other components
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.__adminContext = {
+        setIsAdmin,
+        setAdminToken
+      };
+    }
+    
+    return () => {
+      if (typeof window !== 'undefined') {
+        // @ts-expect-error Property __adminContext does not exist on type Window
+        delete window.__adminContext;
+      }
+    };
+  }, []);
+
   const fetchUsers = useCallback(async () => {
     if (!isAuthenticated || !user?.isAdmin) {
       setError('Unauthorized: Admin access required');

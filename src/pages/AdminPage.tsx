@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../context/AuthContext';
 import UserManagement from '../components/UserManagement';
 import AdminChatHistory from '../components/AdminChatHistory';
@@ -144,17 +144,75 @@ const UserConversationReview: React.FC = () => {
 
 const AdminPage: React.FC = () => {
   const { isAuthenticated, user } = useAuthContext();
+  const { isAdmin, setIsAdmin } = useAdmin();
   const [activeTab, setActiveTab] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // Redirect if not authenticated or not an admin
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+  // Check admin authentication and role
+  useEffect(() => {
+    const checkAdminAuth = () => {
+      setIsLoading(true);
+      
+      // First check if authenticated
+      if (!isAuthenticated) {
+        navigate('/login?redirect=admin', { replace: true });
+        return;
+      }
+      
+      // Then check if user has admin role
+      if (user?.role !== 'admin' && !isAdmin) {
+        // For GitHub Pages deployment, check if we can use a mock admin
+        if (isGitHubPages() && user) {
+          const mockAdminEmail = 'admin@southwestvacations.com';
+          if (user.email === mockAdminEmail) {
+            // Set admin status in context
+            setIsAdmin(true);
+            setIsLoading(false);
+            return;
+          }
+        }
+        
+        // If no admin access, redirect to home with message
+        navigate('/', { 
+          replace: true,
+          state: { 
+            message: 'Access denied: You need admin privileges to access this page.',
+            messageType: 'error'
+          } 
+        });
+        return;
+      }
+      
+      setIsLoading(false);
+    };
+    
+    checkAdminAuth();
+  }, [isAuthenticated, user, isAdmin, navigate, setIsAdmin]);
+
+  // Helper function to detect if running on GitHub Pages
+  const isGitHubPages = () => {
+    return (
+      typeof import.meta !== 'undefined' && 
+      import.meta.env?.VITE_MOCK_AUTH === 'true' || 
+      window.location.hostname.includes('github.io') ||
+      (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1')
+    );
+  };
+
+  // Show loading indicator
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-[#0054a6]"></div>
+          <p className="text-lg font-medium text-gray-600">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (user?.role !== 'admin') {
-    return <Navigate to="/" />;
-  }
-
+  // At this point, we know the user is authenticated and has admin privileges
   return (
     <div className="admin-page container mx-auto px-4 py-8">
       <h1 className="mb-6 text-3xl font-bold text-[#304CB2]">Admin Dashboard</h1>

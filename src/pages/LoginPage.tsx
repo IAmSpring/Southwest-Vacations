@@ -1,14 +1,44 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import LoginForm from '../components/LoginForm';
-import { Navigate } from 'react-router-dom';
-import { useAuthContext } from '../context/AuthContext';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const LoginPage: React.FC = () => {
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, user } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [redirectPath, setRedirectPath] = useState<string>('/');
 
-  // If already authenticated, redirect to home
+  // Extract redirect path from query parameters on component mount
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search);
+    const redirect = queryParams.get('redirect');
+    
+    if (redirect) {
+      if (redirect === 'admin') {
+        setRedirectPath('/admin');
+      } else if (redirect === 'book') {
+        setRedirectPath('/book');
+      } else {
+        setRedirectPath(`/${redirect}`);
+      }
+    }
+  }, [location.search]);
+
+  // Handle onSuccess from LoginForm
+  const handleLoginSuccess = () => {
+    // Redirect to specified path or default
+    navigate(redirectPath, { replace: true });
+  };
+
+  // If already authenticated, redirect to appropriate page
   if (isAuthenticated) {
-    return <Navigate to="/" replace />;
+    // If user is admin and redirect is to admin page, go to admin
+    if (user?.role === 'admin' && redirectPath === '/admin') {
+      return <Navigate to="/admin" replace />;
+    }
+    // Otherwise go to specified redirect path
+    return <Navigate to={redirectPath} replace />;
   }
 
   return (
@@ -24,7 +54,7 @@ const LoginPage: React.FC = () => {
                 Login to Your Account
               </h1>
 
-              <LoginForm onSuccess={() => (window.location.href = '/')} />
+              <LoginForm onSuccess={handleLoginSuccess} />
 
               <div
                 className="mt-6 border-t border-gray-200 pt-6"
