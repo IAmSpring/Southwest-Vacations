@@ -7,6 +7,16 @@ import { Tab } from '@headlessui/react';
 import AdminAIAssistant from '../components/AdminAIAssistant';
 import { useAdmin } from '../context/AdminContext';
 
+// Declare environment variable types for Vite
+declare global {
+  interface ImportMeta {
+    env: {
+      VITE_MOCK_AUTH?: string;
+      VITE_IS_GITHUB_PAGES?: string;
+    };
+  }
+}
+
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
@@ -193,8 +203,8 @@ const AdminPage: React.FC = () => {
   // Helper function to detect if running on GitHub Pages
   const isGitHubPages = () => {
     return (
-      typeof import.meta !== 'undefined' && 
-      import.meta.env?.VITE_MOCK_AUTH === 'true' || 
+      import.meta.env.VITE_MOCK_AUTH === 'true' || 
+      import.meta.env.VITE_IS_GITHUB_PAGES === 'true' ||
       window.location.hostname.includes('github.io') ||
       (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1')
     );

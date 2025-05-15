@@ -2,11 +2,22 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
 import '../styles/LoginForm.css';
 
+// Helper to detect if running on GitHub Pages
+const isGitHubPages = () => {
+  return (
+    import.meta.env.VITE_MOCK_AUTH === 'true' || 
+    import.meta.env.VITE_IS_GITHUB_PAGES === 'true' ||
+    window.location.hostname.includes('github.io') ||
+    (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1')
+  );
+};
+
 // Declare environment variable types for Vite
 declare global {
   interface ImportMeta {
     env: {
       VITE_MOCK_AUTH?: string;
+      VITE_IS_GITHUB_PAGES?: string;
     };
   }
   

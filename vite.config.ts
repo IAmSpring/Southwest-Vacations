@@ -35,4 +35,9 @@ export default defineConfig({
     // Generate a manifest file for asset tracking
     manifest: true,
   },
+  // Define environment variables
+  define: {
+    'import.meta.env.VITE_MOCK_AUTH': JSON.stringify(isProduction ? 'true' : 'false'),
+    'import.meta.env.VITE_IS_GITHUB_PAGES': JSON.stringify(isProduction ? 'true' : 'false'),
+  },
 });
