@@ -41,12 +41,13 @@ jobs:
         with:
           path: './dist'
       
-      - name: Send webhook notification
-        if: success()
-        run: |
-          curl -X POST -H "Content-Type: application/json" \
-          --data '{"event": "deployment_success", "status": "success", "repository": "${{ github.repository }}", "ref": "${{ github.ref }}"}' \
-          ${{ secrets.WEBHOOK_URL }}
+      # Webhook notification commented out until webhook URL is configured
+      # - name: Send webhook notification
+      #   if: success()
+      #   run: |
+      #     curl -X POST -H "Content-Type: application/json" \
+      #     --data '{"event": "deployment_success", "status": "success", "repository": "${{ github.repository }}", "ref": "${{ github.ref }}"}' \
+      #     ${{ secrets.WEBHOOK_URL }}
 
   deploy:
     environment:
