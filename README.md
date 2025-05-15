@@ -157,6 +157,8 @@ The application uses LowDB to store data in a JSON file. The database will be au
 
 ## Testing the Application
 
+![Automated Testing](https://github.com/user-attachments/assets/f7020ec4-3cf8-4a5a-a81c-9834fa672043)
+
 ### Automated Tests
 
 Run the tests using the following commands:
@@ -168,6 +170,8 @@ npm test
 # Run end-to-end tests with Cypress
 npm run cypress
 ```
+
+![Admin Integrations](https://github.com/user-attachments/assets/0c31ccda-3731-49ae-8461-d7aff64be51a)
 
 ### Manual Testing Scripts
 
@@ -481,8 +485,7 @@ This project is set up for automatic deployment to GitHub Pages using GitHub Act
 ### Viewing the Deployed Application
 
 The live application can be accessed at:
-
-- [https://iamspring.github.io/home/](https://iamspring.github.io/home/)
+- [https://iamspring.github.io/Southwest-Vacations/](https://iamspring.github.io/Southwest-Vacations/)
 
 ### Manual Deployment
 
