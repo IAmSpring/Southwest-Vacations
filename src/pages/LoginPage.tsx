@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import LoginForm from '../components/LoginForm';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 
 const LoginPage: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user } = useAuthContext();
   const location = useLocation();
   const navigate = useNavigate();
   const [redirectPath, setRedirectPath] = useState<string>('/');

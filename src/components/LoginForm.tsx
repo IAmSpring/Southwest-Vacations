@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useAuthContext } from '../context/AuthContext';
 import '../styles/LoginForm.css';
 
 // Declare environment variable types for Vite
@@ -23,7 +23,7 @@ type LoginFormProps = {
 };
 
 const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
-  const { login, isLoading } = useAuth();
+  const { login, isLoading } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
