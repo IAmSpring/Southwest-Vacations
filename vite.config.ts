@@ -30,10 +30,14 @@ export default defineConfig({
         assetFileNames: 'assets/[name]-[hash][extname]',
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
+        // Make sure we're not using ESM modules which can cause MIME type issues
+        format: 'iife',
       },
     },
     // Generate a manifest file for asset tracking
     manifest: true,
+    // Important: Set to true for compatibility with older browsers
+    target: 'es2015',
   },
   // Define environment variables
   define: {

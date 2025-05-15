@@ -1,31 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Not Found - Southwest Vacations</title>
-  <script>
-    // Redirect to index.html with the path preserved in a query parameter
-    const repositoryName = 'Southwest-Vacations';
-    const location = window.location;
-    
-    // Handle paths to make sure they redirect within the repository context
-    let pathname = location.pathname;
-    if (pathname.startsWith(`/${repositoryName}/`)) {
-      pathname = pathname.substring(repositoryName.length + 2); // +2 for the slashes
-    } else if (pathname === '/404.html') {
-      pathname = '';
-    }
-    
-    const redirectPath = `${location.origin}/${repositoryName}/#/${pathname}${location.search}`;
-    window.location.replace(redirectPath);
-  </script>
-</head>
-<body>
-  <h1>Redirecting to the home page...</h1>
-  <p>If you are not redirected automatically, please click <a id="redirect-link" href="/Southwest-Vacations/">here</a>.</p>
-  <script>
-    document.getElementById('redirect-link').href = redirectPath;
-  </script>
-</body>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Southwest Vacations</title>
+    <script>
+      // Single Page Apps for GitHub Pages
+      // https://github.com/rafrex/spa-github-pages
+      (function(){
+        var segmentCount = 1; // Number of segments in path (for repo name)
+        var l = window.location;
+        
+        // Extract repository name
+        var repoName = 'Southwest-Vacations';
+        
+        // If this is a redirect from a 404, redirect correctly
+        if (l.search) {
+          var q = {};
+          l.search.slice(1).split('&').forEach(function(v) {
+            var a = v.split('=');
+            q[a[0]] = a.slice(1).join('=').replace(/~and~/g, '&');
+          });
+          if (q.p !== undefined) {
+            // Convert paths with slashes to use tildes instead
+            var path = q.p.replace(/\//g, '~slash~');
+            window.history.replaceState(
+              null, null,
+              '/' + repoName + (path ? '/' + path : '') +
+              (q.q ? '?' + q.q : '') +
+              l.hash
+            );
+          }
+        }
+        
+        // For all 404s that aren't from redirects, redirect to index with path
+        if (l.pathname.split('/')[segmentCount]) {
+          // Get current path without repo name
+          var cleanPath = l.pathname.slice(1).split('/').slice(segmentCount).join('/');
+          
+          // Redirect to index with path info
+          l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            '/' + repoName + '/?p=' + cleanPath +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+          );
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <h2>Southwest Vacations</h2>
+    <p>Redirecting...</p>
+  </body>
 </html> 

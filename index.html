@@ -2,12 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Southwest Vacations</title>
+    <title>Southwest Vacations - Vacation Packages</title>
+    <meta name="description" content="Book your dream vacation with Southwest Vacations. Explore flights, hotels, car rentals, and vacation packages in your favorite destinations." />
     <link rel="stylesheet" href="./src/styles/index.css" />
-    <script type="module" src="./src/main.tsx"></script>
+    <!-- GitHub Pages redirect handler -->
+    <script>
+      // Handle GitHub Pages redirect from 404.html
+      (function() {
+        // Check if we're being redirected from a 404 page
+        var redirect = window.location.search.match(/[?&]p=([^&]+)/);
+        if (redirect) {
+          // Get the pathname from the query parameter
+          var pathname = redirect[1].replace(/~slash~/g, '/');
+          // Replace the current URL with the proper path
+          window.history.replaceState(
+            null, null,
+            window.location.pathname.split('?')[0] + pathname + 
+            (window.location.search.match(/[?&]q=([^&]+)/) ? 
+              '?' + window.location.search.match(/[?&]q=([^&]+)/)[1].replace(/~and~/g, '&') : '') +
+            window.location.hash
+          );
+        }
+      })();
+    </script>
 </head>
 <body>
     <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
 </body>
 </html> 
