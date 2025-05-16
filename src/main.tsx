@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.tsx';
-// Assuming you will have a global stylesheet or Tailwind setup
-import './styles/index.css';
+// Import the CSS from the correct location
+import './index.css';
 
 // Get base path for GitHub Pages
 const repositoryName = 'Southwest-Vacations';
