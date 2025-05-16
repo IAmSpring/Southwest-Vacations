@@ -1,0 +1,2 @@
+/* This file provides backward compatibility for components that import from ./styles/index.css */
+@import '../index.css'; 
