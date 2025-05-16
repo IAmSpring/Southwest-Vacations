@@ -1,26 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuthContext } from '../context/AuthContext';
+import { isGitHubPages, createFullPath } from '../utils/urlUtils';
 import '../styles/LoginForm.css';
-
-// Helper to detect if running on GitHub Pages
-const isGitHubPages = () => {
-  return (
-    import.meta.env.VITE_MOCK_AUTH === 'true' || 
-    import.meta.env.VITE_IS_GITHUB_PAGES === 'true' ||
-    window.location.hostname.includes('github.io') ||
-    (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1')
-  );
-};
 
 // Declare environment variable types for Vite
 declare global {
-  interface ImportMeta {
-    env: {
-      VITE_MOCK_AUTH?: string;
-      VITE_IS_GITHUB_PAGES?: string;
-    };
-  }
-  
   interface Window {
     __adminContext?: {
       setIsAdmin: (value: boolean) => void;
@@ -96,13 +80,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
           
           if (onSuccess) onSuccess();
           
-          // Redirect based on user role
+          // Redirect based on user role with correct path
           if (email === 'admin@southwestvacations.com') {
-            window.location.href = '/admin';
+            window.location.href = createFullPath('/admin');
           } else if (email === 'manager@southwestvacations.com') {
-            window.location.href = '/bookings/manage';
+            window.location.href = createFullPath('/bookings/manage');
           } else {
-            window.location.href = '/';
+            window.location.href = createFullPath('/');
           }
           
           setIsLoading(false);
@@ -193,10 +177,17 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         
         if (onSuccess) onSuccess();
         
-        // Redirect based on user role
+        // Get the redirect path based on user role
         const redirectPath = determineRedirectPath(type);
-        if (redirectPath && redirectPath !== window.location.pathname) {
-          window.location.href = redirectPath;
+        
+        // Create full path with repository name if needed
+        const fullPath = createFullPath(redirectPath);
+        
+        console.log(`Redirecting to: ${fullPath}`);
+        
+        // Check if current path is already the target path
+        if (fullPath && window.location.pathname !== fullPath) {
+          window.location.href = fullPath;
         }
         
         setIsLoading(false);
@@ -212,8 +203,10 @@ const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
         
         // Redirect based on user role
         const redirectPath = determineRedirectPath(type);
-        if (redirectPath && window.location.pathname !== redirectPath) {
-          window.location.href = redirectPath;
+        const fullPath = createFullPath(redirectPath);
+        
+        if (fullPath && window.location.pathname !== fullPath) {
+          window.location.href = fullPath;
         }
       } else {
         setError('Login failed. Please try again.');

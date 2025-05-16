@@ -2,28 +2,22 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.tsx';
+import { isGitHubPages, REPOSITORY_NAME } from './utils/urlUtils';
 // Import the CSS from the correct location
 import './index.css';
 
-// Get base path for GitHub Pages
-const repositoryName = 'Southwest-Vacations';
-const isGitHubPages = () => {
-  return (
-    import.meta.env.VITE_MOCK_AUTH === 'true' || 
-    import.meta.env.VITE_IS_GITHUB_PAGES === 'true' ||
-    window.location.hostname.includes('github.io') ||
-    (!window.location.hostname.includes('localhost') && window.location.hostname !== '127.0.0.1')
-  );
-};
-
 // Use HashRouter for GitHub Pages and BrowserRouter for local development
 const Router = isGitHubPages() ? HashRouter : BrowserRouter;
-const basePath = isGitHubPages() ? `/${repositoryName}` : '/';
+
+// Set the basename
+// For HashRouter, this should be '/' since the path is after the hash
+// For BrowserRouter, this should be '/' for development and '/<repo-name>' for production with BrowserRouter
+const basePath = isGitHubPages() ? '/' : '/';
 
 // Render app with appropriate router
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Router basename={isGitHubPages() ? undefined : basePath}>
+    <Router basename={basePath}>
       <App />
     </Router>
   </React.StrictMode>,
