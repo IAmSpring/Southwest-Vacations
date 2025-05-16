@@ -1,4 +1,5 @@
 import React from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { AuthProvider } from './context/AuthContext';
 import { AdminProvider } from './context/AdminContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -7,6 +8,17 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AIAssistant from './components/AIAssistant';
 import AppRoutes from './AppRoutes';
+
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    },
+  },
+});
 
 // Login demo component
 const LoginDemoInfo = () => {
@@ -78,22 +90,24 @@ const LoginDemoInfo = () => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <AdminProvider>
-        <NotificationProvider>
-          <AIAssistantProvider>
-            <div className="flex min-h-screen flex-col bg-white">
-              <Header />
-              <main id="main-content" className="flex-grow" tabIndex={-1}>
-                <AppRoutes />
-              </main>
-              <Footer />
-              <AIAssistant />
-            </div>
-          </AIAssistantProvider>
-        </NotificationProvider>
-      </AdminProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <AdminProvider>
+          <NotificationProvider>
+            <AIAssistantProvider>
+              <div className="flex min-h-screen flex-col bg-white">
+                <Header />
+                <main id="main-content" className="flex-grow" tabIndex={-1}>
+                  <AppRoutes />
+                </main>
+                <Footer />
+                <AIAssistant />
+              </div>
+            </AIAssistantProvider>
+          </NotificationProvider>
+        </AdminProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 };
 
