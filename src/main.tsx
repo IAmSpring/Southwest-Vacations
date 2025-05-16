@@ -2,15 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.tsx';
-import { isGitHubPages, getBasePath, REPOSITORY_NAME } from './utils/urlUtils';
+import { isGitHubPages } from './utils/urlUtils';
 // Import the CSS from the correct location
 import './index.css';
 
 // Use HashRouter for GitHub Pages and BrowserRouter for local development
 const Router = isGitHubPages() ? HashRouter : BrowserRouter;
 
-// Set the basename - for BrowserRouter, use getBasePath which includes repository name when needed
-const basePath = isGitHubPages() ? '/' : getBasePath();
+// For GitHub Pages with HashRouter, we don't need a basename
+// For local development with BrowserRouter, we use '/'
+const basePath = '/';
 
 // Render app with appropriate router
 ReactDOM.createRoot(document.getElementById('root')!).render(
