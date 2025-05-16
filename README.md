@@ -155,6 +155,7 @@ OPENAI_ASSISTANT_ID=asst_Le5hAPkk1mriAIVsRK06qGsm
 
 The application uses LowDB to store data in a JSON file. The database will be automatically created in the `data` directory when you first run the application.
 
+
 ## Testing the Application
 
 ![Automated Testing](https://github.com/user-attachments/assets/f7020ec4-3cf8-4a5a-a81c-9834fa672043)
