@@ -1,10 +1,10 @@
 import { Country, State, City, ICountry, IState, ICity } from 'country-state-city';
 import { countries } from 'countries-list';
-import i18nCountries from 'i18n-iso-countries';
+import i18nCountries from '../utils/i18nCountriesWrapper';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 
-// Initialize the i18n countries
-i18nCountries.registerLocale(enLocale);
+// Initialize the i18n countries (this is now handled in the wrapper)
+// i18nCountries.registerLocale(enLocale);
 
 // Define Country type from countries-list
 interface CountryListItem {

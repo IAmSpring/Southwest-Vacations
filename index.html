@@ -6,7 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Southwest Vacations - Vacation Packages</title>
     <meta name="description" content="Book your dream vacation with Southwest Vacations. Explore flights, hotels, car rentals, and vacation packages in your favorite destinations." />
-    <link rel="stylesheet" href="./src/styles/index.css" />
+    
+    <!-- Preload critical assets -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Critical CSS inline -->
+    <style>
+      /* Critical loading spinner */
+      #loading-spinner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f5f5f5;
+        z-index: 9999;
+      }
+      .spinner {
+        width: 60px;
+        height: 60px;
+        border: 6px solid #0d47a1;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      /* Hide spinner once content loads */
+      body.loaded #loading-spinner {
+        display: none;
+      }
+    </style>
+    
     <!-- GitHub Pages redirect handler -->
     <script>
       // Handle GitHub Pages redirect from 404.html
@@ -26,9 +62,22 @@
           );
         }
       })();
+      
+      // Mark document as loaded when ready
+      window.addEventListener('load', function() {
+        document.body.classList.add('loaded');
+      });
     </script>
+    
+    <!-- Load main CSS asynchronously -->
+    <link rel="stylesheet" href="./src/styles/index.css" media="print" onload="this.media='all'">
 </head>
 <body>
+    <!-- Loading spinner shown until app is ready -->
+    <div id="loading-spinner">
+      <div class="spinner"></div>
+    </div>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 </body>
