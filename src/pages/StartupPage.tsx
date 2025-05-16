@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
+import { createFullPath, getBasePath } from '../utils/urlUtils';
 
 // Define CSS for animations
 const animationStyles = `
@@ -290,12 +291,12 @@ const StartupPage: React.FC = () => {
   if (isReady) {
     // Add a forced redirect as ultimate fallback
     setTimeout(() => {
-      window.location.href = '/';
+      window.location.href = createFullPath('/');
     }, 1000);
 
     return (
       <>
-        <Navigate to="/" replace />
+        <Navigate to={createFullPath('/')} replace />
         <div
           className="fixed inset-0 flex items-center justify-center bg-blue-800"
           role="status"
@@ -404,8 +405,8 @@ const StartupPage: React.FC = () => {
                   <div
                     className="mt-2"
                     role="progressbar"
-                    aria-valuemin="0"
-                    aria-valuemax="100"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
                     aria-valuenow={Math.round((testsPassed.passed / testsPassed.total) * 100)}
                     aria-label="Test passing percentage"
                   >

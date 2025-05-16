@@ -67,12 +67,27 @@ permalink: /404.html
     <h1>Page Not Found</h1>
     <p>The page you're looking for doesn't exist or has been moved. Let's get you back on track to finding your perfect vacation.</p>
     
-    <a href="{{ site.baseurl }}/" class="button">Return to Home</a>
+    <a href="/Southwest-Vacations/" class="button">Return to Home</a>
     
     <script>
+        // Define the repository name for GitHub Pages
+        const REPOSITORY_NAME = 'Southwest-Vacations';
+        
+        // Handle redirects for different URL structures
+        function getHomepageUrl() {
+            const hostName = window.location.hostname;
+            if (hostName.includes('github.io')) {
+                return `/${REPOSITORY_NAME}/`;
+            }
+            return '/';
+        }
+        
+        // Update button href
+        document.querySelector('.button').href = getHomepageUrl();
+        
         // Automatically redirect to home page after 10 seconds
         setTimeout(function() {
-            window.location.href = "{{ site.baseurl }}/";
+            window.location.href = getHomepageUrl();
         }, 10000);
     </script>
 </body>

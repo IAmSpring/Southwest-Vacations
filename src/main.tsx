@@ -2,17 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App.tsx';
-import { isGitHubPages, REPOSITORY_NAME } from './utils/urlUtils';
+import { isGitHubPages, getBasePath, REPOSITORY_NAME } from './utils/urlUtils';
 // Import the CSS from the correct location
 import './index.css';
 
 // Use HashRouter for GitHub Pages and BrowserRouter for local development
 const Router = isGitHubPages() ? HashRouter : BrowserRouter;
 
-// Set the basename
-// For HashRouter, this should be '/' since the path is after the hash
-// For BrowserRouter, this should be '/' for development and '/<repo-name>' for production with BrowserRouter
-const basePath = isGitHubPages() ? '/' : '/';
+// Set the basename - for BrowserRouter, use getBasePath which includes repository name when needed
+const basePath = isGitHubPages() ? '/' : getBasePath();
 
 // Render app with appropriate router
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -20,5 +18,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     <Router basename={basePath}>
       <App />
     </Router>
-  </React.StrictMode>,
+  </React.StrictMode>
 );
