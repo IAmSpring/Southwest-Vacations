@@ -4,9 +4,13 @@ import { useNotifications } from '../context/NotificationContext';
 
 interface NotificationIconProps {
   className?: string;
+  dropdownPosition?: 'top' | 'bottom';
 }
 
-const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) => {
+const NotificationIcon: React.FC<NotificationIconProps> = ({
+  className = '',
+  dropdownPosition = 'bottom',
+}) => {
   const { unreadCount, notifications, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -59,6 +63,9 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
     markAllAsRead();
   };
 
+  // Position classes based on dropdown position
+  const dropdownPositionClasses = dropdownPosition === 'top' ? 'bottom-full mb-2' : 'top-full mt-2';
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -96,7 +103,7 @@ const NotificationIcon: React.FC<NotificationIconProps> = ({ className = '' }) =
 
       {isOpen && (
         <div
-          className="absolute right-0 z-10 mt-2 w-80 rounded-md bg-white p-2 shadow-lg"
+          className={`absolute right-0 z-10 w-80 rounded-md bg-white p-2 shadow-lg ${dropdownPositionClasses}`}
           role="dialog"
           aria-label="Notifications panel"
         >
